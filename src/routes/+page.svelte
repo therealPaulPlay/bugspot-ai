@@ -86,7 +86,7 @@
 			</h1>
 
 			<p class="text-muted-foreground mx-auto mb-8 max-w-3xl text-lg sm:text-xl">
-				We use AI to ensure that all bug reports will be useful to developers & meet <i>your</i> guidelines. No more non-issues
+				Utilize AI to ensure that all bug reports are be useful to developers & meet <i>your</i> guidelines. No more non-issues
 				or endless back-and-forth.
 			</p>
 
