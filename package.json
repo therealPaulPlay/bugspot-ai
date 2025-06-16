@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --port 3000 --host",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
@@ -14,12 +14,14 @@
 		"db:push": "drizzle-kit push"
 	},
 	"devDependencies": {
+		"@internationalized/date": "^3.8.2",
 		"@lucide/svelte": "^0.515.0",
 		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/kit": "^2.16.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/node": "^22",
+		"bits-ui": "^2.8.0",
 		"clsx": "^2.1.1",
 		"drizzle-kit": "^0.30.2",
 		"prettier": "^3.4.2",
@@ -34,6 +36,8 @@
 	},
 	"dependencies": {
 		"drizzle-orm": "^0.40.0",
+		"lucide-svelte": "^0.515.0",
+		"mode-watcher": "^1.0.8",
 		"mysql2": "^3.12.0"
 	}
 }
