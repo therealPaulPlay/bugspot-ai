@@ -3,33 +3,9 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Badge } from "$lib/components/ui/badge";
-	import {
-		ArrowRight,
-		Bug,
-		Sparkles,
-		Zap,
-		Shield,
-		Users,
-		ExternalLink,
-		ArrowBigRight,
-		ArrowDown,
-		CloudCheck,
-	} from "lucide-svelte";
+	import { ArrowRight, Bug, Sparkles, Zap, Shield, CloudCheck, ArrowDown, AlertTriangle } from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { user } from "$lib/stores/account";
-
-	let products = $state([]);
-	let loading = $state(true);
-
-	// Mock data for demonstration
-	const mockProducts = [
-		{ id: 1, name: "React Dashboard", slug: "react-dashboard", bugCount: 23 },
-		{ id: 2, name: "Vue Mobile App", slug: "vue-mobile-app", bugCount: 15 },
-		{ id: 3, name: "Angular CRM", slug: "angular-crm", bugCount: 8 },
-		{ id: 4, name: "Node.js API", slug: "nodejs-api", bugCount: 12 },
-		{ id: 5, name: "Django Backend", slug: "django-backend", bugCount: 5 },
-		{ id: 6, name: "Flutter App", slug: "flutter-app", bugCount: 19 },
-	];
 
 	// Animation for bug report transformation
 	const badReports = [
@@ -55,25 +31,52 @@
 		browserInfo: "Safari 17.2, iOS 17.1.1",
 	};
 
-	onMount(async () => {
-		try {
-			// Simulate API call
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			products = mockProducts;
-		} catch (error) {
-			console.error("Failed to load products:", error);
-			products = mockProducts; // Fallback to mock data
-		} finally {
-			loading = false;
-		}
-	});
+	// Simple errors that will animate in
+	const errors = [
+		{
+			title: "TooManyChaoticReportsError",
+			description: "System overwhelmed by bug reports that just say 'it's broken'.",
+			position: "top: 7%; left: 15%;",
+			colorClass: "bg-red-50 dark:bg-red-950 border-red-300 dark:border-red-700",
+		},
+		{
+			title: "DuplicateIssueException",
+			description: "Same bug reported 47 times with different titles.",
+			position: "top: 20%; right: 20%;",
+			colorClass: "bg-yellow-50 dark:bg-yellow-950 border-yellow-300 dark:border-yellow-700",
+		},
+		{
+			title: "MissingStepsError",
+			description: "Cannot reproduce issue. Steps: 'just click stuff until it breaks'.",
+			position: "top: 40%; left: 10%;",
+			colorClass: "bg-blue-50 dark:bg-blue-950 border-blue-300 dark:border-blue-700",
+		},
+		{
+			title: "VagueDescriptionWarning",
+			description: "'Something is wrong' detected. Unable to parse actual problem.",
+			position: "top: 10%; right: 10%;",
+			colorClass: "bg-purple-50 dark:bg-purple-950 border-purple-300 dark:border-purple-700",
+		},
+		{
+			title: "PriorityOverflowError",
+			description: "Everything marked as 'URGENT!!!'. Priority system crashed.",
+			position: "top: 55%; left: 25%;",
+			colorClass: "bg-orange-50 dark:bg-orange-950 border-orange-300 dark:border-orange-700",
+		},
+		{
+			title: "ScreenshotNotFoundException",
+			description: "Visual evidence missing. Developers using telepathy.",
+			position: "top: 50%; right: 15%;",
+			colorClass: "bg-green-50 dark:bg-green-950 border-green-300 dark:border-green-700",
+		},
+	];
 </script>
 
 <svelte:head>
-	<title>Bugspot - Streamline bug reporting & management with AI</title>
+	<title>Bugspot - Help users create professional bug reports with AI</title>
 	<meta
 		name="description"
-		content="Help users create professional bug reports with AI. Reduce back-and-forth communication & help developers debug effectively. Think Bugzilla – accessible for everyone."
+		content="Help users create professional bug reports with AI. Reduce back-and-forth communication & help developers debug effectively."
 	/>
 </svelte:head>
 
@@ -92,12 +95,12 @@
 			</div>
 
 			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">
-				Empower users to create
-				<span class="text-primary">exceptional bug reports with ease.</span>
+				Help users create
+				<span class="text-primary">professional bug reports.</span>
 			</h1>
 
 			<p class="text-muted-foreground mx-auto mb-8 max-w-3xl text-lg sm:text-xl">
-				Utilize AI to ensure that all bug reports are be useful to developers & meet <i>your</i> guidelines. No more non-issues
+				Utilize AI to ensure that all bug reports are useful to developers and meet your guidelines. No more non-issues
 				or endless back-and-forth.
 			</p>
 
@@ -201,17 +204,17 @@
 		</div>
 
 		<div class="grid gap-8 md:grid-cols-3">
-			<Card class="hover:shadow-lg transition group">
+			<Card class="group transition hover:shadow-lg">
 				<CardHeader>
 					<Zap class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">AI-powered analysis</CardTitle>
 					<CardDescription>
-						Our AI automatically suggests finds missing critical information and ensures reports follow best practices.
+						Our AI automatically finds missing critical information and ensures reports follow best practices.
 					</CardDescription>
 				</CardHeader>
 			</Card>
 
-			<Card class="hover:shadow-lg transition group">
+			<Card class="group transition hover:shadow-lg">
 				<CardHeader>
 					<Shield class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">Prevent duplicates</CardTitle>
@@ -222,13 +225,13 @@
 				</CardHeader>
 			</Card>
 
-			<Card class="hover:shadow-lg transition group">
+			<Card class="group transition hover:shadow-lg">
 				<CardHeader>
 					<CloudCheck class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">Sync with GitHub</CardTitle>
 					<CardDescription>
-						Assign issues, follow progress and collaborate. Bugspot adds issues right to GitHub and notifies you about
-						newly added ones.
+						Seamlessly integrate with your existing workflow. Bugspot creates GitHub issues directly from enhanced bug
+						reports.
 					</CardDescription>
 				</CardHeader>
 			</Card>
@@ -236,58 +239,51 @@
 	</div>
 </section>
 
-<!-- Products showcase -->
+<!-- Fun Errors Demo Section -->
 <section class="py-24">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-16 text-center">
 			<h2 class="mb-4 text-3xl font-bold">
-				What's going on? <span class="text-muted-foreground">It must be a bug.</span>
+				When things go wrong... <span class="text-muted-foreground">let's make it right.</span>
 			</h2>
+			<p class="text-muted-foreground text-lg">
+				See how Bugspot helps your customers create beautiful reports.
+			</p>
 		</div>
 
-		{#if loading}
-			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{#each Array(6) as _}
-					<Card class="animate-pulse">
-						<CardHeader>
-							<div class="bg-muted h-6 w-3/4 rounded"></div>
-							<div class="bg-muted h-4 w-1/2 rounded"></div>
-						</CardHeader>
-						<CardContent>
+		<!-- Windows-style overlapping error showcase -->
+		<div class="relative mx-auto mb-8 h-[500px] max-w-5xl">
+			{#each errors as error, index}
+				<div
+					class="absolute w-80"
+					style="{error.position} z-index: {10 + index};"
+					transition:blur={{ delay: index * 300, duration: 800 }}
+				>
+					<Card class="border-2 shadow-lg {error.colorClass}">
+						<CardHeader class="pb-2">
 							<div class="flex items-center justify-between">
-								<div class="bg-muted h-4 w-1/3 rounded"></div>
-								<div class="bg-muted h-6 w-16 rounded"></div>
+								<div class="flex items-center space-x-2">
+									<div class="h-3 w-3 rounded-full bg-red-500"></div>
+									<div class="h-3 w-3 rounded-full bg-yellow-500"></div>
+									<div class="h-3 w-3 rounded-full bg-green-500"></div>
+								</div>
+								<div class="flex h-4 w-4 items-center justify-center border border-gray-400 text-xs">×</div>
 							</div>
+							<CardTitle class="font-mono text-sm">{error.title}</CardTitle>
+						</CardHeader>
+						<CardContent class="pt-0">
+							<p class="text-muted-foreground mb-2 text-xs">{error.description}</p>
+							<AlertTriangle class="text-muted-foreground h-3 w-3" />
 						</CardContent>
 					</Card>
-				{/each}
-			</div>
-		{:else}
-			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{#each products as product}
-					<Card class="group cursor-pointer transition-shadow hover:shadow-lg">
-						<CardHeader>
-							<div class="flex items-center justify-between">
-								<CardTitle class="group-hover:text-primary text-lg transition-colors">
-									{product.name}
-								</CardTitle>
-								<ExternalLink class="text-muted-foreground group-hover:text-primary h-4 w-4 transition-colors" />
-							</div>
-							<CardDescription>
-								Active bug tracking for {product.name}
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div class="flex items-center justify-between">
-								<span class="text-muted-foreground text-sm">
-									{product.bugCount} open issues
-								</span>
-							</div>
-						</CardContent>
-					</Card>
-				{/each}
-			</div>
-		{/if}
+				</div>
+			{/each}
+		</div>
+
+		<!-- Simple report button -->
+		<div class="text-center">
+			<Button class="px-8 py-6" onclick={() => goto("/demo")}>Try the demo</Button>
+		</div>
 	</div>
 </section>
 
