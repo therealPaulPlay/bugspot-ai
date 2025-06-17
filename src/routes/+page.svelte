@@ -3,7 +3,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Badge } from "$lib/components/ui/badge";
-	import { ArrowRight, Bug, Sparkles, Zap, Shield, CloudCheck, ArrowDown, AlertTriangle } from "lucide-svelte";
+	import { ArrowRight, Bug, Sparkles, Zap, Shield, CloudCheck, ArrowDown } from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { user } from "$lib/stores/account";
 
@@ -46,7 +46,7 @@
 		{
 			title: "MissingStepsError",
 			description: "Cannot reproduce issue. Steps: 'just click stuff until it breaks'.",
-			position: "top: 40%; left: 10%;",
+			position: "top: 42%; left: 10%;",
 		},
 		{
 			title: "VagueDescriptionWarning",
@@ -265,7 +265,6 @@
 						</CardHeader>
 						<CardContent class="pt-0">
 							<p class="text-muted-foreground mb-2 text-xs">{error.description}</p>
-							<AlertTriangle class="text-muted-foreground h-3 w-3" />
 						</CardContent>
 					</Card>
 				</div>

@@ -5,6 +5,7 @@
 	import { ModeWatcher, mode } from "mode-watcher";
 	import Footer from "$lib/components/footer.svelte";
 	import Navbar from "$lib/components/navbar.svelte";
+	import { Toaster } from "$lib/components/ui/sonner/index.js";
 
 	let { children } = $props();
 
@@ -16,6 +17,8 @@
 </script>
 
 <ModeWatcher />
+
+<Toaster />
 
 <div class="bg-background min-h-screen">
 	<!-- Navigation -->
