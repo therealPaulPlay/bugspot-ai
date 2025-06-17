@@ -37,37 +37,31 @@
 			title: "TooManyChaoticReportsError",
 			description: "System overwhelmed by bug reports that just say 'it's broken'.",
 			position: "top: 7%; left: 15%;",
-			colorClass: "bg-red-50 dark:bg-red-950 border-red-300 dark:border-red-700",
 		},
 		{
 			title: "DuplicateIssueException",
 			description: "Same bug reported 47 times with different titles.",
 			position: "top: 20%; right: 20%;",
-			colorClass: "bg-yellow-50 dark:bg-yellow-950 border-yellow-300 dark:border-yellow-700",
 		},
 		{
 			title: "MissingStepsError",
 			description: "Cannot reproduce issue. Steps: 'just click stuff until it breaks'.",
 			position: "top: 40%; left: 10%;",
-			colorClass: "bg-blue-50 dark:bg-blue-950 border-blue-300 dark:border-blue-700",
 		},
 		{
 			title: "VagueDescriptionWarning",
 			description: "'Something is wrong' detected. Unable to parse actual problem.",
 			position: "top: 10%; right: 10%;",
-			colorClass: "bg-purple-50 dark:bg-purple-950 border-purple-300 dark:border-purple-700",
 		},
 		{
 			title: "PriorityOverflowError",
 			description: "Everything marked as 'URGENT!!!'. Priority system crashed.",
 			position: "top: 55%; left: 25%;",
-			colorClass: "bg-orange-50 dark:bg-orange-950 border-orange-300 dark:border-orange-700",
 		},
 		{
 			title: "ScreenshotNotFoundException",
 			description: "Visual evidence missing. Developers using telepathy.",
 			position: "top: 50%; right: 15%;",
-			colorClass: "bg-green-50 dark:bg-green-950 border-green-300 dark:border-green-700",
 		},
 	];
 </script>
@@ -246,9 +240,7 @@
 			<h2 class="mb-4 text-3xl font-bold">
 				When things go wrong... <span class="text-muted-foreground">let's make it right.</span>
 			</h2>
-			<p class="text-muted-foreground text-lg">
-				See how Bugspot helps your customers create beautiful reports.
-			</p>
+			<p class="text-muted-foreground text-lg">See how Bugspot helps your customers create beautiful reports.</p>
 		</div>
 
 		<!-- Windows-style overlapping error showcase -->
@@ -259,7 +251,7 @@
 					style="{error.position} z-index: {10 + index};"
 					transition:blur={{ delay: index * 300, duration: 800 }}
 				>
-					<Card class="border-2 shadow-lg {error.colorClass}">
+					<Card class="border-2 shadow-lg">
 						<CardHeader class="pb-2">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center space-x-2">
@@ -267,7 +259,7 @@
 									<div class="h-3 w-3 rounded-full bg-yellow-500"></div>
 									<div class="h-3 w-3 rounded-full bg-green-500"></div>
 								</div>
-								<div class="flex h-4 w-4 items-center justify-center border border-gray-400 text-xs">×</div>
+								<div class="flex h-4 w-4 items-center justify-center border border-gray-400 text-xs rounded px-1">×</div>
 							</div>
 							<CardTitle class="font-mono text-sm">{error.title}</CardTitle>
 						</CardHeader>
