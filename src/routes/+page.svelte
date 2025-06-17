@@ -3,7 +3,18 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Badge } from "$lib/components/ui/badge";
-	import { ArrowRight, Bug, Sparkles, Zap, Shield, Users, ExternalLink, ArrowBigRight, ArrowDown } from "lucide-svelte";
+	import {
+		ArrowRight,
+		Bug,
+		Sparkles,
+		Zap,
+		Shield,
+		Users,
+		ExternalLink,
+		ArrowBigRight,
+		ArrowDown,
+		CloudCheck,
+	} from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { user } from "$lib/stores/account";
 
@@ -103,7 +114,7 @@
 		<div class="mx-auto mt-20 grid max-w-5xl gap-8 rounded-3xl border p-6 shadow-xl md:grid-cols-9">
 			<!-- Before -->
 			<div class="flex flex-col items-center space-y-4 md:col-span-4">
-				<span class="text-muted-foreground px-2 text-sm font-medium mr-auto">Before: Useless reports</span>
+				<span class="text-muted-foreground mr-auto px-2 text-sm font-medium">Before: Useless reports</span>
 				{#each badReports as badReport}
 					<Card class="w-full grow border-red-200 dark:border-red-800">
 						<CardHeader>
@@ -123,7 +134,10 @@
 			<div class="flex items-center justify-center md:col-span-1">
 				<div class="relative">
 					<!-- Outer glow ring -->
-					<div class="bg-primary/10 absolute inset-0 rounded-full"></div>
+					<div
+						class="bg-primary/10 absolute inset-0 animate-ping rounded-full"
+						style="animation-duration: 2.5s; animation-iteration-count: infinite;"
+					></div>
 					<!-- Arrow container -->
 					<div
 						class="bg-primary/10 border-primary/20 relative flex h-16 w-16 items-center justify-center rounded-full border backdrop-blur-sm md:h-20 md:w-20"
@@ -187,20 +201,20 @@
 		</div>
 
 		<div class="grid gap-8 md:grid-cols-3">
-			<Card>
+			<Card class="hover:shadow-lg transition group">
 				<CardHeader>
 					<Zap class="text-primary mb-2 h-8 w-8" />
-					<CardTitle>AI-powered analysis</CardTitle>
+					<CardTitle class="group-hover:text-primary transition">AI-powered analysis</CardTitle>
 					<CardDescription>
 						Our AI automatically suggests finds missing critical information and ensures reports follow best practices.
 					</CardDescription>
 				</CardHeader>
 			</Card>
 
-			<Card>
+			<Card class="hover:shadow-lg transition group">
 				<CardHeader>
 					<Shield class="text-primary mb-2 h-8 w-8" />
-					<CardTitle>Prevent duplicates</CardTitle>
+					<CardTitle class="group-hover:text-primary transition">Prevent duplicates</CardTitle>
 					<CardDescription>
 						Smart duplicate detection shows similar issues before you submit, reducing noise and keeping your bug
 						tracker clean.
@@ -208,13 +222,13 @@
 				</CardHeader>
 			</Card>
 
-			<Card>
+			<Card class="hover:shadow-lg transition group">
 				<CardHeader>
-					<Users class="text-primary mb-2 h-8 w-8" />
-					<CardTitle>Team collaboration</CardTitle>
+					<CloudCheck class="text-primary mb-2 h-8 w-8" />
+					<CardTitle class="group-hover:text-primary transition">Sync with GitHub</CardTitle>
 					<CardDescription>
-						Assign issues, follow progress, get notifications, and collaborate effectively with your entire development
-						team.
+						Assign issues, follow progress and collaborate. Bugspot adds issues right to GitHub and notifies you about
+						newly added ones.
 					</CardDescription>
 				</CardHeader>
 			</Card>
@@ -227,7 +241,7 @@
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-16 text-center">
 			<h2 class="mb-4 text-3xl font-bold">
-				Popular bugspots. <span class="text-muted-foreground">Why not take a look?</span>
+				What's going on? <span class="text-muted-foreground">It must be a bug.</span>
 			</h2>
 		</div>
 
