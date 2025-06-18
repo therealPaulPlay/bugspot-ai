@@ -6,11 +6,9 @@ import jwt from 'jsonwebtoken';
 import { env } from '$env/dynamic/private';
 import { authenticateTokenWithId } from '$lib/server/auth/authenticateTokenWithId';
 
-const GITHUB_CLIENT_ID = env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = env.GITHUB_CLIENT_SECRET;
+const GITHUB_APP_CLIENT_ID = env.GITHUB_APP_CLIENT_ID;
+const GITHUB_APP_CLIENT_SECRET = env.GITHUB_APP_CLIENT_SECRET;
 const JWT_SECRET = env.JWT_SECRET;
-
-// TODO: RATE LIMITING (via request IP! -> check how to do that here)
 
 function createNewJwtToken(user) {
     try {
@@ -32,7 +30,7 @@ function createNewJwtToken(user) {
     }
 }
 
-// GitHub OAuth login/signup
+// GitHub App OAuth login/signup
 export async function POST({ request, locals }) {
     const { code, state } = locals.body;
     if (!code || !state) return json({ error: 'Missing code or state parameter' }, { status: 400 });
@@ -46,8 +44,8 @@ export async function POST({ request, locals }) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                client_id: GITHUB_CLIENT_ID,
-                client_secret: GITHUB_CLIENT_SECRET,
+                client_id: GITHUB_APP_CLIENT_ID,
+                client_secret: GITHUB_APP_CLIENT_SECRET,
                 code
             })
         });
@@ -131,16 +129,11 @@ export async function POST({ request, locals }) {
 // Delete account
 export async function DELETE({ request, locals }) {
     const { userId } = locals.body;
-
-    // Authenticate user
     authenticateTokenWithId(request, userId);
 
     try {
-        // Delete user and all related data (cascade will handle related records)
         await db.delete(users).where(eq(users.id, userId));
-
         return json({ success: true });
-
     } catch (error) {
         console.error('Account deletion error:', error);
         return json({ error: 'Failed to delete account: ' + error.message }, { status: 500 });

@@ -114,7 +114,17 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist.ttf');
+}
+
+@theme {
+  --font-sans: "Geist", sans-serif;
 }

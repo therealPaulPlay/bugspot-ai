@@ -70,10 +70,10 @@
 </script>
 
 <svelte:head>
-	<title>Bugspot - Help users create professional bug reports with AI</title>
+	<title>Bugspot - AI-assisted bug report forms</title>
 	<meta
 		name="description"
-		content="Help users create professional bug reports with AI. Reduce back-and-forth communication & help developers debug effectively."
+		content="Help users create professional bug reports with AI and sync them directly with Github. Reduce back-and-forth communication, avoid duplicates & help developers debug effectively."
 	/>
 </svelte:head>
 
@@ -95,7 +95,7 @@
 
 			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">
 				Help users create
-				<span class="text-primary">professional bug reports.</span>
+				<span class="text-primary">pefect bug reports.</span>
 			</h1>
 
 			<p class="text-muted-foreground mx-auto mb-8 max-w-3xl text-lg sm:text-xl">
@@ -206,9 +206,10 @@
 			<Card class="group transition hover:shadow-lg">
 				<CardHeader>
 					<Zap class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">AI-customized reports</CardTitle>
+					<CardTitle class="group-hover:text-primary transition">AI-assisted reports</CardTitle>
 					<CardDescription>
-						Our AI automatically finds missing critical information and ensures reports follow best practices.
+						AI automatically finds critical missing information and guides the user through the process to ensure best practices are
+						being followed.
 					</CardDescription>
 				</CardHeader>
 			</Card>
@@ -218,7 +219,7 @@
 					<Shield class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">Prevent duplicates</CardTitle>
 					<CardDescription>
-						Smart duplicate detection shows similar issues before you submit, reducing noise and keeping your bug
+						Smart duplicate detection suggests similar issues before the user submits, reducing noise and keeping your bug
 						tracker clean.
 					</CardDescription>
 				</CardHeader>

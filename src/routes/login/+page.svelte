@@ -26,15 +26,18 @@
 		loading = true;
 
 		try {
-			// Generate state for CSRF protection
 			const state = crypto.randomUUID();
 			sessionStorage.setItem("oauth_state", state);
 
-			// Redirect to GitHub OAuth
+			// Wrap the state in JSON like your repos route does
+			const stateData = JSON.stringify({
+				state,
+				type: "login", // Add type to distinguish from repo access
+			});
+
 			const redirectUri = `${window.location.origin}/api/account/github-callback`;
 			const scope = "user:email";
-
-			const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`;
+			const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_APP_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${encodeURIComponent(stateData)}`;
 
 			window.location.href = githubUrl;
 		} catch (err) {
@@ -45,11 +48,12 @@
 
 	async function handleGitHubCallback(code, state) {
 		loading = true;
-
 		try {
-			// Verify state
+			// Parse the JSON state to get the original UUID
+			const stateData = JSON.parse(decodeURIComponent(state));
 			const storedState = sessionStorage.getItem("oauth_state");
-			if (state !== storedState) throw new Error("Invalid state parameter");
+
+			if (stateData.state !== storedState) throw new Error("Invalid state parameter");
 
 			// Exchange code for token
 			const response = await betterFetch("/api/account", {

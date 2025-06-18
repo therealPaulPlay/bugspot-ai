@@ -66,7 +66,7 @@
 	}
 </script>
 
-<nav class="bg-background/50 fixed top-0 right-0 left-0 z-99 border-b backdrop-blur-xl">
+<nav class="bg-background/50 fixed top-0 right-0 left-0 z-50 border-b backdrop-blur-xl">
 	<div class="mx-auto max-w-7xl px-4">
 		<div class="flex h-16 justify-between">
 			<div class="flex items-center">

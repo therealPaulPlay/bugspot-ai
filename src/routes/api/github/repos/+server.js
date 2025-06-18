@@ -1,20 +1,17 @@
 import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
 
 // Get user's GitHub repositories
 export async function GET({ request, url }) {
     try {
-        // Get GitHub token and pagination params from query
         const githubToken = url.searchParams.get('token');
         const page = parseInt(url.searchParams.get('page')) || 1;
         const perPage = parseInt(url.searchParams.get('per_page')) || 100;
 
         if (!githubToken) return json({ error: 'GitHub token required', needsAuth: true }, { status: 401 });
 
-        // Fetch user's repositories from GitHub with pagination
         const response = await fetch(`https://api.github.com/user/repos?sort=updated&per_page=${perPage}&page=${page}`, {
             headers: {
-                'Authorization': `token ${githubToken}`,
+                'Authorization': `Bearer ${githubToken}`,
                 'Accept': 'application/vnd.github.v3+json'
             }
         });
@@ -25,15 +22,11 @@ export async function GET({ request, url }) {
         }
 
         const repos = await response.json();
-
-        // Get pagination info from headers
         const linkHeader = response.headers.get('Link');
         const hasNextPage = linkHeader ? linkHeader.includes('rel="next"') : false;
         const hasPrevPage = page > 1;
 
-        // Filter and format repositories
         const formattedRepos = repos
-            .filter(repo => !repo.fork) // Exclude forks
             .map(repo => ({
                 id: repo.id,
                 name: repo.name,
@@ -48,46 +41,10 @@ export async function GET({ request, url }) {
 
         return json({
             repos: formattedRepos,
-            pagination: {
-                currentPage: page,
-                hasNextPage,
-                hasPrevPage,
-                perPage
-            }
+            pagination: { currentPage: page, hasNextPage, hasPrevPage, perPage }
         });
-
     } catch (error) {
         console.error('GitHub repos error:', error);
         return json({ error: 'Failed to fetch repositories' }, { status: 500 });
-    }
-}
-
-// Generate GitHub OAuth URL for repository access
-export async function POST({ request, locals, url }) {
-    const { returnUrl } = locals.body;
-
-    try {
-        // Generate state for CSRF protection
-        const state = crypto.randomUUID();
-
-        // Use THIS route as the redirect URI instead of /api/account
-        const redirectUri = `${url.origin}/api/account/github-callback`;
-
-        // Encode the return URL in the state so you can redirect after login
-        const stateWithReturn = JSON.stringify({
-            state,
-            type: 'repo_access',
-            returnUrl: returnUrl || '/dashboard'
-        });
-
-        const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}&scope=repo&state=${encodeURIComponent(stateWithReturn)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-
-        return json({
-            authUrl: githubUrl,
-            state
-        });
-    } catch (error) {
-        console.error('GitHub auth URL error:', error);
-        return json({ error: 'Failed to generate auth URL' }, { status: 500 });
     }
 }

@@ -68,19 +68,15 @@
 					<ul class="space-y-3">
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">AI-powered bug analysis</span>
+							<span class="text-sm">AI-powered bug report forms</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Use for multiple products</span>
+							<span class="text-sm">Use for multiple repositories</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Team collaboration</span>
-						</li>
-						<li class="flex items-start space-x-3">
-							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Priority & tag management</span>
+							<span class="text-sm">Automatic priority and tag management</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
@@ -88,7 +84,11 @@
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Duplicate detection</span>
+							<span class="text-sm">Duplicate prevention</span>
+						</li>
+						<li class="flex items-start space-x-3">
+							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
+							<span class="text-sm">Integrate with GitHub issues</span>
 						</li>
 					</ul>
 
@@ -97,6 +97,9 @@
 						class="w-full {index === 1 ? '' : 'variant-outline'}"
 						variant={index === 1 ? "default" : "outline"}
 						disabled={loading === tier.id}
+						onclick={() => {
+							if (tier.price === 0) goto("/login");
+						}}
 					>
 						{#if loading === tier.id}
 							<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
@@ -119,7 +122,7 @@
 	<div class="bg-muted/50 rounded-2xl p-12 text-center">
 		<h2 class="mb-4 text-2xl font-bold">To infinity and beyond?</h2>
 		<p class="text-muted-foreground mx-auto mb-8 max-w-2xl">
-			Contact us for custom pricing that fits your team's needs.
+			Contact us for custom pricing and volume discounts. Let's figure this out together.
 		</p>
 		<Button href="mailto:paulplaystudio@gmail.com">
 			Contact us
