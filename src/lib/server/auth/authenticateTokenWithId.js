@@ -18,6 +18,7 @@ export function authenticateTokenWithId(request, requestedId) {
         return decoded; // Return for optional later use
 
     } catch (err) {
+        console.error("Error during JWT validation on the server:", err);
         throw error(403, 'Your authentication token is no longer valid. Please log in again.');
     }
 }

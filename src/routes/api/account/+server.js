@@ -33,12 +33,11 @@ function createNewJwtToken(user) {
 }
 
 // GitHub OAuth login/signup
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
+    const { code, state } = locals.body;
+    if (!code || !state) return json({ error: 'Missing code or state parameter' }, { status: 400 });
+
     try {
-        const { code, state } = await request.json();
-
-        if (!code || !state) return json({ error: 'Missing code or state parameter' }, { status: 400 });
-
         // Exchange code for access token
         const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
             method: 'POST',
@@ -93,7 +92,7 @@ export async function POST({ request }) {
             };
 
             const insertResult = await db.insert(users).values(newUser);
-            user = [{ ...newUser, id: insertResult.insertId }];
+            user = [{ ...newUser, id: insertResult[0].insertId }];
         } else {
             // Update existing user info
             await db.update(users)
@@ -109,7 +108,7 @@ export async function POST({ request }) {
 
         // Generate JWT token
         const token = createNewJwtToken(user[0]);
-        if (!token) return json({ error: 'Failed to generate access token' }, { status: 500 });
+        if (!token) return json({ error: 'Failed to generate access token!' }, { status: 500 });
 
         return json({
             token,
@@ -130,13 +129,13 @@ export async function POST({ request }) {
 }
 
 // Delete account
-export async function DELETE({ request }) {
+export async function DELETE({ request, locals }) {
+    const { userId } = locals.body;
+
+    // Authenticate user
+    authenticateTokenWithId(request, userId);
+
     try {
-        const { userId } = await request.json();
-
-        // Authenticate user
-        authenticateTokenWithId(request, userId);
-
         // Delete user and all related data (cascade will handle related records)
         await db.delete(users).where(eq(users.id, userId));
 
@@ -144,6 +143,6 @@ export async function DELETE({ request }) {
 
     } catch (error) {
         console.error('Account deletion error:', error);
-        return json({ error: 'Failed to delete account' }, { status: 500 });
+        return json({ error: 'Failed to delete account: ' + error.message }, { status: 500 });
     }
 }

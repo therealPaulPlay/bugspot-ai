@@ -50,7 +50,7 @@
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${localStorage.getItem("bearer")}`,
 				},
-				body: JSON.stringify({ userId: user.id }),
+				body: JSON.stringify({ userId: $user.id }),
 			});
 
 			authStore.logout();

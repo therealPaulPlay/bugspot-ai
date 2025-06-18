@@ -6,13 +6,13 @@ import { authenticateTokenWithId } from '$lib/server/auth/authenticateTokenWithI
 
 // Get user's forms
 export async function GET({ request, url }) {
+    const userId = url.searchParams.get('userId');
+    if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
+
+    // Authenticate user
+    authenticateTokenWithId(request, userId);
+
     try {
-        const userId = url.searchParams.get('userId');
-        if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
-
-        // Authenticate user
-        authenticateTokenWithId(request, userId);
-
         // Get user with forms
         const userForms = await db.query.users.findFirst({
             where: eq(users.id, userId),
@@ -55,30 +55,29 @@ export async function GET({ request, url }) {
 }
 
 // Create new form
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
+    const {
+        userId,
+        name,
+        description,
+        githubRepo,
+        githubToken,
+        customPrompt,
+        domains,
+        requireEmail,
+        requireSteps,
+        requireVideo,
+        requireScreenshot,
+        requireExpectedResult,
+        requireObservedResult
+    } = locals.body;
+
+    if (!name?.trim()) return json({ error: 'Form name is required' }, { status: 400 });
+
+    // Authenticate user
+    authenticateTokenWithId(request, userId);
+
     try {
-        const {
-            userId,
-            name,
-            description,
-            githubRepo,
-            githubToken,
-            customPrompt,
-            domains,
-            requireEmail,
-            requireSteps,
-            requireVideo,
-            requireScreenshot,
-            requireExpectedResult,
-            requireObservedResult
-        } = await request.json();
-
-        if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
-        if (!name?.trim()) return json({ error: 'Form name is required' }, { status: 400 });
-
-        // Authenticate user
-        authenticateTokenWithId(request, userId);
-
         // Generate form ID
         const formId = crypto.randomUUID();
 
@@ -120,31 +119,31 @@ export async function POST({ request }) {
 }
 
 // Update existing form
-export async function PUT({ request }) {
+export async function PUT({ request, locals }) {
+    const {
+        userId,
+        formId,
+        name,
+        description,
+        githubRepo,
+        githubToken,
+        customPrompt,
+        domains,
+        requireEmail,
+        requireSteps,
+        requireVideo,
+        requireScreenshot,
+        requireExpectedResult,
+        requireObservedResult
+    } = locals.body;
+
+    if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
+    if (!formId || !name?.trim()) return json({ error: 'Form ID and name are required' }, { status: 400 });
+
+    // Authenticate user
+    authenticateTokenWithId(request, userId);
+
     try {
-        const {
-            userId,
-            formId,
-            name,
-            description,
-            githubRepo,
-            githubToken,
-            customPrompt,
-            domains,
-            requireEmail,
-            requireSteps,
-            requireVideo,
-            requireScreenshot,
-            requireExpectedResult,
-            requireObservedResult
-        } = await request.json();
-
-        if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
-        if (!formId || !name?.trim()) return json({ error: 'Form ID and name are required' }, { status: 400 });
-
-        // Authenticate user
-        authenticateTokenWithId(request, userId);
-
         // Verify form belongs to user
         const existingForm = await db.query.forms.findFirst({
             where: eq(forms.id, formId)
@@ -194,16 +193,15 @@ export async function PUT({ request }) {
 }
 
 // Delete form
-export async function DELETE({ request }) {
+export async function DELETE({ request, locals }) {
+    const { userId, formId } = locals.body;
+    if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
+    if (!formId) return json({ error: 'Form ID is required' }, { status: 400 });
+
+    // Authenticate user
+    authenticateTokenWithId(request, userId);
+    
     try {
-        const { userId, formId } = await request.json();
-
-        if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
-        if (!formId) return json({ error: 'Form ID is required' }, { status: 400 });
-
-        // Authenticate user
-        authenticateTokenWithId(request, userId);
-
         // Verify form belongs to user and delete
         const result = await db.delete(forms)
             .where(and(
