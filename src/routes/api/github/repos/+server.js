@@ -63,21 +63,29 @@ export async function GET({ request, url }) {
 }
 
 // Generate GitHub OAuth URL for repository access
-export async function POST({ request }) {
-    try {
-        const { returnUrl } = await request.json();
+export async function POST({ request, locals, url }) {
+    const { returnUrl } = locals.body;
 
+    try {
         // Generate state for CSRF protection
         const state = crypto.randomUUID();
 
-        // GitHub OAuth URL with repo scope
-        const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}&scope=repo&state=${state}&redirect_uri=${encodeURIComponent(returnUrl || 'http://localhost:3000/dashboard')}`;
+        // Use THIS route as the redirect URI instead of /api/account
+        const redirectUri = `${url.origin}/api/account/github-callback`;
+
+        // Encode the return URL in the state so you can redirect after login
+        const stateWithReturn = JSON.stringify({
+            state,
+            type: 'repo_access',
+            returnUrl: returnUrl || '/dashboard'
+        });
+
+        const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}&scope=repo&state=${encodeURIComponent(stateWithReturn)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
         return json({
             authUrl: githubUrl,
             state
         });
-
     } catch (error) {
         console.error('GitHub auth URL error:', error);
         return json({ error: 'Failed to generate auth URL' }, { status: 500 });

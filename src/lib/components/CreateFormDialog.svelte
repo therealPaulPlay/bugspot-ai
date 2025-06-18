@@ -10,6 +10,7 @@
 	import { Github, ExternalLink, AlertCircle, CheckCircle } from "lucide-svelte";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
+	import { user } from "$lib/stores/account";
 
 	let { open = $bindable(false), editingForm = null, onSuccess = () => {} } = $props();
 
@@ -106,7 +107,7 @@
 			}
 		} catch (error) {
 			console.error("Failed to load repos:", error);
-			toast.error("Failed to load GitHub repositories");
+			toast.error("Failed to load GitHub repositories!");
 			needsGithubAuth = true;
 		} finally {
 			loadingRepos = false;
@@ -139,7 +140,7 @@
 			window.location.href = data.authUrl;
 		} catch (error) {
 			console.error("GitHub auth error:", error);
-			toast.error("Failed to request GitHub access");
+			toast.error("Failed to request GitHub access!");
 		}
 	}
 
@@ -151,14 +152,13 @@
 
 		loading = true;
 		try {
-			const user = JSON.parse(localStorage.getItem("user"));
 			const domains = formData.domains
-				.split("\n")
+				.split(",")
 				.map((d) => d.trim())
 				.filter((d) => d);
 
 			const payload = {
-				userId: user.id,
+				userId: $user.id,
 				...formData,
 				domains,
 				githubToken: githubToken || null,
@@ -202,10 +202,6 @@
 			loading = false;
 		}
 	}
-
-	function closeDialog() {
-		open = false;
-	}
 </script>
 
 <Dialog bind:open>
@@ -218,27 +214,27 @@
 		<div class="space-y-6">
 			<!-- Basic info -->
 			<div class="space-y-4">
-				<div>
-					<Label for="name">Form name *</Label>
+				<div class="space-y-2">
+					<Label for="name">Form name</Label>
 					<Input id="name" bind:value={formData.name} placeholder="My App Bug Reports" required />
 				</div>
 
-				<div>
+				<div class="space-y-2">
 					<Label for="description">Description (optional)</Label>
 					<Input id="description" bind:value={formData.description} placeholder="Report bugs for our mobile app" />
 				</div>
 			</div>
 
 			<!-- GitHub Repository -->
-			<div class="space-y-3">
-				<Label class="text-base font-medium">GitHub Repository</Label>
+			<div class="space-y-2">
+				<Label class="text-base font-medium">GitHub repository</Label>
 
 				{#if needsGithubAuth}
 					<Alert>
 						<Github class="h-4 w-4" />
 						<AlertDescription>
 							Connect your GitHub account to create issues directly from bug reports.
-							<Button variant="link" class="h-auto p-0" onclick={requestGithubAccess}>
+							<Button variant="link" class="h-auto !p-0" onclick={requestGithubAccess}>
 								<ExternalLink class="h-3 w-3" />
 								Connect GitHub
 							</Button>
@@ -289,18 +285,18 @@
 				{:else}
 					<Button variant="outline" onclick={loadGithubRepos} disabled={loadingRepos}>
 						<Github class="h-4 w-4" />
-						Load Repositories
+						Load repositories
 					</Button>
 				{/if}
 			</div>
 
 			<!-- Allowed domains -->
-			<div>
-				<Label for="domains">Allowed domains (one per line)</Label>
+			<div class="space-y-2">
+				<Label for="domains">Allowed domains (comma-separated)</Label>
 				<Textarea
 					id="domains"
 					bind:value={formData.domains}
-					placeholder="myapp.com&#10;www.myapp.com&#10;staging.myapp.com"
+					placeholder="myapp.com, www.myapp.com, staging.myapp.com"
 					rows={3}
 				/>
 			</div>
@@ -343,19 +339,19 @@
 			</div>
 
 			<!-- Custom prompt -->
-			<div>
-				<Label for="customPrompt">Custom AI prompt addition (optional)</Label>
+			<div class="space-y-2">
+				<Label for="customPrompt">Custom prompt addition (optional)</Label>
 				<Textarea
 					id="customPrompt"
 					bind:value={formData.customPrompt}
-					placeholder="Additional instructions for the AI to consider when analyzing reports..."
+					placeholder="Do not allow reports for issue xyz because..."
 					rows={3}
 				/>
 			</div>
 
 			<!-- Actions -->
 			<div class="flex justify-end space-x-3">
-				<Button variant="outline" onclick={closeDialog}>Cancel</Button>
+				<Button variant="outline" onclick={() => (open = false)}>Cancel</Button>
 				<Button onclick={saveForm} disabled={loading || !formData.name.trim()}>
 					{#if loading}
 						<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>

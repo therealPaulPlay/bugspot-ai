@@ -31,7 +31,7 @@
 			sessionStorage.setItem("oauth_state", state);
 
 			// Redirect to GitHub OAuth
-			const redirectUri = `${window.location.origin}/login`;
+			const redirectUri = `${window.location.origin}/api/account/github-callback`;
 			const scope = "user:email";
 
 			const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`;
