@@ -1,0 +1,251 @@
+<script>
+	import { onMount } from "svelte";
+	import { Button } from "$lib/components/ui/button";
+	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
+	import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "$lib/components/ui/dialog";
+	import { Plus, Settings, ExternalLink, Copy, CheckCircle, Trash2 } from "lucide-svelte";
+	import { goto } from "$app/navigation";
+	import { betterFetch } from "$lib/utils/betterFetch";
+	import { toast } from "svelte-sonner";
+	import { user } from "$lib/stores/account";
+	import CreateFormDialog from "$lib/components/CreateFormDialog.svelte";
+
+	let forms = $state([]);
+	let loading = $state(true);
+	let showCreateDialog = $state(false);
+	let showIframeDialog = $state(false);
+	let editingForm = $state(null);
+	let currentFormId = $state(null);
+	let copied = $state(false);
+
+	$effect(async () => {
+		if ($user) await loadDashboard();
+	});
+
+	async function loadDashboard() {
+		try {
+			const token = localStorage.getItem("bearer");
+
+			const response = await betterFetch(`/api/dashboard?userId=${$user.id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const data = await response.json();
+			forms = data.forms || [];
+		} catch (error) {
+			console.error("Failed to load dashboard:", error);
+			toast.error("Failed to load dashboard");
+		} finally {
+			loading = false;
+		}
+	}
+
+	function openCreateDialog() {
+		editingForm = null;
+		showCreateDialog = true;
+	}
+
+	function openEditDialog(form) {
+		editingForm = form;
+		showCreateDialog = true;
+	}
+
+	function openIframeDialog(formId) {
+		currentFormId = formId;
+		showIframeDialog = true;
+	}
+
+	async function deleteForm(formId, formName) {
+		if (!confirm(`Are you sure you want to delete "${formName}"? This cannot be undone.`)) {
+			return;
+		}
+
+		try {
+			await betterFetch("/api/dashboard", {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${localStorage.getItem("bearer")}`,
+				},
+				body: JSON.stringify({
+					userId: $user.id,
+					formId,
+				}),
+			});
+
+			toast.success("Form deleted successfully");
+			await loadDashboard();
+		} catch (error) {
+			console.error("Delete form error:", error);
+			toast.error("Failed to delete form");
+		}
+	}
+
+	function handleFormSuccess() {
+		loadDashboard();
+	}
+
+	function generateIframeCode(formId) {
+		return `<iframe src="${window.location.origin}/form?id=${formId}" width="100%" height="600" frameborder="0"></iframe>`;
+	}
+
+	async function copyIframeCode() {
+		const code = generateIframeCode(currentFormId);
+		await navigator.clipboard.writeText(code);
+		copied = true;
+		setTimeout(() => (copied = false), 2000);
+		toast.success("Iframe code copied to clipboard!");
+	}
+
+	function previewForm(formId) {
+		window.open(`/form?id=${formId}`, "_blank");
+	}
+</script>
+
+<svelte:head>
+	<title>Dashboard</title>
+</svelte:head>
+
+{#if !$user}
+	<div class="bg-background/20 fixed inset-0 z-99 flex items-center justify-center backdrop-blur-lg">
+		<div>
+			<h2>Please <a href="/login" class="underline">sign in</a> to use the dashboard.</h2>
+		</div>
+	</div>
+{/if}
+
+<div class="mx-auto min-h-screen max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+	<!-- Header -->
+	<div class="mb-8">
+		<h1 class="text-3xl font-bold">Dashboard</h1>
+		<p class="text-muted-foreground mt-1">Manage your bug report forms.</p>
+	</div>
+
+	{#if loading}
+		<!-- Loading state -->
+		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+			{#each Array(3) as _}
+				<Card class="animate-pulse">
+					<CardHeader>
+						<div class="bg-muted h-5 w-3/4 rounded"></div>
+						<div class="bg-muted h-4 w-1/2 rounded"></div>
+					</CardHeader>
+					<CardContent>
+						<div class="bg-muted mb-2 h-4 w-full rounded"></div>
+						<div class="bg-muted h-4 w-2/3 rounded"></div>
+					</CardContent>
+				</Card>
+			{/each}
+		</div>
+	{:else if forms.length === 0}
+		<!-- Empty state -->
+		<div class="py-12 text-center">
+			<Plus class="text-muted-foreground mx-auto mb-4 h-16 w-16" />
+			<h3 class="mb-2 text-xl font-semibold">No forms yet.</h3>
+			<p class="text-muted-foreground mb-6">Create a form to start collecting exceptional bug reports.</p>
+
+			<Button size="lg" onclick={openCreateDialog}>
+				<Plus class="h-4 w-4" />
+				Create your first form
+			</Button>
+		</div>
+	{:else}
+		<!-- Forms grid -->
+		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+			{#each forms as form}
+				<Card class="transition-shadow hover:shadow-lg">
+					<CardHeader>
+						<div class="flex items-center justify-between">
+							<CardTitle class="text-lg">{form.name}</CardTitle>
+							<div class="flex space-x-1">
+								<Button variant="ghost" size="sm" onclick={() => openEditDialog(form)}>
+									<Settings class="h-4 w-4" />
+								</Button>
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={() => deleteForm(form.id, form.name)}
+									class="text-destructive hover:text-destructive"
+								>
+									<Trash2 class="h-4 w-4" />
+								</Button>
+							</div>
+						</div>
+						{#if form.description}
+							<CardDescription>{form.description}</CardDescription>
+						{/if}
+					</CardHeader>
+					<CardContent>
+						<div class="space-y-3">
+							<div class="text-muted-foreground text-sm">
+								{form.githubRepo ? `Connected to ${form.githubRepo}` : "No GitHub repo connected"}
+							</div>
+
+							<div class="text-muted-foreground text-sm">
+								{form.domains?.length || 0} allowed domain(s)
+							</div>
+
+							<div class="flex space-x-2">
+								<Button variant="outline" size="sm" class="flex-1" onclick={() => previewForm(form.id)}>
+									<ExternalLink class="h-4 w-4" />
+									Preview
+								</Button>
+								<Button size="sm" class="flex-1" onclick={() => openIframeDialog(form.id)}>
+									<Copy class="h-4 w-4" />
+									Get code
+								</Button>
+							</div>
+						</div>
+					</CardContent>
+				</Card>
+			{/each}
+
+			<!-- Add new form card -->
+			<Card
+				class="hover:border-primary/50 hover:bg-muted/50 cursor-pointer border-2 border-dashed transition-colors"
+				onclick={openCreateDialog}
+			>
+				<CardContent class="flex flex-col items-center justify-center py-12">
+					<Plus class="text-muted-foreground mb-4 h-12 w-12" />
+					<h3 class="mb-2 font-semibold">Create new form</h3>
+					<p class="text-muted-foreground text-center text-sm">Add another bug report form for a different project</p>
+				</CardContent>
+			</Card>
+		</div>
+	{/if}
+</div>
+
+<!-- Create/Edit Form Dialog -->
+<CreateFormDialog bind:open={showCreateDialog} {editingForm} onSuccess={handleFormSuccess} />
+
+<!-- Iframe code dialog -->
+<Dialog bind:open={showIframeDialog}>
+	<DialogContent>
+		<DialogHeader>
+			<DialogTitle>Embed your form</DialogTitle>
+			<DialogDescription>
+				Copy this code and paste it into your website where you want the bug report form to appear
+			</DialogDescription>
+		</DialogHeader>
+
+		<div class="space-y-4">
+			<div class="bg-muted rounded-lg p-4">
+				<code class="font-mono text-sm break-all">
+					{generateIframeCode(currentFormId)}
+				</code>
+			</div>
+
+			<Button onclick={copyIframeCode} class="w-full">
+				{#if copied}
+					<CheckCircle class="h-4 w-4" />
+					Copied!
+				{:else}
+					<Copy class="h-4 w-4" />
+					Copy iframe code
+				{/if}
+			</Button>
+		</div>
+	</DialogContent>
+</Dialog>

@@ -8,6 +8,7 @@
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
 	import { env } from "$env/dynamic/public";
+	import { authStore } from "$lib/stores/account";
 
 	let loading = $state(false);
 
@@ -58,10 +59,7 @@
 			});
 
 			const data = await response.json();
-
-			// Store user data
-			localStorage.setItem("bearer", data.token);
-			localStorage.setItem("user", JSON.stringify(data.user));
+			authStore.login(data); // Login and store user data in localstorage
 
 			toast.success("Successfully logged in!");
 
@@ -69,7 +67,6 @@
 			sessionStorage.removeItem("oauth_state");
 			const redirectTo = page.url.searchParams.get("redirect") || "/dashboard";
 			goto(redirectTo);
-
 		} catch (err) {
 			console.error("GitHub callback error:", err);
 			toast.error(err.message);

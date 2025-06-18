@@ -15,6 +15,8 @@ export function authenticateTokenWithId(request, requestedId) {
         const tokenUserId = decoded.userId;
         if (tokenUserId != requestedId) throw error(403, 'User ID from access token does not match requested user id.');
 
+        return decoded; // Return for optional later use
+
     } catch (err) {
         throw error(403, 'Your authentication token is no longer valid. Please log in again.');
     }

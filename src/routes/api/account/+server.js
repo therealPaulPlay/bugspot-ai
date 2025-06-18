@@ -10,6 +10,8 @@ const GITHUB_CLIENT_ID = env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = env.GITHUB_CLIENT_SECRET;
 const JWT_SECRET = env.JWT_SECRET;
 
+// TODO: RATE LIMITING (via request IP! -> check how to do that here)
+
 function createNewJwtToken(user) {
     try {
         const accessToken = jwt.sign(
@@ -75,10 +77,7 @@ export async function POST({ request }) {
 
         const emails = await emailResponse.json();
         const primaryEmail = emails.find(email => email.primary)?.email || githubUser.email;
-
-        if (!primaryEmail) {
-            return json({ error: 'No email address found. Please make sure your GitHub email is public or primary.' }, { status: 400 });
-        }
+        if (!primaryEmail) return json({ error: 'No email address found. Please make sure your GitHub email is public or primary.' }, { status: 400 });
 
         // Check if user exists
         let user = await db.select().from(users).where(eq(users.githubId, githubUser.id.toString())).limit(1);
