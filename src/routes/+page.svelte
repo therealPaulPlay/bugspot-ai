@@ -7,6 +7,9 @@
 	import { goto } from "$app/navigation";
 	import { user } from "$lib/stores/account";
 
+	let scrollY = $state(0);
+	let errorSection = $state(null);
+
 	// Animation for bug report transformation
 	const badReports = [
 		{
@@ -56,12 +59,12 @@
 		{
 			title: "PriorityOverflowError",
 			description: "Everything marked as 'URGENT!!!'. Priority system crashed.",
-			position: "top: 55%; left: 25%;",
+			position: "top: 45%; left: 25%;",
 		},
 		{
 			title: "ScreenshotNotFoundException",
 			description: "Visual evidence missing. Developers using telepathy.",
-			position: "top: 50%; right: 15%;",
+			position: "top: 35%; right: 15%;",
 		},
 	];
 </script>
@@ -73,6 +76,8 @@
 		content="Help users create professional bug reports with AI. Reduce back-and-forth communication & help developers debug effectively."
 	/>
 </svelte:head>
+
+<svelte:window bind:scrollY />
 
 <!-- Hero Section -->
 <section class="relative overflow-hidden">
@@ -201,7 +206,7 @@
 			<Card class="group transition hover:shadow-lg">
 				<CardHeader>
 					<Zap class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">AI-powered analysis</CardTitle>
+					<CardTitle class="group-hover:text-primary transition">AI-customized reports</CardTitle>
 					<CardDescription>
 						Our AI automatically finds missing critical information and ensures reports follow best practices.
 					</CardDescription>
@@ -234,21 +239,26 @@
 </section>
 
 <!-- Fun Errors Demo Section -->
-<section class="py-24">
+<section class="py-24" bind:this={errorSection}>
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-8 text-center">
-			<h2 class="mb-4 text-3xl font-bold">
+			<h2 class="text-3xl font-bold">
 				When things go wrong... <span class="text-muted-foreground">let's make it right.</span>
 			</h2>
 			<p class="text-muted-foreground text-lg">See how Bugspot helps your customers create beautiful reports.</p>
 		</div>
 
 		<!-- Windows-style overlapping error showcase -->
-		<div class="relative mx-auto mb-8 h-[500px] max-w-5xl">
+		<div
+			class="relative mx-auto mb-12 h-[400px] max-w-5xl overflow-hidden mask-y-from-95% mask-y-to-100% mask-x-from-80% mask-x-to-100%"
+		>
 			{#each errors as error, index}
+				{@const sectionTop = errorSection?.offsetTop || 0}
+				{@const relativeScroll = Math.min(750, Math.max(0, scrollY - sectionTop + 1000))}
 				<div
 					class="absolute w-80"
-					style="{error.position} z-index: {10 + index};"
+					style="{error.position} z-index: {10 + index}; transform: translateY({relativeScroll *
+						(0.01 + (index + 1) * 0.01)}px);"
 					transition:blur={{ delay: index * 300, duration: 800 }}
 				>
 					<Card class="border-2 shadow-lg">
@@ -259,7 +269,9 @@
 									<div class="h-3 w-3 rounded-full bg-yellow-500"></div>
 									<div class="h-3 w-3 rounded-full bg-green-500"></div>
 								</div>
-								<div class="flex h-4 w-4 items-center justify-center border border-gray-400 text-xs rounded px-1">×</div>
+								<div class="flex h-4 w-4 items-center justify-center rounded border border-gray-400 px-1 text-xs">
+									×
+								</div>
 							</div>
 							<CardTitle class="font-mono text-sm">{error.title}</CardTitle>
 						</CardHeader>
