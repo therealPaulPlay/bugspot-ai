@@ -108,17 +108,22 @@
 					{$user ? "Open your dashboard" : "Get started for free"}
 					<ArrowRight class="h-4 w-4" />
 				</Button>
-				<Button variant="outline" size="lg" href="/pricing">View pricing</Button>
+				<Button
+					variant="outline"
+					size="lg"
+					onclick={() => {
+						errorSection.scrollIntoView({ block: "center", behavior: "smooth" });
+					}}>View demo</Button
+				>
 			</div>
 		</div>
 
-		<!-- Bug report transformation demo -->
-		<div class="mx-auto mt-20 grid max-w-5xl gap-8 rounded-3xl border p-6 shadow-xl md:grid-cols-9">
+		<!-- Bug report transformation -->
+		<div class="mx-auto mt-20 grid max-w-5xl gap-8 md:grid-cols-9">
 			<!-- Before -->
 			<div class="flex flex-col items-center space-y-4 md:col-span-4">
-				<span class="text-muted-foreground mr-auto px-2 text-sm font-medium">Before: Useless reports</span>
 				{#each badReports as badReport}
-					<Card class="w-full grow border-red-200 dark:border-red-800">
+					<Card class="border-primary w-full grow shadow-lg">
 						<CardHeader>
 							<CardTitle class="text-base">{badReport.title}</CardTitle>
 						</CardHeader>
@@ -142,7 +147,7 @@
 					></div>
 					<!-- Arrow container -->
 					<div
-						class="bg-primary/10 border-primary/20 relative flex h-16 w-16 items-center justify-center rounded-full border backdrop-blur-sm md:h-20 md:w-20"
+						class="bg-primary/10 border-primary relative flex h-16 w-16 items-center justify-center rounded-full border shadow-lg backdrop-blur-sm md:h-20 md:w-20"
 					>
 						<!-- Mobile: Down arrow, Desktop: Right arrow -->
 						<ArrowDown class="text-primary md:hidden" size={24} strokeWidth={2} />
@@ -157,12 +162,11 @@
 
 			<!-- After -->
 			<div class="flex flex-col space-y-4 md:col-span-4">
-				<span class="text-muted-foreground px-2 text-sm font-medium">After: Useful & concise reports</span>
-				<Card class="grow border-green-200 dark:border-green-800">
+				<Card class="border-primary grow shadow-lg">
 					<CardHeader>
 						<CardTitle class="text-base">{goodReport.title}</CardTitle>
 					</CardHeader>
-					<CardContent class="space-y-3">
+					<CardContent class="flex h-full flex-col gap-3">
 						<p class="text-sm">{goodReport.description}</p>
 						<div class="space-y-2 text-xs">
 							<div>
@@ -178,7 +182,7 @@
 								<span class="text-muted-foreground"> {goodReport.observedResult}</span>
 							</div>
 						</div>
-						<div class="flex items-center justify-between">
+						<div class="mt-auto flex items-center justify-between">
 							<Badge class="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100">
 								{goodReport.priority}
 							</Badge>
@@ -208,8 +212,8 @@
 					<Zap class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">AI-assisted reports</CardTitle>
 					<CardDescription>
-						AI automatically finds critical missing information and guides the user through the process to ensure best practices are
-						being followed.
+						AI automatically finds critical missing information and guides the user through the process to ensure best
+						practices are being followed.
 					</CardDescription>
 				</CardHeader>
 			</Card>
@@ -219,8 +223,8 @@
 					<Shield class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">Prevent duplicates</CardTitle>
 					<CardDescription>
-						Smart duplicate detection suggests similar issues before the user submits, reducing noise and keeping your bug
-						tracker clean.
+						Smart duplicate detection suggests similar issues before the user submits, reducing noise and keeping your
+						bug tracker clean.
 					</CardDescription>
 				</CardHeader>
 			</Card>
@@ -228,10 +232,10 @@
 			<Card class="group transition hover:shadow-lg">
 				<CardHeader>
 					<CloudCheck class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">Sync with GitHub</CardTitle>
+					<CardTitle class="group-hover:text-primary transition">Add to GitHub issues</CardTitle>
 					<CardDescription>
-						Seamlessly integrate with your existing workflow. Bugspot creates GitHub issues directly from enhanced bug
-						reports.
+						Seamlessly integrate with your existing workflow. Bugspot creates GitHub issues directly from AI-enhanced
+						report forms.
 					</CardDescription>
 				</CardHeader>
 			</Card>

@@ -23,6 +23,7 @@ export const forms = mysqlTable('forms', {
 	githubRepo: varchar('github_repo', { length: 255 }), // e.g. "owner/repo"
 	githubToken: varchar('github_token', { length: 255 }), // User's GitHub token for creating issues
 	customPrompt: text('custom_prompt'),
+	colorScheme: varchar('color_scheme', { length: 255 }),
 	requireEmail: boolean('require_email').default(true),
 	requireSteps: boolean('require_steps').default(true),
 	requireVideo: boolean('require_video').default(false),

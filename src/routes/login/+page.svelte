@@ -65,7 +65,7 @@
 			const data = await response.json();
 			authStore.login(data); // Login and store user data in localstorage
 
-			toast.success("Successfully logged in!");
+			toast.success("Successfully signed in!");
 
 			// Clean up and redirect
 			sessionStorage.removeItem("oauth_state");

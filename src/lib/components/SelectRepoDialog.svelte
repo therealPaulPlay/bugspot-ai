@@ -10,7 +10,7 @@
 	import { env } from "$env/dynamic/public";
 	import { onMount } from "svelte";
 
-	let { open = $bindable(false), onRepoSelected = () => {} } = $props();
+	let { open = $bindable(false), onRepoSelected, onClosed } = $props();
 
 	let repos = $state([]);
 	let loading = $state(false);
@@ -59,13 +59,15 @@
 			return;
 		}
 		const repo = repos.find((r) => r.fullName === selected);
-		onRepoSelected(repo);
+		if (onRepoSelected) onRepoSelected(repo);
 		open = false;
 		selected = "";
 	}
 </script>
 
-<Dialog bind:open>
+<Dialog bind:open onOpenChange={(open) => {
+	if (!open && onClosed) onClosed();
+}}>
 	<DialogContent class="max-w-md">
 		<DialogHeader>
 			<DialogTitle>Connect GitHub repository</DialogTitle>

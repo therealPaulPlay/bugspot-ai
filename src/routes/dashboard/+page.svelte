@@ -36,7 +36,7 @@
 			forms = data.forms || [];
 		} catch (error) {
 			console.error("Failed to load dashboard:", error);
-			toast.error("Failed to load dashboard");
+			toast.error("Failed to load dashboard: " + error.message);
 		} finally {
 			loading = false;
 		}
@@ -88,15 +88,18 @@
 	}
 
 	function generateIframeCode(formId) {
-		return `<iframe src="${window.location.origin}/form?id=${formId}" width="100%" height="600" frameborder="0"></iframe>`;
+		return `<iframe src="${window.location.origin}/form?id=${formId}" width="800" height="500" frameborder="0"></iframe>`;
 	}
 
 	async function copyIframeCode() {
-		const code = generateIframeCode(currentFormId);
-		await navigator.clipboard.writeText(code);
-		copied = true;
-		setTimeout(() => (copied = false), 2000);
-		toast.success("Iframe code copied to clipboard!");
+		try {
+			const code = generateIframeCode(currentFormId);
+			await navigator.clipboard.writeText(code);
+			copied = true;
+			setTimeout(() => (copied = false), 2000);
+		} catch (error) {
+			toast.error("Failed to copy iframe code: " + error);
+		}
 	}
 
 	function previewForm(formId) {
@@ -157,8 +160,8 @@
 			{#each forms as form}
 				<Card class="transition-shadow hover:shadow-lg">
 					<CardHeader>
-						<div class="flex items-center justify-between">
-							<CardTitle class="text-lg">{form.name}</CardTitle>
+						<div class="relative flex items-center justify-between overflow-hidden">
+							<CardTitle class="max-w-2/3 truncate text-lg">{form.name}</CardTitle>
 							<div class="flex space-x-1">
 								<Button variant="ghost" size="sm" onclick={() => openEditDialog(form)}>
 									<Settings class="h-4 w-4" />
@@ -194,7 +197,7 @@
 								</Button>
 								<Button size="sm" class="flex-1" onclick={() => openIframeDialog(form.id)}>
 									<Copy class="h-4 w-4" />
-									Get code
+									Embed
 								</Button>
 							</div>
 						</div>
@@ -207,10 +210,8 @@
 				class="hover:border-primary/50 hover:bg-muted/50 cursor-pointer border-2 border-dashed transition-colors"
 				onclick={openCreateDialog}
 			>
-				<CardContent class="flex flex-col items-center justify-center py-12">
-					<Plus class="text-muted-foreground mb-4 h-12 w-12" />
-					<h3 class="mb-2 font-semibold">Create new form</h3>
-					<p class="text-muted-foreground text-center text-sm">Add another bug report form for a different project</p>
+				<CardContent class="flex h-full flex-col items-center justify-center py-12">
+					<Plus class="text-muted-foreground h-12 w-12" />
 				</CardContent>
 			</Card>
 		</div>
@@ -226,7 +227,8 @@
 		<DialogHeader>
 			<DialogTitle>Embed your form</DialogTitle>
 			<DialogDescription>
-				Copy this code and paste it into your website where you want the bug report form to appear
+				Copy this code and paste it into your website where you want the form to appear. We recommend
+				embedding it into a popup.
 			</DialogDescription>
 		</DialogHeader>
 

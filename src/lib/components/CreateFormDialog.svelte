@@ -18,94 +18,53 @@
 	let { open = $bindable(false), editingForm = null, onSuccess = () => {} } = $props();
 
 	let loading = $state(false);
-	let showRepoSelector = $state(false);
 	let selectedRepo = $state(null);
 
-	let formData = $state({
-		name: "",
-		description: "",
-		domains: "",
-		customPrompt: "",
-		colorScheme: "default",
-		requireEmail: true,
-		requireSteps: true,
-		requireVideo: false,
-		requireScreenshot: true,
-		requireExpectedResult: true,
-		requireObservedResult: true,
-	});
+	let formData = $state();
+	let repoSelectDialogOpen = $derived(open && !selectedRepo);
 
 	// Reset and setup when dialog opens
 	$effect(() => {
 		if (open) {
-			if (editingForm) {
-				// Editing - populate form and skip repo selector
-				formData = {
-					name: editingForm.name || "",
-					description: editingForm.description || "",
-					domains: editingForm.domains?.map((d) => d.domain).join(", ") || "",
-					customPrompt: editingForm.customPrompt || "",
-					colorScheme: editingForm.colorScheme || "default",
-					requireEmail: editingForm.requireEmail ?? true,
-					requireSteps: editingForm.requireSteps ?? true,
-					requireVideo: editingForm.requireVideo ?? false,
-					requireScreenshot: editingForm.requireScreenshot ?? true,
-					requireExpectedResult: editingForm.requireExpectedResult ?? true,
-					requireObservedResult: editingForm.requireObservedResult ?? true,
-				};
-				selectedRepo = editingForm.githubRepo ? { fullName: editingForm.githubRepo } : null;
-				showRepoSelector = false;
-			} else {
-				// Creating new - reset form and start with repo selector
-				formData = {
-					name: "",
-					description: "",
-					domains: "",
-					customPrompt: "",
-					colorScheme: "default",
-					requireEmail: true,
-					requireSteps: true,
-					requireVideo: false,
-					requireScreenshot: true,
-					requireExpectedResult: true,
-					requireObservedResult: true,
-				};
-				selectedRepo = null;
-				showRepoSelector = true;
-			}
+			formData = {
+				name: editingForm?.name || "",
+				description: editingForm?.description || "",
+				domains: editingForm?.domains?.map((d) => d.domain).join(", ") || "",
+				customPrompt: editingForm?.customPrompt || "",
+				colorScheme: editingForm?.colorScheme || "default",
+				requireEmail: editingForm?.requireEmail ?? true,
+				requireSteps: editingForm?.requireSteps ?? true,
+				requireVideo: editingForm?.requireVideo ?? false,
+				requireScreenshot: editingForm?.requireScreenshot ?? true,
+				requireExpectedResult: editingForm?.requireExpectedResult ?? true,
+				requireObservedResult: editingForm?.requireObservedResult ?? true,
+			};
+			selectedRepo = editingForm?.githubRepo ? { fullName: editingForm?.githubRepo } : null;
 		}
 	});
 
 	// User came back from GitHub auth - reopen the repo selector
 	onMount(() => {
 		const urlToken = page.url.searchParams.get("github_token");
-		if (urlToken && !editingForm) {
-			showRepoSelector = true;
-			if (!open) open = true;
-		}
-	});
-
-	// Watch for when repo selector closes without selection
-	$effect(() => {
-		// If repo selector was closed but no repo selected and we're creating new form
-		if (!showRepoSelector && !selectedRepo && !editingForm && open) {
-			// Close the entire dialog since user didn't select a repo
-			open = false;
-		}
+		if (urlToken && !editingForm && !open) open = true;
 	});
 
 	async function saveForm() {
-		if (!formData.name.trim()) {
-			toast.error("Form name is required");
-			return;
-		}
+		if (!formData.name.trim()) return toast.error("Form name is required!");
+
+		const domains = formData.domains
+			.split(",")
+			.map((d) => d.trim())
+			.filter((d) => d);
+
+		domains.forEach((domain) => {
+			return domain.toLowerCase().replace("https://", "").replace("http://", "").replace("www.", "").split("/")[0];
+		});
+
+		if (domains.length == 0) return toast.error("At least one domain is required!");
 
 		loading = true;
 		try {
-			const domains = formData.domains
-				.split(",")
-				.map((d) => d.trim())
-				.filter((d) => d);
 			const payload = {
 				userId: $user.id,
 				...formData,
@@ -138,7 +97,7 @@
 </script>
 
 <!-- Main form dialog - only show after repo is selected AND not showing repo selector -->
-{#if !showRepoSelector && selectedRepo}
+{#if open && selectedRepo}
 	<Dialog bind:open>
 		<DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto">
 			<DialogHeader>
@@ -148,12 +107,10 @@
 
 			<div class="space-y-6">
 				<!-- GitHub Repository -->
-				{#if selectedRepo || true}
-					<Alert.Root>
-						<CheckCircle2 />
-						<Alert.Title>Connected to {selectedRepo.fullName}.</Alert.Title>
-					</Alert.Root>
-				{/if}
+				<Alert.Root>
+					<CheckCircle2 />
+					<Alert.Title>Connected to {selectedRepo?.fullName}.</Alert.Title>
+				</Alert.Root>
 
 				<!-- Basic Info -->
 				<div class="space-y-4">
@@ -175,8 +132,7 @@
 						<Label for="colorScheme">Color scheme</Label>
 						<Select.Root bind:value={formData.colorScheme} type="single">
 							<Select.Trigger>
-								{(formData.colorScheme == "default" ? "default (orange)" : formData.colorScheme) ||
-									"Select the color"}
+								{(formData.colorScheme == "default" ? "default (orange)" : formData.colorScheme) || "Select the color"}
 							</Select.Trigger>
 							<Select.Content>
 								<Select.Item value="default">default</Select.Item>
@@ -193,8 +149,8 @@
 
 				<!-- Domains -->
 				<div class="space-y-2">
-					<Label for="domains">Allowed domains (comma-separated)</Label>
-					<Textarea id="domains" bind:value={formData.domains} placeholder="myapp.com, www.myapp.com" rows={2} />
+					<Label for="domains">Whitelisted iframe domains (comma-separated)</Label>
+					<Textarea id="domains" bind:value={formData.domains} placeholder="your-site.com, www.your-site.com" rows={2} />
 				</div>
 
 				<!-- Required Fields -->
@@ -242,7 +198,7 @@
 				<!-- Actions -->
 				<div class="flex justify-end space-x-3">
 					<Button variant="outline" onclick={() => (open = false)}>Cancel</Button>
-					<Button onclick={saveForm} disabled={loading || !formData.name.trim()}>
+					<Button onclick={saveForm} disabled={loading || !formData.name.trim() || !formData.domains.trim()}>
 						{#if loading}
 							<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
 							{editingForm ? "Updating..." : "Creating..."}
@@ -258,9 +214,11 @@
 
 <!-- Repo selector as first step - renders last so it appears on top -->
 <SelectRepoDialog
-	bind:open={showRepoSelector}
+	bind:open={repoSelectDialogOpen}
 	onRepoSelected={(repo) => {
 		selectedRepo = repo;
-		showRepoSelector = false;
+	}}
+	onClosed={() => {
+		if (!selectedRepo) open = false;
 	}}
 />

@@ -105,7 +105,7 @@
 								</Button>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end" class="w-48">
-								<div class="px-2 py-2 pt-4">
+								<div class="px-2 py-2">
 									<p class="text-muted-foreground truncate text-xs">{$user.email}</p>
 								</div>
 								<DropdownMenuSeparator />
@@ -117,7 +117,7 @@
 								<DropdownMenuItem
 									onclick={() => {
 										authStore.logout();
-										toast.success("Signed out successfully!");
+										toast.info("Signed out.");
 										goto("/");
 									}}
 								>

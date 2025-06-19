@@ -72,15 +72,11 @@
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Use for multiple repositories</span>
-						</li>
-						<li class="flex items-start space-x-3">
-							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
 							<span class="text-sm">Automatic priority and tag management</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Guest reporting</span>
+							<span class="text-sm">Add custom instructions</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
@@ -88,7 +84,7 @@
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Integrate with GitHub issues</span>
+							<span class="text-sm">Integrate with multiple GitHub repos</span>
 						</li>
 					</ul>
 
