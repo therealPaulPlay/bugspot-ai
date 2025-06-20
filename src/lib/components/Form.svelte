@@ -6,6 +6,7 @@
 	import Input from "./ui/input/input.svelte";
 	import Textarea from "./ui/textarea/textarea.svelte";
 	import Badge from "./ui/badge/badge.svelte";
+	import { onMount } from "svelte";
 
 	let { formConfig = {}, primaryColor = "black" } = $props();
 
@@ -32,6 +33,21 @@
 		if (currentSlideIndex > 0) currentSlideIndex--;
 	}
 
+	// History URL management -----------------------------------------------------------
+
+	onMount(() => {
+		const slideIndex = page.url.searchParams.get("slide");
+		if (slideIndex) currentSlideIndex = slideIndex;
+	});
+
+	$effect(() => {
+		const params = new URLSearchParams(page.url.search);
+		if (currentSlideIndex) params.set("slide", currentSlideIndex);
+		else params.delete("slide");
+		const newUrl = params.toString().length > 0 ? `${page.url.pathname}?${params.toString()}` : page.url.pathname;
+		window.history.replaceState({}, "", newUrl);
+	});
+
 	// User inputs --------------------------------------------------------------------------
 	let titleInput = $state("");
 	let descriptionInput = $state("");
@@ -40,7 +56,7 @@
 
 <!-- General information -->
 {#if slide != "start"}
-	<div class="text-muted-foreground absolute top-6 left-6 flex items-center gap-4 text-xs">
+	<div class="text-muted-foreground absolute top-6 left-6 flex items-center gap-4 text-xs" in:fade>
 		<Button variant="link" class="h-fit !p-0" onclick={prevSlide}><ArrowLeft /> Back</Button>
 		<p>{currentSlideIndex} / {slides.length}</p>
 	</div>
@@ -49,10 +65,10 @@
 <!-- Start card -->
 {#if slide == "start"}
 	<h1
-		class="absolute top-2/5 right-10 left-10 max-w-full -translate-y-1/2 transform truncate text-center text-5xl font-semibold text-wrap"
+		class="absolute top-2/5 right-10 left-10 max-w-full -translate-y-1/2 transform truncate py-1 text-center text-5xl font-semibold text-wrap"
 		out:fly={{ x: -300, duration: 300 }}
 	>
-		Report an issue.
+		Report a bug.
 	</h1>
 	<div class="absolute right-6 bottom-6 left-6 flex flex-col items-center gap-6">
 		<div out:fly={{ x: 300, duration: 300 }}>
@@ -81,12 +97,12 @@
 
 <!-- Optional badge snippet -->
 {#snippet optionalBadge(show = false)}
-	<Badge variant="outline"><Info />Optional</Badge>
+	<Badge variant="outline" class="mb-1"><Info />Optional</Badge>
 {/snippet}
 
 {#if slide == "title"}
 	<div in:fade>
-		<h2 class="mb-4 text-2xl font-semibold">Give your issue a title.</h2>
+		<h2 class="mb-4 text-2xl font-semibold">Give your report a title.</h2>
 		<Input bind:value={titleInput} type="text" placeholder="E.g. Profile fails to load" maxlength={100} />
 		<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 10 characters.</p>
 		{@render nextButton(titleInput.length >= 10)}
@@ -109,12 +125,10 @@
 
 {#if slide == "expected result"}
 	<div in:fade>
+		<h2 class="mb-4 text-2xl font-semibold">What should have happened?</h2>
 		{@render optionalBadge(formConfig.reuireExpectedResult)}
-		<h2 class="mb-4 text-2xl font-semibold">
-			What should have happened?
-		</h2>
 		<Input bind:value={expectedResultInput} maxlength={200} placeholder="E.g. The profile should have..."></Input>
 		<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 20 characters.</p>
-		{@render nextButton(expectedResultInput.length >= 20)}
+		{@render nextButton(expectedResultInput.length >= 20 || formConfig.reuireExpectedResult)}
 	</div>
 {/if}

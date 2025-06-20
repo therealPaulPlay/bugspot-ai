@@ -88,7 +88,7 @@
 	}
 
 	function generateIframeCode(formId) {
-		return `<iframe src="${window.location.origin}/form?id=${formId}" width="800" height="500" frameborder="0"></iframe>`;
+		return `<iframe src="${window.location.origin}/form/${formId}" width="800" height="500" frameborder="0"></iframe>`;
 	}
 
 	async function copyIframeCode() {
@@ -176,9 +176,6 @@
 								</Button>
 							</div>
 						</div>
-						{#if form.description}
-							<CardDescription>{form.description}</CardDescription>
-						{/if}
 					</CardHeader>
 					<CardContent>
 						<div class="space-y-3">

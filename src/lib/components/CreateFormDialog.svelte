@@ -28,7 +28,6 @@
 		if (open) {
 			formData = {
 				name: editingForm?.name || "",
-				description: editingForm?.description || "",
 				domains: editingForm?.domains?.map((d) => d.domain).join(", ") || "",
 				customPrompt: editingForm?.customPrompt || "",
 				colorScheme: editingForm?.colorScheme || "default",
@@ -54,12 +53,10 @@
 
 		const domains = formData.domains
 			.split(",")
-			.map((d) => d.trim())
+			.map(
+				(d) => d.toLowerCase().trim().replace("https://", "").replace("http://", "").split("/")[0],
+			)
 			.filter((d) => d);
-
-		domains.forEach((domain) => {
-			return domain.toLowerCase().replace("https://", "").replace("http://", "").replace("www.", "").split("/")[0];
-		});
 
 		if (domains.length == 0) return toast.error("At least one domain is required!");
 
@@ -117,15 +114,6 @@
 					<div class="space-y-2">
 						<Label for="name">Form name</Label>
 						<Input id="name" bind:value={formData.name} placeholder="My app bug reports" required />
-					</div>
-
-					<div class="space-y-2">
-						<Label for="description">Description (optional)</Label>
-						<Input
-							id="description"
-							bind:value={formData.description}
-							placeholder="This bug report form is used to..."
-						/>
 					</div>
 
 					<div class="space-y-2">

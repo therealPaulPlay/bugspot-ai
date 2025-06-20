@@ -53,7 +53,6 @@ export async function POST({ request, locals }) {
             id: formId,
             userId: userId.toString(),
             name: locals.body.name.trim(),
-            description: locals.body.description?.trim() || null,
             githubRepo: locals.body.githubRepo || null,
             githubToken: locals.body.githubToken || null,
             customPrompt: locals.body.customPrompt?.trim() || null,
@@ -98,7 +97,6 @@ export async function PUT({ request, locals }) {
         await db.update(forms)
             .set({
                 name: locals.body.name.trim(),
-                description: locals.body.description?.trim() || null,
                 githubRepo: locals.body.githubRepo || null,
                 githubToken: locals.body.githubToken || null,
                 customPrompt: locals.body.customPrompt?.trim() || null,

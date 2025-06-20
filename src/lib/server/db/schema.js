@@ -19,7 +19,6 @@ export const forms = mysqlTable('forms', {
 	id: varchar('id', { length: 36 }).primaryKey(), // UUID
 	userId: bigint('user_id', { unsigned: true }).references(() => users.id, { onDelete: 'cascade' }).notNull(),
 	name: varchar('name', { length: 255 }).notNull(),
-	description: text('description'),
 	githubRepo: varchar('github_repo', { length: 255 }), // e.g. "owner/repo"
 	githubToken: varchar('github_token', { length: 255 }), // User's GitHub token for creating issues
 	customPrompt: text('custom_prompt'),
