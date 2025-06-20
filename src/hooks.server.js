@@ -1,3 +1,4 @@
+import { llmLimiter, standardLimiter } from '$lib/utils/rateLimiters';
 import { json } from '@sveltejs/kit';
 
 const allowedOrigins = [
@@ -7,7 +8,19 @@ const allowedOrigins = [
 ];
 
 export async function handle({ event, resolve }) {
-    // Parse JSON for API routes with body
+    // API rate limits
+    if (event.url.pathname.startsWith('/api')) {
+        switch (true) {
+            case event.url.pathname.startsWith('/api/llm'):
+                if (await llmLimiter.isLimited(event)) return json({ error: 'Too many llm requests' }, { status: 429 });
+                break;
+
+            default:
+                if (await standardLimiter.isLimited(event)) return json({ error: 'Too many requests' }, { status: 429 });
+        }
+    }
+
+    // Parse JSON for API routes with body (not GET or OPTIONS)
     if (event.url.pathname.startsWith('/api') && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(event.request.method)) {
         try {
             event.locals.body = await event.request.json();

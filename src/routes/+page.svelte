@@ -3,7 +3,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Badge } from "$lib/components/ui/badge";
-	import { ArrowRight, Bug, Sparkles, Zap, Shield, CloudCheck, ArrowDown } from "lucide-svelte";
+	import { ArrowRight, Bug, Sparkles, Zap, Shield, CloudCheck, ArrowDown, Video } from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { user } from "$lib/stores/account";
 
@@ -15,7 +15,7 @@
 		{
 			title: "button doesn't function",
 			description: "weird error shows when I click it. I'm using Arch btw.",
-			priority: "very high",
+			priority: "my priority",
 		},
 		{
 			title: "stuff broken",
@@ -87,10 +87,11 @@
 	<div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
 		<div class="text-center">
 			<div class="mb-4 flex justify-center">
-				<div class="bg-primary/10 flex items-center space-x-2 rounded-full px-4 py-2">
-					<Sparkles class="text-primary h-4 w-4" />
-					<span class="text-sm font-medium">AI-powered bug reporting</span>
-				</div>
+				<Button variant="ghost" class="bg-primary/10 text-foreground rounded-full group">
+					<Video class="text-primary h-4 w-4" />
+					<span class="text-sm font-medium -mr-1">Watch 1-minute introduction</span>
+					<ArrowRight class="text-primary h-4 w-4 transition-all max-w-0 group-hover:max-w-4" />
+				</Button>
 			</div>
 
 			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">
@@ -99,8 +100,8 @@
 			</h1>
 
 			<p class="text-muted-foreground mx-auto mb-8 max-w-3xl text-lg sm:text-xl">
-				Utilize AI to ensure that all bug reports are useful to developers and meet your guidelines. No more non-issues
-				or endless back-and-forth.
+				Our AI-powered bug report forms ensure that all reports are useful to developers and meet your guidelines. No
+				more non-issues or endless back-and-forth.
 			</p>
 
 			<div class="flex flex-col justify-center gap-4 sm:flex-row">
@@ -129,8 +130,8 @@
 						</CardHeader>
 						<CardContent>
 							<p class="text-muted-foreground mb-2 text-sm">{badReport.description}</p>
-							<Badge class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100">
-								Priority: {badReport.priority}
+							<Badge class="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100">
+								{badReport.priority}
 							</Badge>
 						</CardContent>
 					</Card>

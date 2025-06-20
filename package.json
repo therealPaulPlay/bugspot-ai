@@ -41,6 +41,7 @@
 		"jsonwebtoken": "^9.0.2",
 		"lucide-svelte": "^0.515.0",
 		"mode-watcher": "^1.0.8",
-		"mysql2": "^3.12.0"
+		"mysql2": "^3.12.0",
+		"sveltekit-rate-limiter": "^0.7.0"
 	}
 }
