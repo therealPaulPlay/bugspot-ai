@@ -2,6 +2,8 @@ import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 import { isTokenExpired } from '$lib/utils/isJwtExpired';
 import { toast } from 'svelte-sonner';
+import { page } from '$app/state';
+import { goto } from '$app/navigation';
 
 // User
 export const user = writable(null);
@@ -15,7 +17,8 @@ if (browser) {
             if (!isTokenExpired(token)) user.set(JSON.parse(storedUser));
             else {
                 authStore.logout();
-                toast.info("Session expired. Please sign in again.")
+                toast.info("Your session has expired. Please sign in again.")
+                if (page.url.pathname.startsWith("/dashboard")) goto("/login");
             }
         } catch (error) {
             console.error('Failed to parse stored user:', error);

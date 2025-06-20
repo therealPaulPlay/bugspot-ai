@@ -1,4 +1,4 @@
-import { mysqlTable, varchar, text, int, timestamp, boolean, json, bigint } from 'drizzle-orm/mysql-core';
+import { mysqlTable, varchar, text, int, timestamp, boolean, bigint } from 'drizzle-orm/mysql-core';
 import { relations } from 'drizzle-orm';
 
 // Users table

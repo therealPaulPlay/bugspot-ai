@@ -103,7 +103,7 @@
 	}
 
 	function previewForm(formId) {
-		window.open(`/form?id=${formId}`, "_blank");
+		window.open(`/form/${formId}`, "_blank");
 	}
 </script>
 
@@ -183,11 +183,11 @@
 					<CardContent>
 						<div class="space-y-3">
 							<div class="text-muted-foreground text-sm">
-								{form.githubRepo ? `Connected to ${form.githubRepo}` : "No GitHub repo connected"}
+								{form.githubRepo ? `Connected to ${form.githubRepo}` : "No GitHub repo connected"}.
 							</div>
 
 							<div class="text-muted-foreground text-sm">
-								{form.domains?.length || 0} allowed domain(s)
+								{form.domains?.length || 0} allowed domain(s).
 							</div>
 
 							<div class="flex space-x-2">
@@ -227,8 +227,8 @@
 		<DialogHeader>
 			<DialogTitle>Embed your form</DialogTitle>
 			<DialogDescription>
-				Copy this code and paste it into your website where you want the form to appear. We recommend
-				embedding it into a popup.
+				Copy this code and paste it into your website where you want the form to appear. We recommend embedding it into
+				a popup.
 			</DialogDescription>
 		</DialogHeader>
 

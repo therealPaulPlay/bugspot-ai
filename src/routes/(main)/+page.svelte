@@ -87,10 +87,10 @@
 	<div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
 		<div class="text-center">
 			<div class="mb-4 flex justify-center">
-				<Button variant="ghost" class="bg-primary/10 text-foreground rounded-full group">
+				<Button variant="ghost" class="bg-primary/10 text-foreground group rounded-full">
 					<Video class="text-primary h-4 w-4" />
-					<span class="text-sm font-medium -mr-1">Watch 1-minute introduction</span>
-					<ArrowRight class="text-primary h-4 w-4 transition-all max-w-0 group-hover:max-w-4" />
+					<span class="-mr-1 text-sm font-medium">Watch 1-minute introduction</span>
+					<ArrowRight class="text-primary h-4 w-4 max-w-0 transition-all group-hover:max-w-4" />
 				</Button>
 			</div>
 
@@ -211,10 +211,10 @@
 			<Card class="group transition hover:shadow-lg">
 				<CardHeader>
 					<Zap class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">AI-assisted reports</CardTitle>
+					<CardTitle class="group-hover:text-primary transition">Customizable AI-assistance</CardTitle>
 					<CardDescription>
-						AI automatically finds critical missing information and guides the user through the process to ensure best
-						practices are being followed.
+						AI guides the user through the submission process and ensures the information you need was
+						provided. Custom prompts are supported.
 					</CardDescription>
 				</CardHeader>
 			</Card>

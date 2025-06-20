@@ -1,0 +1,17 @@
+<script>
+	import "./theme.css";
+	import Footer from "$lib/components/Footer.svelte";
+	import Navbar from "$lib/components/Navbar.svelte";
+	let { children } = $props();
+</script>
+
+<!-- Navigation -->
+<Navbar />
+
+<!-- Main content -->
+<main class="mt-16 min-h-screen">
+	{@render children()}
+</main>
+
+<!-- Footer -->
+<Footer />

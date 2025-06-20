@@ -12,7 +12,7 @@
 <div class="flex min-h-screen items-center justify-center px-4">
 	<div class="text-center">
 		<h1 class="text-muted-foreground mb-2 text-4xl font-bold">{page.status}</h1>
-		<p class="text-muted-foreground mb-8 text-xl">Uh oh. Looks like we found another bug!</p>
+		<p class="text-muted-foreground mb-8 text-xl">Uh oh. An error occured.</p>
 
 		<div class="flex justify-center gap-4">
 			<Button variant="outline" onclick={() => window.location.reload()}>

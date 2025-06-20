@@ -1,17 +1,11 @@
 import { llmLimiter, standardLimiter } from '$lib/utils/rateLimiters';
 import { json } from '@sveltejs/kit';
 
-const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://bugspot.dev'
-];
-
 export async function handle({ event, resolve }) {
     // API rate limits
     if (event.url.pathname.startsWith('/api')) {
         switch (true) {
-            case event.url.pathname.startsWith('/api/llm'):
+            case event.url.pathname.startsWith('/api/public/llm'):
                 if (await llmLimiter.isLimited(event)) return json({ error: 'Too many llm requests' }, { status: 429 });
                 break;
 
@@ -29,8 +23,10 @@ export async function handle({ event, resolve }) {
         }
     }
 
-    const origin = event.request.headers.get('origin');
     const response = await resolve(event);
-    if (origin && allowedOrigins.includes(origin)) response.headers.set('Access-Control-Allow-Origin', origin);
+
+    // CORS for public route
+    if (event.url.pathname.startsWith('/api/public')) response.headers.set('Access-Control-Allow-Origin', "*");
+
     return response;
 }
