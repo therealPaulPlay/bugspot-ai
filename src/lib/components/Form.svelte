@@ -72,7 +72,7 @@
 	</h1>
 	<div class="absolute right-6 bottom-6 left-6 flex flex-col items-center gap-6">
 		<div out:fly={{ x: 300, duration: 300 }}>
-			<Button onclick={nextSlide} class="!p-6 !px-10">
+			<Button onclick={nextSlide} size="lg">
 				Start <ArrowRight />
 			</Button>
 		</div>
@@ -89,7 +89,7 @@
 <!-- Next button snippet -->
 {#snippet nextButton(enabled = true)}
 	<div class="absolute right-6 bottom-6 text-center">
-		<Button onclick={nextSlide} class="!p-6 !px-10" disabled={!enabled}>
+		<Button onclick={nextSlide} size="lg" disabled={!enabled}>
 			Next <ArrowRight />
 		</Button>
 	</div>

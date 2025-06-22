@@ -9,7 +9,7 @@
 <Navbar />
 
 <!-- Main content -->
-<main class="mt-16 min-h-screen">
+<main class="mt-18 min-h-screen">
 	{@render children()}
 </main>
 

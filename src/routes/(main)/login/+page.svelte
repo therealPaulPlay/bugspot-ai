@@ -103,7 +103,7 @@
 		<Card>
 			<CardContent class="space-y-4">
 				<!-- GitHub login button -->
-				<Button class="w-full" onclick={handleGitHubLogin} disabled={loading}>
+				<Button class="w-full" size="lg" onclick={handleGitHubLogin} disabled={loading}>
 					{#if loading}
 						<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
 						Connecting...

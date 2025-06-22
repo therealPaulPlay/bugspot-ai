@@ -28,7 +28,7 @@
 	/>
 </svelte:head>
 
-<div class="mx-auto max-w-6xl px-4 py-24 sm:px-6 lg:px-8">
+<div class="mx-auto max-w-6xl px-8 py-24">
 	<!-- Header -->
 	<div class="mb-16 text-center">
 		<h1 class="mb-4 text-4xl font-bold">Simple, transparent pricing.</h1>
@@ -40,7 +40,7 @@
 	<!-- Pricing cards -->
 	<div class="mb-8 grid gap-8 lg:grid-cols-3">
 		{#each tiers as tier, index}
-			<Card class="relative {index === 1 ? 'border-primary scale-105 shadow-lg' : ''} transition-all hover:shadow-lg">
+			<Card class="relative {index === 1 ? 'border-primary lg:scale-105 shadow-lg' : 'shadow-none'} transition-all hover:shadow-lg">
 				{#if index === 1}
 					<div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
 						<Badge class="bg-primary text-primary-foreground px-3 py-1">
@@ -91,6 +91,7 @@
 					<!-- CTA Button -->
 					<Button
 						class="w-full {index === 1 ? '' : 'variant-outline'}"
+						size="lg"
 						variant={index === 1 ? "default" : "outline"}
 						disabled={loading === tier.id}
 						onclick={() => {
@@ -110,17 +111,17 @@
 			</Card>
 		{/each}
 	</div>
-	<div class="mb-16 flex w-full justify-center">
-		<Button variant="outline">Manage subscription <UserRoundCog /></Button>
+	<div class="mb-26 flex w-full justify-center">
+		<Button variant="outline" size="lg">Manage subscription <UserRoundCog /></Button>
 	</div>
 
 	<!-- Contact section -->
-	<div class="bg-muted/50 rounded-2xl p-12 text-center">
+	<div class="bg-muted/50 rounded-3xl p-12 text-center">
 		<h2 class="mb-4 text-2xl font-bold">To infinity and beyond?</h2>
 		<p class="text-muted-foreground mx-auto mb-8 max-w-2xl">
 			Contact us for custom pricing and volume discounts. Let's figure this out together.
 		</p>
-		<Button href="mailto:paulplaystudio@gmail.com">
+		<Button href="mailto:paulplaystudio@gmail.com" size="lg">
 			Contact us
 			<Mail class="h-4 w-4" />
 		</Button>

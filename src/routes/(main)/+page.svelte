@@ -39,32 +39,32 @@
 		{
 			title: "TooManyChaoticReportsError",
 			description: "System overwhelmed by bug reports that just say 'it's broken'.",
-			position: "top: 7%; left: 15%;",
+			position: "top: 2%; left: 15%;",
 		},
 		{
 			title: "DuplicateIssueException",
 			description: "Same bug reported 47 times with different titles.",
-			position: "top: 20%; right: 20%;",
+			position: "top: 15%; right: 20%;",
 		},
 		{
 			title: "MissingStepsError",
 			description: "Cannot reproduce issue. Steps: 'just click stuff until it breaks'.",
-			position: "top: 42%; left: 10%;",
+			position: "top: 37%; left: 10%;",
 		},
 		{
 			title: "VagueDescriptionWarning",
 			description: "'Something is wrong' detected. Unable to parse actual problem.",
-			position: "top: 10%; right: 10%;",
+			position: "top: 5%; right: 10%;",
 		},
 		{
 			title: "PriorityOverflowError",
 			description: "Everything marked as 'URGENT!!!'. Priority system crashed.",
-			position: "top: 45%; left: 25%;",
+			position: "top: 40%; left: 25%;",
 		},
 		{
 			title: "ScreenshotNotFoundException",
 			description: "Visual evidence missing. Developers using telepathy.",
-			position: "top: 35%; right: 15%;",
+			position: "top: 30%; right: 15%;",
 		},
 	];
 </script>
@@ -82,7 +82,7 @@
 <!-- Hero Section -->
 <section class="relative overflow-hidden">
 	<!-- Background gradient -->
-	<div class="from-primary/10 via-background to-secondary/10 absolute inset-0 bg-gradient-to-br"></div>
+	<div class="from-background/10 via-primary/10 to-primary/30 absolute inset-0 bg-gradient-to-b"></div>
 
 	<div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
 		<div class="text-center">
@@ -105,7 +105,7 @@
 			</p>
 
 			<div class="flex flex-col justify-center gap-4 sm:flex-row">
-				<Button size="lg" onclick={() => ($user ? goto("/dashboard") : goto("/login"))}>
+				<Button size="lg" onclick={() => ($user ? goto("/dashboard") : goto("/login"))} class="action-button relative overflow-hidden">
 					{$user ? "Open your dashboard" : "Get started for free"}
 					<ArrowRight class="h-4 w-4" />
 				</Button>
@@ -124,7 +124,7 @@
 			<!-- Before -->
 			<div class="flex flex-col items-center space-y-4 md:col-span-4">
 				{#each badReports as badReport}
-					<Card class="border-primary w-full grow shadow-lg">
+					<Card class="w-full grow rounded-3xl border-none shadow-lg">
 						<CardHeader>
 							<CardTitle class="text-base">{badReport.title}</CardTitle>
 						</CardHeader>
@@ -143,27 +143,23 @@
 				<div class="relative">
 					<!-- Outer glow ring -->
 					<div
-						class="bg-primary/10 absolute inset-0 animate-ping rounded-full"
+						class="bg-primary/10 absolute inset-0 rounded-full"
 						style="animation-duration: 2.5s; animation-iteration-count: infinite;"
 					></div>
 					<!-- Arrow container -->
 					<div
-						class="bg-primary/10 border-primary relative flex h-16 w-16 items-center justify-center rounded-full border shadow-lg backdrop-blur-sm md:h-20 md:w-20"
+						class="bg-background relative flex h-16 w-16 items-center justify-center rounded-full border border-none shadow-lg backdrop-blur-sm md:h-20 md:w-20"
 					>
 						<!-- Mobile: Down arrow, Desktop: Right arrow -->
 						<ArrowDown class="text-primary md:hidden" size={24} strokeWidth={2} />
 						<ArrowRight class="text-primary hidden md:block" size={32} strokeWidth={2} />
 					</div>
-					<!-- Sparkle effects -->
-					<div class="bg-primary/60 absolute -top-1 -right-1 h-2 w-2 animate-pulse rounded-full delay-300"></div>
-					<div class="bg-primary/60 absolute -top-2 right-4 h-1 w-1 animate-pulse rounded-full delay-300"></div>
-					<div class="bg-primary/40 absolute -bottom-1 -left-1 h-1 w-1 animate-pulse rounded-full delay-700"></div>
 				</div>
 			</div>
 
 			<!-- After -->
 			<div class="flex flex-col space-y-4 md:col-span-4">
-				<Card class="border-primary grow shadow-lg">
+				<Card class="grow rounded-3xl border-none shadow-lg relative overflow-hidden">
 					<CardHeader>
 						<CardTitle class="text-base">{goodReport.title}</CardTitle>
 					</CardHeader>
@@ -197,29 +193,30 @@
 </section>
 
 <!-- Features Section -->
-<section class="bg-muted/50 py-24">
+<section class="inset-shadow-xl py-24">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-12 text-center">
 			<h2 class="mb-4 text-3xl font-bold">
-				Say goodbye to <Badge class="bg-foreground text-background text-2xl font-bold">need info</Badge>, <Badge
-					class="bg-foreground text-background text-2xl font-bold">duplicate</Badge
-				> and <Badge class="bg-foreground text-background text-2xl font-bold">can't repro</Badge>
+				Say goodbye to <Badge variant="secondary" class="text-3xl font-bold">need info</Badge>, <Badge
+					variant="secondary"
+					class="text-3xl font-bold">duplicate</Badge
+				> and <Badge variant="secondary" class="text-3xl font-bold">can't repro</Badge>.
 			</h2>
 		</div>
 
 		<div class="grid gap-8 md:grid-cols-3">
-			<Card class="group transition hover:shadow-lg">
+			<Card class="group bg-accent/50 border-none shadow-none transition">
 				<CardHeader>
 					<Zap class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">Customizable AI-assistance</CardTitle>
 					<CardDescription>
-						AI guides the user through the submission process and ensures the information you need was
-						provided. Custom prompts are supported.
+						AI guides the user through the submission process and ensures the information you need was provided. Custom
+						prompts are supported.
 					</CardDescription>
 				</CardHeader>
 			</Card>
 
-			<Card class="group transition hover:shadow-lg">
+			<Card class="group bg-accent/50 border-none shadow-none transition">
 				<CardHeader>
 					<Shield class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">Prevent duplicates</CardTitle>
@@ -230,7 +227,7 @@
 				</CardHeader>
 			</Card>
 
-			<Card class="group transition hover:shadow-lg">
+			<Card class="group bg-accent/50 border-none shadow-none transition">
 				<CardHeader>
 					<CloudCheck class="text-primary mb-2 h-8 w-8" />
 					<CardTitle class="group-hover:text-primary transition">Add to GitHub issues</CardTitle>
@@ -245,7 +242,7 @@
 </section>
 
 <!-- Fun Errors Demo Section -->
-<section class="py-24" bind:this={errorSection}>
+<section class="bg-muted/50 py-24" bind:this={errorSection}>
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-8 text-center">
 			<h2 class="text-3xl font-bold">
@@ -267,7 +264,7 @@
 						(0.01 + (index + 1) * 0.01)}px);"
 					transition:blur={{ delay: index * 300, duration: 800 }}
 				>
-					<Card class="border-2 shadow-lg">
+					<Card class="shadow-lg">
 						<CardHeader class="pb-2">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center space-x-2">
@@ -291,14 +288,14 @@
 
 		<!-- Simple report button -->
 		<div class="text-center">
-			<Button class="px-8 py-6" onclick={() => goto("/demo")}>Try the demo</Button>
+			<Button size="lg" onclick={() => goto("/demo")}>Try the demo</Button>
 		</div>
 	</div>
 </section>
 
 <!-- CTA Section -->
-<section class="bg-primary text-primary-foreground py-24">
-	<div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+<section class="mx-8 my-16">
+	<div class="bg-primary text-primary-foreground mx-auto max-w-7xl rounded-3xl px-8 py-12 text-center shadow-xl">
 		<Bug class="mx-auto mb-8 h-16 w-16 opacity-80" />
 		<h2 class="mb-4 text-3xl font-bold">
 			You fix important bugs. <span class="opacity-80">We take care of the rest.</span>
@@ -314,3 +311,36 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	:global(.action-button::before) {
+		animation: 4s card-glint 2s infinite;
+		background: var(--background);
+		filter: blur(30px);
+		content: "";
+		position: absolute;
+		width: 30px;
+		z-index: 1;
+		height: 200%;
+		top: -20px;
+		left: 0;
+		transform: rotate(30deg);
+		pointer-events: none;
+		margin-left: -50px;
+	}
+
+	@keyframes card-glint {
+		0% {
+			margin-left: -100px;
+			visibility: visible;
+		}
+
+		60% {
+			margin-left: calc(100% + 50px);
+		}
+
+		100% {
+			margin-left: calc(100% + 50px);
+		}
+	}
+</style>

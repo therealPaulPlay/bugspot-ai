@@ -64,11 +64,20 @@
 			deletingAccount = false;
 		}
 	}
+
+	let pageScrollY = $state(0);
 </script>
 
-<nav class="bg-background/50 fixed top-0 right-0 left-0 z-50 border-b backdrop-blur-xl">
-	<div class="mx-auto max-w-7xl px-4">
-		<div class="flex h-16 justify-between">
+<svelte:window bind:scrollY={pageScrollY} />
+
+<nav class="fixed top-0 right-0 left-0 z-50">
+	<div class="flex w-full justify-center transition-all duration-300 {pageScrollY > 10 ? 'p-4' : ''}">
+		<div
+			class="bg-background flex h-18 w-full max-w-7xl justify-between rounded-xl border p-4 duration-300 {pageScrollY >
+			10
+				? 'shadow-xl'
+				: 'border-transparent'}"
+		>
 			<div class="flex items-center">
 				<!-- Logo -->
 				<a href="/" class="flex items-center space-x-2">
