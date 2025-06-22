@@ -105,7 +105,11 @@
 			</p>
 
 			<div class="flex flex-col justify-center gap-4 sm:flex-row">
-				<Button size="lg" onclick={() => ($user ? goto("/dashboard") : goto("/login"))} class="action-button relative overflow-hidden">
+				<Button
+					size="lg"
+					onclick={() => ($user ? goto("/dashboard") : goto("/login"))}
+					class="action-button relative overflow-hidden"
+				>
 					{$user ? "Open your dashboard" : "Get started for free"}
 					<ArrowRight class="h-4 w-4" />
 				</Button>
@@ -124,7 +128,7 @@
 			<!-- Before -->
 			<div class="flex flex-col items-center space-y-4 md:col-span-4">
 				{#each badReports as badReport}
-					<Card class="w-full grow rounded-3xl border-none shadow-lg">
+					<Card class="w-full grow rounded-3xl border-none shadow-lg bg-background">
 						<CardHeader>
 							<CardTitle class="text-base">{badReport.title}</CardTitle>
 						</CardHeader>
@@ -140,26 +144,18 @@
 
 			<!-- Arrow -->
 			<div class="flex items-center justify-center md:col-span-1">
-				<div class="relative">
-					<!-- Outer glow ring -->
-					<div
-						class="bg-primary/10 absolute inset-0 rounded-full"
-						style="animation-duration: 2.5s; animation-iteration-count: infinite;"
-					></div>
-					<!-- Arrow container -->
-					<div
-						class="bg-background relative flex h-16 w-16 items-center justify-center rounded-full border border-none shadow-lg backdrop-blur-sm md:h-20 md:w-20"
-					>
-						<!-- Mobile: Down arrow, Desktop: Right arrow -->
-						<ArrowDown class="text-primary md:hidden" size={24} strokeWidth={2} />
-						<ArrowRight class="text-primary hidden md:block" size={32} strokeWidth={2} />
-					</div>
+				<div
+					class="bg-background relative flex h-16 w-16 items-center justify-center rounded-full border border-none shadow-lg backdrop-blur-sm md:h-20 md:w-20"
+				>
+					<!-- Mobile: Down arrow, Desktop: Right arrow -->
+					<ArrowDown class="text-primary md:hidden" size={24} strokeWidth={2} />
+					<ArrowRight class="text-primary hidden md:block" size={32} strokeWidth={2} />
 				</div>
 			</div>
 
 			<!-- After -->
 			<div class="flex flex-col space-y-4 md:col-span-4">
-				<Card class="grow rounded-3xl border-none shadow-lg relative overflow-hidden">
+				<Card class="relative grow overflow-hidden rounded-3xl border-none shadow-lg bg-background">
 					<CardHeader>
 						<CardTitle class="text-base">{goodReport.title}</CardTitle>
 					</CardHeader>
@@ -264,7 +260,7 @@
 						(0.01 + (index + 1) * 0.01)}px);"
 					transition:blur={{ delay: index * 300, duration: 800 }}
 				>
-					<Card class="shadow-lg">
+					<Card class="shadow-lg bg-background">
 						<CardHeader class="pb-2">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center space-x-2">
@@ -315,7 +311,7 @@
 <style>
 	:global(.action-button::before) {
 		animation: 4s card-glint 2s infinite;
-		background: var(--background);
+		background: white;
 		filter: blur(30px);
 		content: "";
 		position: absolute;
