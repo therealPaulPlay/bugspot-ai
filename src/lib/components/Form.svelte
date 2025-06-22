@@ -7,6 +7,7 @@
 	import Textarea from "./ui/textarea/textarea.svelte";
 	import Badge from "./ui/badge/badge.svelte";
 	import { onMount } from "svelte";
+	import { replaceState } from "$app/navigation";
 
 	let { formConfig = {}, primaryColor = "black" } = $props();
 
@@ -45,13 +46,14 @@
 		if (currentSlideIndex) params.set("slide", currentSlideIndex);
 		else params.delete("slide");
 		const newUrl = params.toString().length > 0 ? `${page.url.pathname}?${params.toString()}` : page.url.pathname;
-		window.history.replaceState({}, "", newUrl);
+		replaceState("", newUrl);
 	});
 
 	// User inputs --------------------------------------------------------------------------
 	let titleInput = $state("");
 	let descriptionInput = $state("");
 	let expectedResultInput = $state("");
+	let observedResultInput = $state("");
 </script>
 
 <!-- General information -->
@@ -97,7 +99,9 @@
 
 <!-- Optional badge snippet -->
 {#snippet optionalBadge(show = false)}
-	<Badge variant="outline" class="mb-1"><Info />Optional</Badge>
+	<Badge class="mb-1 text-sm" variant="secondary"
+		><Info size={15} strokeWidth={2.5} style="width: 15px; height: 15px;" />Optional</Badge
+	>
 {/snippet}
 
 {#if slide == "title"}
@@ -125,10 +129,20 @@
 
 {#if slide == "expected result"}
 	<div in:fade>
-		<h2 class="mb-4 text-2xl font-semibold">What should have happened?</h2>
 		{@render optionalBadge(formConfig.reuireExpectedResult)}
+		<h2 class="mb-4 text-2xl font-semibold">What should have happened?</h2>
 		<Input bind:value={expectedResultInput} maxlength={200} placeholder="E.g. The profile should have..."></Input>
 		<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 20 characters.</p>
 		{@render nextButton(expectedResultInput.length >= 20 || formConfig.reuireExpectedResult)}
+	</div>
+{/if}
+
+{#if slide == "observed result"}
+	<div in:fade>
+		{@render optionalBadge(formConfig.reuireExpectedResult)}
+		<h2 class="mb-4 text-2xl font-semibold">What happened instead?</h2>
+		<Input bind:value={observedResultInput} maxlength={200} placeholder="E.g. The profile appeared to..."></Input>
+		<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 20 characters.</p>
+		{@render nextButton(observedResultInput.length >= 20 || formConfig.reuireObservedResult)}
 	</div>
 {/if}
