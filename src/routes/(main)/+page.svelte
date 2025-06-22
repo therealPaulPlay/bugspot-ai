@@ -3,36 +3,24 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Badge } from "$lib/components/ui/badge";
-	import { ArrowRight, Bug, Sparkles, Zap, Shield, CloudCheck, ArrowDown, Video } from "lucide-svelte";
+	import { ArrowRight, Bug, Zap, Shield, CloudCheck, ArrowDown, Video, MessageSquare, Dot } from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { user } from "$lib/stores/account";
 
 	let scrollY = $state(0);
 	let errorSection = $state(null);
 
-	// Animation for bug report transformation
-	const badReports = [
+	const messyReports = [
 		{
-			title: "button doesn't function",
-			description: "weird error shows when I click it. I'm using Arch btw.",
-			priority: "my priority",
+			title: "help!!!",
+			author: "user123",
+			content: "it is broken when i click it doesnt work plz fix (I'm on arch btw)",
+			timestamp: "2 min ago",
 		},
-		{
-			title: "stuff broken",
-			description: "it doesnt work when i click the button :(",
-			priority: "idk",
-		},
+		{},
+		{},
+		{},
 	];
-
-	const goodReport = {
-		title: "Login button unresponsive on mobile Safari",
-		description: "The login button becomes unresponsive after form validation fails on mobile Safari browsers.",
-		stepsToReproduce: "1. Navigate to login page on mobile Safari\n2. Click on login (without filling out form)",
-		expectedResult: "Login button should remain clickable after validation errors.",
-		observedResult: "Button becomes unresponsive and requires page refresh.",
-		priority: "P1 - High",
-		browserInfo: "Safari 17.2, iOS 17.1.1",
-	};
 
 	// Simple errors that will animate in
 	const errors = [
@@ -82,7 +70,7 @@
 <!-- Hero Section -->
 <section class="relative overflow-hidden">
 	<!-- Background gradient -->
-	<div class="from-background/10 via-primary/10 to-primary/30 absolute inset-0 bg-gradient-to-b"></div>
+	<div class="from-background/10 via-primary/5 to-primary/20 absolute inset-0 bg-gradient-to-b"></div>
 
 	<div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
 		<div class="text-center">
@@ -96,19 +84,19 @@
 
 			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">
 				Help users create
-				<span class="text-primary">pefect bug reports.</span>
+				<span class="text-primary">perfect bug reports.</span>
 			</h1>
 
-			<p class="text-muted-foreground mx-auto mb-8 max-w-3xl text-lg sm:text-xl">
-				Our AI-powered bug report forms ensure that all reports are useful to developers and meet your guidelines. No
-				more non-issues or endless back-and-forth.
+			<p class="text-muted-foreground mx-auto mb-8 max-w-3xl sm:text-lg">
+				Our AI-powered forms guide users to create detailed, actionable bug reports that meet your guidelines. No more
+				non-issues or endless back-and-forth.
 			</p>
 
 			<div class="flex flex-col justify-center gap-4 sm:flex-row">
 				<Button
 					size="lg"
 					onclick={() => ($user ? goto("/dashboard") : goto("/login"))}
-					class="action-button relative overflow-hidden"
+					class="glint relative overflow-hidden"
 				>
 					{$user ? "Open your dashboard" : "Get started for free"}
 					<ArrowRight class="h-4 w-4" />
@@ -117,72 +105,113 @@
 					variant="outline"
 					size="lg"
 					onclick={() => {
-						errorSection.scrollIntoView({ block: "center", behavior: "smooth" });
+						errorSection?.scrollIntoView({ block: "center", behavior: "smooth" });
 					}}>View demo</Button
 				>
 			</div>
 		</div>
 
 		<!-- Bug report transformation -->
-		<div class="mx-auto mt-20 grid max-w-5xl gap-8 md:grid-cols-9">
-			<!-- Before -->
-			<div class="flex flex-col items-center space-y-4 md:col-span-4">
-				{#each badReports as badReport}
-					<Card class="w-full grow rounded-3xl border-none shadow-lg bg-background">
-						<CardHeader>
-							<CardTitle class="text-base">{badReport.title}</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p class="text-muted-foreground mb-2 text-sm">{badReport.description}</p>
-							<Badge class="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100">
-								{badReport.priority}
-							</Badge>
-						</CardContent>
-					</Card>
-				{/each}
-			</div>
-
-			<!-- Arrow -->
-			<div class="flex items-center justify-center md:col-span-1">
-				<div
-					class="bg-background relative flex h-16 w-16 items-center justify-center rounded-full border border-none shadow-lg backdrop-blur-sm md:h-20 md:w-20"
-				>
-					<!-- Mobile: Down arrow, Desktop: Right arrow -->
-					<ArrowDown class="text-primary md:hidden" size={24} strokeWidth={2} />
-					<ArrowRight class="text-primary hidden md:block" size={32} strokeWidth={2} />
+		<div class="relative mx-auto mt-20 max-w-6xl">
+			<div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+				<!-- Before -->
+				<div class="relative h-[340px]">
+					{#each messyReports as report, index}
+						<Card
+							class="bg-background dark:border-accent absolute h-45 w-full gap-2 border-transparent shadow-lg"
+							style="
+									top: {index * 25}px;
+									left: {index * 8}px;
+									z-index: {messyReports.length - index};
+									transform: rotate({(index - 1) * 1.5}deg);
+									opacity: {100 - index * 20}%;
+								"
+						>
+							<CardHeader class="pb-3">
+								<div class="text-muted-foreground flex items-center justify-between text-xs">
+									<span>@{report?.author}</span>
+									<span>{report?.timestamp}</span>
+								</div>
+								<CardTitle class="text-base">{report?.title}</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<p class="text-muted-foreground h-3/5 text-sm">{report?.content}</p>
+								<div class="mt-3 flex gap-2">
+									<Badge variant="secondary" class="text-xs">no repro</Badge>
+									<Badge variant="secondary" class="text-xs">missing info</Badge>
+								</div>
+							</CardContent>
+						</Card>
+					{/each}
 				</div>
-			</div>
 
-			<!-- After -->
-			<div class="flex flex-col space-y-4 md:col-span-4">
-				<Card class="relative grow overflow-hidden rounded-3xl border-none shadow-lg bg-background">
-					<CardHeader>
-						<CardTitle class="text-base">{goodReport.title}</CardTitle>
+				<!-- After -->
+
+				<Card class="bg-background dark:border-accent flex flex-1 flex-col gap-4 border-transparent shadow-xl">
+					<CardHeader class="border-b">
+						<div class="flex items-start justify-between">
+							<div class="flex items-center gap-2">
+								<div class="border-primary flex h-5 w-5 items-center justify-center rounded-full border-2">
+									<Dot class="text-primary h-3 w-3 fill-current" />
+								</div>
+								<span class="text-primary text-sm font-medium">#16</span>
+							</div>
+							<Badge class="bg-primary text-xs text-white">Open</Badge>
+						</div>
+
+						<CardTitle class="text-primary mt-1 text-base leading-tight"
+							>Login button unresponsive on mobile Safari</CardTitle
+						>
+
+						<div class="text-muted-foreground mt-1 flex items-center text-xs">
+							<span>@bugspot</span>
+						</div>
 					</CardHeader>
-					<CardContent class="flex h-full flex-col gap-3">
-						<p class="text-sm">{goodReport.description}</p>
-						<div class="space-y-2 text-xs">
+
+					<!-- GitHub Issue Content -->
+					<CardContent class="flex flex-1 flex-col">
+						<div class="flex-1 space-y-3 text-sm">
 							<div>
-								<span class="font-medium">Steps to reproduce:</span>
-								<pre class="text-muted-foreground mt-1 whitespace-pre-wrap">{goodReport.stepsToReproduce}</pre>
+								<h4 class="mb-1 font-semibold">Steps to reproduce</h4>
+								<div class="text-muted-foreground space-y-0.5 text-sm">
+									<div>1. Visit the /login page</div>
+									<div>2. Click login without filling form</div>
+								</div>
 							</div>
+
 							<div>
-								<span class="font-medium">Expected:</span>
-								<span class="text-muted-foreground"> {goodReport.expectedResult}</span>
-							</div>
-							<div>
-								<span class="font-medium">Observed:</span>
-								<span class="text-muted-foreground"> {goodReport.observedResult}</span>
+								<div>
+									<span class="font-semibold">Expected:</span>
+									<span class="text-muted-foreground"> Button remains clickable after validation errors.</span>
+								</div>
+								<div>
+									<span class="font-semibold">Observed:</span>
+									<span class="text-muted-foreground"> Button becomes unresponsive, requires page refresh.</span>
+								</div>
 							</div>
 						</div>
-						<div class="mt-auto flex items-center justify-between">
-							<Badge class="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100">
-								{goodReport.priority}
-							</Badge>
-							<span class="text-muted-foreground text-xs">{goodReport.browserInfo}</span>
+
+						<div class="text-muted-foreground mt-3 flex items-center justify-between gap-4 border-t pt-3 text-xs">
+							<div class="flex gap-4">
+								<span class="flex items-center gap-1">
+									<MessageSquare class="h-3 w-3" /> 3
+								</span>
+								<Badge variant="secondary" class="text-xs">P1 - high</Badge>
+							</div>
+							<div>
+								<p class="text-muted-foreground text-xs">Safari 17.1, iOS 17.1.1</p>
+							</div>
 						</div>
 					</CardContent>
 				</Card>
+			</div>
+
+			<!-- Arrow indicator -->
+			<div
+				class="oveflow-hidden bg-background text-primary border-primary absolute top-3/7 left-1/2 z-20 flex justify-center items-center h-20 w-20 -translate-x-1/2 -translate-y-1/2 transform rounded-full border-2 shadow-xl lg:top-1/2"
+			>
+				<ArrowRight class="hidden h-8 w-8 lg:block" />
+				<ArrowDown class="h-8 w-8 lg:hidden" />
 			</div>
 		</div>
 	</div>
@@ -193,10 +222,11 @@
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-12 text-center">
 			<h2 class="mb-4 text-3xl font-bold">
-				Say goodbye to <Badge variant="secondary" class="text-3xl font-bold">need info</Badge>, <Badge
-					variant="secondary"
-					class="text-3xl font-bold">duplicate</Badge
-				> and <Badge variant="secondary" class="text-3xl font-bold">can't repro</Badge>.
+				Say goodbye to <span class="mr-1 text-nowrap"
+					><Badge variant="secondary" class="text-3xl font-bold">need info</Badge>,</span
+				>
+				<Badge variant="secondary" class="text-3xl font-bold">duplicate</Badge> and
+				<span class="text-nowrap"><Badge variant="secondary" class="text-3xl font-bold">can't repro</Badge>.</span>
 			</h2>
 		</div>
 
@@ -258,9 +288,8 @@
 					class="absolute w-80"
 					style="{error.position} z-index: {10 + index}; transform: translateY({relativeScroll *
 						(0.01 + (index + 1) * 0.01)}px);"
-					transition:blur={{ delay: index * 300, duration: 800 }}
 				>
-					<Card class="shadow-lg bg-background">
+					<Card class="bg-background shadow-lg">
 						<CardHeader class="pb-2">
 							<div class="flex items-center justify-between">
 								<div class="flex items-center space-x-2">
@@ -294,10 +323,10 @@
 	<div class="bg-primary text-primary-foreground mx-auto max-w-7xl rounded-3xl px-8 py-12 text-center shadow-xl">
 		<Bug class="mx-auto mb-8 h-16 w-16 opacity-80" />
 		<h2 class="mb-4 text-3xl font-bold">
-			You fix important bugs. <span class="opacity-80">We take care of the rest.</span>
+			You debug faster. <span class="opacity-80">We clear the clutter.</span>
 		</h2>
-		<p class="mx-auto mb-8 max-w-2xl text-xl opacity-90">
-			Join a growing community of developers streamlining their bug management.
+		<p class="mx-auto mb-8 max-w-xl text-xl opacity-90">
+			Join a growing community of developers streamlining their bug report management.
 		</p>
 		<div class="flex flex-col justify-center gap-4 sm:flex-row">
 			<Button variant="secondary" size="lg" onclick={() => goto("/login")}>
@@ -309,8 +338,8 @@
 </section>
 
 <style>
-	:global(.action-button::before) {
-		animation: 4s card-glint 2s infinite;
+	:global(.glint::before) {
+		animation: 4s fade-glint 2s infinite;
 		background: white;
 		filter: blur(30px);
 		content: "";
@@ -325,7 +354,7 @@
 		margin-left: -50px;
 	}
 
-	@keyframes card-glint {
+	@keyframes fade-glint {
 		0% {
 			margin-left: -100px;
 			visibility: visible;
