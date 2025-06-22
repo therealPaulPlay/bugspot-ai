@@ -139,7 +139,7 @@
 
 {#if slide == "observed result"}
 	<div in:fade>
-		{@render optionalBadge(formConfig.reuireExpectedResult)}
+		{@render optionalBadge(formConfig.reuireObservedResult)}
 		<h2 class="mb-4 text-2xl font-semibold">What happened instead?</h2>
 		<Input bind:value={observedResultInput} maxlength={200} placeholder="E.g. The profile appeared to..."></Input>
 		<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 20 characters.</p>
