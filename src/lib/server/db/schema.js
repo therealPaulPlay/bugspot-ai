@@ -20,7 +20,6 @@ export const forms = mysqlTable('forms', {
 	userId: bigint('user_id', { unsigned: true }).references(() => users.id, { onDelete: 'cascade' }).notNull(),
 	name: varchar('name', { length: 255 }).notNull(),
 	githubRepo: varchar('github_repo', { length: 255 }), // e.g. "owner/repo"
-	githubToken: varchar('github_token', { length: 255 }), // User's GitHub token for creating issues
 	customPrompt: text('custom_prompt'),
 	colorScheme: varchar('color_scheme', { length: 255 }),
 	requireEmail: boolean('require_email').default(true),

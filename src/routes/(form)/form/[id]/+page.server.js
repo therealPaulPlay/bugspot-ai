@@ -16,7 +16,7 @@ export async function load({ params }) {
         if (!form) throw error(404, 'Form not found');
 
         // Remove sensitive/private fields
-        const { createdAt, userId, githubRepo, githubToken, customPrompt, ...publicForm } = form;
+        const { createdAt, userId, githubRepo, customPrompt, ...publicForm } = form;
 
         // Clean up domains
         const cleanedForm = {
