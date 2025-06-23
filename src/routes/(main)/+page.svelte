@@ -351,7 +351,7 @@
 		left: 0;
 		transform: rotate(30deg);
 		pointer-events: none;
-		margin-left: -50px;
+		margin-left: -100px;
 	}
 
 	@keyframes fade-glint {

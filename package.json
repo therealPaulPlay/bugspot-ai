@@ -21,7 +21,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/node": "^22",
-		"bits-ui": "^2.8.0",
+		"bits-ui": "^2.8.8",
 		"clsx": "^2.1.1",
 		"drizzle-kit": "^0.30.2",
 		"prettier": "^3.4.2",
@@ -42,6 +42,7 @@
 		"lucide-svelte": "^0.515.0",
 		"mode-watcher": "^1.0.8",
 		"mysql2": "^3.12.0",
+		"overfade": "^0.0.5",
 		"sveltekit-rate-limiter": "^0.7.0"
 	}
 }
