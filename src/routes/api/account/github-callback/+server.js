@@ -1,4 +1,3 @@
-// src/routes/api/auth/callback/+server.js
 import { env } from '$env/dynamic/private';
 
 export async function GET({ url }) {
