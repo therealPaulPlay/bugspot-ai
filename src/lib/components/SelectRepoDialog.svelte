@@ -42,14 +42,9 @@
 		}
 	}
 
-	async function checkAppAccess(repoFullName) {
-		if (!repoFullName) return;
-
-		checkingAppAccess = true;
-		appHasAccess = null;
-
+	async function updateInstallationId() {
 		try {
-			const response = await betterFetch("/api/github/check-app-access", {
+			await betterFetch("/api/github/update-installation", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -57,16 +52,12 @@
 				},
 				body: JSON.stringify({
 					userId: localStorage.getItem("userId"),
-					repo: repoFullName,
+					githubToken: token,
 				}),
 			});
-			const data = await response.json();
-			appHasAccess = data.hasAccess;
 		} catch (error) {
-			console.error("Error checking app access:", error);
-			appHasAccess = false;
-		} finally {
-			checkingAppAccess = false;
+			console.error("Failed to update installation ID for user:", error);
+			toast.error("Failed to update GitHub installation ID for user: " + error);
 		}
 	}
 
@@ -82,25 +73,22 @@
 	}
 
 	function installAppForRepo() {
+		const state = crypto.randomUUID();
+		const stateData = JSON.stringify({
+			state,
+			type: "app_installation",
+			returnUrl: window.location.href,
+		});
+
 		const [owner] = selected.split("/");
-		const installUrl = `https://github.com/apps/${env.PUBLIC_GITHUB_APP_NAME?.toLocaleLowerCase()?.replaceAll(" ", "-")}/installations/new?target_id=${owner}`;
+		const installUrl = `https://github.com/apps/${env.PUBLIC_GITHUB_APP_NAME?.toLowerCase()?.replaceAll(" ", "-")}/installations/new?target_id=${owner}&state=${encodeURIComponent(stateData)}`;
 
 		const newWindow = window.open(installUrl, "_blank");
-
-		// Refresh repos when user returns
-		// const checkInterval = setInterval(() => {
-		// 	if (newWindow.closed) {
-		// 		clearInterval(checkInterval);
-		// 		loadRepos();
-		// 		toast.success("Please reselect your repository to check installation status.");
-		// 	}
-		// }, 1000);
 	}
 
 	async function continueWithRepo() {
 		const repo = repos.find((r) => r.fullName === selected);
 
-		// If app not installed, show install prompt
 		if (!repo.appInstalled) return installAppForRepo();
 
 		if (onRepoSelected) onRepoSelected(repo);

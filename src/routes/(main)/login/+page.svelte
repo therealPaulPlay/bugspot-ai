@@ -18,7 +18,11 @@
 		const state = page.url.searchParams.get("state");
 		const errorParam = page.url.searchParams.get("error");
 
-		if (errorParam) return toast.error("GitHub authentication was cancelled or failed.");
+		if (errorParam) {
+			const error = decodeURIComponent(errorParam);
+			return toast.error("GitHub callback failed: " + error);
+		}
+
 		if (code && state) await handleGitHubCallback(code, state);
 	});
 
@@ -32,7 +36,7 @@
 			// Wrap the state in JSON like your repos route does
 			const stateData = JSON.stringify({
 				state,
-				type: "login", // Add type to distinguish from repo access
+				type: "login", // Add type to distinguish from other callbacks
 			});
 
 			const redirectUri = `${window.location.origin}/api/account/github-callback`;

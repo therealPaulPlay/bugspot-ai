@@ -4,10 +4,10 @@ export async function GET({ url }) {
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state');
 
-    if (!code || !state) {
+    if (!state) {
         return new Response(null, {
             status: 302,
-            headers: { 'Location': '/login?error=missing_oauth_params' }
+            headers: { 'Location': `/login?error=${encodeURIComponent("Missing state parameter in callback!")}` }
         });
     }
 
@@ -16,6 +16,7 @@ export async function GET({ url }) {
 
         if (stateData.type === 'repo_access') {
             // Repo access flow
+            if (!code) throw new Error("Missing code parameter in repo_access callback!");
             const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
                 method: 'POST',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
@@ -42,23 +43,21 @@ export async function GET({ url }) {
                 status: 302,
                 headers: { 'Location': returnUrl }
             });
-            
+
         } else {
             // Login flow
+            if (!code) throw new Error("Missing code parameter in login callback – cancelled?");
             return new Response(null, {
                 status: 302,
                 headers: { 'Location': `/login?code=${code}&state=${encodeURIComponent(state)}` }
             });
         }
     } catch (error) {
-        console.warn('OAuth callback error:', error);
-        const fallbackUrl = error.message === 'Token exchange failed!'
-            ? '/dashboard?error=auth_failed'
-            : `/login?code=${code}&state=${encodeURIComponent(state)}`;
+        console.warn('GitHub callbcak error:', error);
 
         return new Response(null, {
             status: 302,
-            headers: { 'Location': fallbackUrl }
+            headers: { 'Location': `/login?error=${encodeURIComponent(error.message)}` }
         });
     }
 }

@@ -1,4 +1,5 @@
 import { json } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 
 // Get user's GitHub repositories with installation status
 export async function GET({ request, url }) {
@@ -33,10 +34,15 @@ export async function GET({ request, url }) {
         const repos = await reposResponse.json();
         const installations = installationsResponse.ok ? await installationsResponse.json() : { installations: [] };
 
-        // Get accessible repositories for each installation
+        // Filter to only our GitHub App installations
+        const ourInstallations = installations.installations?.filter(inst => {
+            return inst.app_id === parseInt(env.GITHUB_APP_ID);
+        }) || [];
+
+        // Get accessible repositories for our app installations only
         let accessibleRepos = new Set();
 
-        for (const installation of installations.installations || []) {
+        for (const installation of ourInstallations) {
             try {
                 const repoResponse = await fetch(`https://api.github.com/user/installations/${installation.id}/repositories`, {
                     headers: {
