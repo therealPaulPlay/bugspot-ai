@@ -101,10 +101,6 @@
 			toast.error("Failed to copy iframe code: " + error);
 		}
 	}
-
-	function previewForm(formId) {
-		window.open(`/form/${formId}`, "_blank");
-	}
 </script>
 
 <svelte:head>
@@ -188,7 +184,14 @@
 							</div>
 
 							<div class="flex space-x-2">
-								<Button variant="outline" size="sm" class="flex-1" onclick={() => previewForm(form.id)}>
+								<Button
+									variant="outline"
+									size="sm"
+									class="flex-1"
+									onclick={() => {
+										window.open(`/form/${formId}`, "_blank");
+									}}
+								>
 									<ExternalLink class="h-4 w-4" />
 									Preview
 								</Button>

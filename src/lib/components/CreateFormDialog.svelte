@@ -84,7 +84,7 @@
 			open = false;
 			onSuccess(data);
 		} catch (error) {
-			toast.error(error.message || "Failed to save form");
+			toast.error(error.message || "Failed to save form.");
 		} finally {
 			loading = false;
 		}
@@ -185,7 +185,6 @@
 
 				<!-- Actions -->
 				<div class="flex justify-end space-x-3">
-					<Button variant="outline" onclick={() => (open = false)}>Cancel</Button>
 					<Button onclick={saveForm} disabled={loading || !formData.name.trim() || !formData.domains.trim()}>
 						{#if loading}
 							<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>

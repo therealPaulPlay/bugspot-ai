@@ -36,7 +36,7 @@
 			const data = await response.json();
 			repos = data.repos || [];
 		} catch {
-			toast.error("Failed to load repositories");
+			toast.error("Failed to load repositories.");
 		} finally {
 			loading = false;
 		}
@@ -162,7 +162,6 @@
 				{/if}
 
 				<div class="flex justify-end space-x-2">
-					<Button variant="outline" onclick={() => (open = false)}>Cancel</Button>
 					<Button onclick={continueWithRepo} disabled={!selected}>
 						{@const repo = repos.find((r) => r.fullName === selected)}
 						{repo && !repo.appInstalled ? "Install App" : "Continue"}

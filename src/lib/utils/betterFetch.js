@@ -10,9 +10,7 @@ export async function betterFetch(url, options) {
 
         return response;
     } catch (error) {
-        if (error instanceof TypeError && error.message === "Failed to fetch") {
-            throw new Error("Network error. Please check your connection & the server status.");
-        }
+        if (error instanceof TypeError && error.message.toLowerCase().includes("fetch")) throw new Error("Network error. Please check your connection & the server status.");
         throw error;
     }
 }
