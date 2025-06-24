@@ -3,17 +3,19 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "$lib/components/ui/dialog";
-	import { Plus, Settings, ExternalLink, Copy, CheckCircle, Trash2 } from "lucide-svelte";
+	import { Plus, Settings, ExternalLink, Copy, CheckCircle, Trash2, Info } from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
 	import { user } from "$lib/stores/account";
 	import CreateFormDialog from "$lib/components/CreateFormDialog.svelte";
+	import { page } from "$app/state";
 
 	let forms = $state([]);
 	let loading = $state(true);
 	let showCreateDialog = $state(false);
 	let showIframeDialog = $state(false);
+	let showInfoDialog = $state(false);
 	let editingForm = $state(null);
 	let currentFormId = $state(null);
 	let copied = $state(false);
@@ -47,16 +49,6 @@
 		showCreateDialog = true;
 	}
 
-	function openEditDialog(form) {
-		editingForm = form;
-		showCreateDialog = true;
-	}
-
-	function openIframeDialog(formId) {
-		currentFormId = formId;
-		showIframeDialog = true;
-	}
-
 	async function deleteForm(formId, formName) {
 		if (!confirm(`Are you sure you want to delete "${formName}"? This cannot be undone.`)) {
 			return;
@@ -83,12 +75,12 @@
 		}
 	}
 
-	function handleFormSuccess() {
-		loadDashboard();
+	function generateFormURL(formId) {
+		return page.url.origin + "/form/" + formId;
 	}
 
 	function generateIframeCode(formId) {
-		return `<iframe src="${window.location.origin}/form/${formId}" width="800" height="500" frameborder="0"></iframe>`;
+		return `<iframe src="${generateFormURL(formId)}" width="800" height="500" frameborder="0"></iframe>`;
 	}
 
 	async function copyIframeCode() {
@@ -159,7 +151,14 @@
 						<div class="relative flex items-center justify-between overflow-hidden">
 							<CardTitle class="max-w-2/3 truncate text-lg">{form.name}</CardTitle>
 							<div class="flex space-x-1">
-								<Button variant="ghost" size="sm" onclick={() => openEditDialog(form)}>
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={() => {
+										editingForm = form;
+										showCreateDialog = true;
+									}}
+								>
 									<Settings class="h-4 w-4" />
 								</Button>
 								<Button
@@ -189,15 +188,32 @@
 									size="sm"
 									class="flex-1"
 									onclick={() => {
-										window.open(`/form/${form.id}`, "_blank");
+										window.open(generateFormURL(form.id), "_blank");
 									}}
 								>
 									<ExternalLink class="h-4 w-4" />
-									Preview
+									Link
 								</Button>
-								<Button size="sm" class="flex-1" onclick={() => openIframeDialog(form.id)}>
+								<Button
+									size="sm"
+									class="flex-1"
+									onclick={() => {
+										currentFormId = form.id;
+										showIframeDialog = true;
+									}}
+								>
 									<Copy class="h-4 w-4" />
 									Embed
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={() => {
+										currentFormId = form.id;
+										showInfoDialog = true;
+									}}
+								>
+									<Info />
 								</Button>
 							</div>
 						</div>
@@ -219,7 +235,7 @@
 </div>
 
 <!-- Create/Edit Form Dialog -->
-<CreateFormDialog bind:open={showCreateDialog} {editingForm} onSuccess={handleFormSuccess} />
+<CreateFormDialog bind:open={showCreateDialog} {editingForm} onSuccess={loadDashboard} />
 
 <!-- Iframe code dialog -->
 <Dialog bind:open={showIframeDialog}>
@@ -234,7 +250,7 @@
 
 		<div class="space-y-4">
 			<div class="bg-muted rounded-lg p-4">
-				<code class="font-mono text-sm break-all">
+				<code class="font-mono text-sm text-xs break-all">
 					{generateIframeCode(currentFormId)}
 				</code>
 			</div>
@@ -248,6 +264,41 @@
 					Copy iframe code
 				{/if}
 			</Button>
+		</div>
+	</DialogContent>
+</Dialog>
+
+<!-- Info dialog -->
+<Dialog bind:open={showInfoDialog}>
+	<DialogContent class="max-w-lg">
+		<DialogHeader>
+			<DialogTitle>Using your form</DialogTitle>
+		</DialogHeader>
+
+		<div class="space-y-4">
+			<!-- Direct Link -->
+			<div>
+				<h3 class="mb-1 text-sm font-semibold">Direct link</h3>
+				<p class="text-muted-foreground text-sm">
+					Put it in your footer, docs, or anywhere users should be able to report a bug.
+				</p>
+			</div>
+			<div>
+				<h3 class="mb-1 text-sm font-semibold">Embedded iframe</h3>
+				<p class="text-muted-foreground text-sm">
+					Embed directly, e.g. in a popup component. Users never leave your site and it's intuitive.
+				</p>
+			</div>
+			<div>
+				<h3 class="mb-1 text-sm font-semibold">Adding context</h3>
+				<p class="text-muted-foreground mb-2 text-sm">Pass custom data (e.g. session info) for better debugging:</p>
+				<div class="bg-muted rounded p-2 font-mono text-xs">
+					?custom-data=${'{encodeURIComponent("User ID: 123, Plan: Pro")}'}
+				</div>
+				<p class="text-muted-foreground mt-1 text-xs">
+					Use <code>encodeURIComponent()</code> to safely encode your data.
+				</p>
+			</div>
 		</div>
 	</DialogContent>
 </Dialog>

@@ -37,6 +37,16 @@
 		}
 	}
 
+	// Custom data from URL
+	onMount(() => {
+		const customDataFromURL = page.url.searchParams.get("custom-data");
+		try {
+			if (customDataFromURL) customData = decodeURIComponent(customDataFromURL);
+		} catch {
+            console.warn("Failed to decode customData URI component.");
+        }
+	});
+
 	// History URL management
 	onMount(() => {
 		const slideIndex = page.url.searchParams.get("slide");

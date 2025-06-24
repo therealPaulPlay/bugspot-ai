@@ -60,22 +60,21 @@ async function processReport(title, description, expectedResult, observedResult,
 ${customPrompt ? `Additional guidelines: ${customPrompt}` : ''}
 
 ---- CONTENT FORMAT (Markdown):
-### Description:
+## Description
 (Detailed & concise description here)
 
-### Behavior
+## Behavior
 **Expected:** ${expectedResult ? '(Expected result)' : 'Not provided.'}
-
 **Observed:** ${observedResult ? '(Observed result)' : 'Not provided.'}
 
-### Steps:
+## Steps to reproduce
 ${steps ? '1. (Step one – and so on)' : 'Not provided.'}
 
-### Media:
-Screenshot: ${screenshotUrl ? '(Screenshot URL)' : 'Not provided.'}
-Video: ${videoUrl ? '(Video URL)' : 'Not provided.'}
+## Media
+**Screenshot**: ${screenshotUrl ? '(Screenshot URL)' : 'Not provided.'}
+**Video**: ${videoUrl ? '(Video URL)' : 'Not provided.'}
 
-### Environment details
+## Environment details
 ${userAgent ? `<details>\n<summary>User agent</summary>\n(User agent)\n</details>` : ''}
 ${customData ? `<details>\n<summary>Custom data</summary>\n(Custom data)\n</details>` : ''}
 ${(!customData && !userAgent) ? 'No environment information.' : ''}
