@@ -75,7 +75,7 @@ export async function POST({ request, locals }) {
         return json({ formId, success: true });
     } catch (error) {
         console.error('Form creation error:', error);
-        return json({ error: 'Failed to create form' }, { status: 500 });
+        return json({ error: 'Failed to create form!' }, { status: 500 });
     }
 }
 

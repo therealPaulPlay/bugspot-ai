@@ -3,7 +3,7 @@
 	import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "$lib/components/ui/dialog";
 	import * as Select from "$lib/components/ui/select/index.js";
 	import { Alert, AlertDescription } from "$lib/components/ui/alert";
-	import { Github, ExternalLink } from "lucide-svelte";
+	import { Github, ExternalLink, AlertTriangle, CheckCircle } from "lucide-svelte";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
 	import { page } from "$app/state";
@@ -42,6 +42,34 @@
 		}
 	}
 
+	async function checkAppAccess(repoFullName) {
+		if (!repoFullName) return;
+
+		checkingAppAccess = true;
+		appHasAccess = null;
+
+		try {
+			const response = await betterFetch("/api/github/check-app-access", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${localStorage.getItem("token")}`,
+				},
+				body: JSON.stringify({
+					userId: localStorage.getItem("userId"),
+					repo: repoFullName,
+				}),
+			});
+			const data = await response.json();
+			appHasAccess = data.hasAccess;
+		} catch (error) {
+			console.error("Error checking app access:", error);
+			appHasAccess = false;
+		} finally {
+			checkingAppAccess = false;
+		}
+	}
+
 	function connect() {
 		const state = crypto.randomUUID();
 		const stateData = JSON.stringify({
@@ -53,21 +81,40 @@
 		window.location.href = url;
 	}
 
-	function continueWithRepo() {
-		if (!selected) {
-			toast.error("Please select a repository");
-			return;
-		}
+	function installAppForRepo() {
+		const [owner] = selected.split("/");
+		const installUrl = `https://github.com/apps/${env.PUBLIC_GITHUB_APP_NAME?.toLocaleLowerCase()?.replaceAll(" ", "-")}/installations/new?target_id=${owner}`;
+
+		const newWindow = window.open(installUrl, "_blank");
+
+		// Refresh repos when user returns
+		// const checkInterval = setInterval(() => {
+		// 	if (newWindow.closed) {
+		// 		clearInterval(checkInterval);
+		// 		loadRepos();
+		// 		toast.success("Please reselect your repository to check installation status.");
+		// 	}
+		// }, 1000);
+	}
+
+	async function continueWithRepo() {
 		const repo = repos.find((r) => r.fullName === selected);
+
+		// If app not installed, show install prompt
+		if (!repo.appInstalled) return installAppForRepo();
+
 		if (onRepoSelected) onRepoSelected(repo);
 		open = false;
 		selected = "";
 	}
 </script>
 
-<Dialog bind:open onOpenChange={(open) => {
-	if (!open && onClosed) onClosed();
-}}>
+<Dialog
+	bind:open
+	onOpenChange={(open) => {
+		if (!open && onClosed) onClosed();
+	}}
+>
 	<DialogContent class="max-w-md">
 		<DialogHeader>
 			<DialogTitle>Connect GitHub repository</DialogTitle>
@@ -98,10 +145,15 @@
 					<Select.Content class="max-h-[300px]">
 						{#each repos as repo}
 							<Select.Item value={repo.fullName} label={repo.fullName}>
-								<div>
-									<div class="font-medium">{repo.fullName}</div>
-									{#if repo.description}
-										<div class="text-muted-foreground text-xs">{repo.description}</div>
+								<div class="flex w-full items-center justify-between">
+									<div>
+										<div class="font-medium">{repo.fullName}</div>
+										{#if repo.description}
+											<div class="text-muted-foreground text-xs">{repo.description}</div>
+										{/if}
+									</div>
+									{#if repo.appInstalled}
+										<CheckCircle class="ml-2 h-4 w-4" />
 									{/if}
 								</div>
 							</Select.Item>
@@ -109,9 +161,24 @@
 					</Select.Content>
 				</Select.Root>
 
+				{#if selected}
+					{@const repo = repos.find((r) => r.fullName === selected)}
+					{#if repo && !repo.appInstalled}
+						<Alert class="border-orange-200 bg-orange-50">
+							<AlertTriangle class="h-4 w-4 text-orange-600" />
+							<AlertDescription class="text-orange-800">
+								GitHub App needs to be installed for this repository.
+							</AlertDescription>
+						</Alert>
+					{/if}
+				{/if}
+
 				<div class="flex justify-end space-x-2">
 					<Button variant="outline" onclick={() => (open = false)}>Cancel</Button>
-					<Button onclick={continueWithRepo} disabled={!selected}>Continue</Button>
+					<Button onclick={continueWithRepo} disabled={!selected}>
+						{@const repo = repos.find((r) => r.fullName === selected)}
+						{repo && !repo.appInstalled ? "Install App" : "Continue"}
+					</Button>
 				</div>
 			</div>
 		{:else}

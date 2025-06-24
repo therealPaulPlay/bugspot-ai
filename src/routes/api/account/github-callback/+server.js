@@ -34,6 +34,15 @@ export async function GET({ url }) {
             redirectUrl.searchParams.set('github_token', tokenData.access_token);
 
             return new Response(null, { status: 302, headers: { 'Location': redirectUrl.toString() } });
+
+        } else if (stateData.type === 'app_installation') {
+            // App installation flow - redirect back to dashboard
+            const returnUrl = stateData.returnUrl || '/dashboard';
+            return new Response(null, {
+                status: 302,
+                headers: { 'Location': returnUrl }
+            });
+            
         } else {
             // Login flow
             return new Response(null, {
