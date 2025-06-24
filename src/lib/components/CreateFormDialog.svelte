@@ -53,9 +53,7 @@
 
 		const domains = formData.domains
 			.split(",")
-			.map(
-				(d) => d.toLowerCase().trim().replace("https://", "").replace("http://", "").split("/")[0],
-			)
+			.map((d) => d.toLowerCase().trim().replace("https://", "").replace("http://", "").split("/")[0])
 			.filter((d) => d);
 
 		if (domains.length == 0) return toast.error("At least one domain is required!");
@@ -99,7 +97,6 @@
 		<DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto">
 			<DialogHeader>
 				<DialogTitle>{editingForm ? "Edit form" : "Create form"}</DialogTitle>
-				<DialogDescription>Customize what info users need to provide in their reports.</DialogDescription>
 			</DialogHeader>
 
 			<div class="space-y-6">
@@ -143,7 +140,10 @@
 
 				<!-- Required Fields -->
 				<div class="space-y-3">
-					<Label class="text-base font-medium">Required information</Label>
+					<div class="space-y-0">
+						<Label class="text-base font-medium">Required information</Label>
+						<p class="text-muted-foreground text-sm">Selected means required, unselected fields are optional.</p>
+					</div>
 					<div class="grid grid-cols-2 gap-3">
 						<div class="flex items-center space-x-2">
 							<Checkbox id="requireEmail" bind:checked={formData.requireEmail} />

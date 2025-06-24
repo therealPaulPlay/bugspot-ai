@@ -1,4 +1,3 @@
-// src/routes/form/[id]/+page.server.js
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';

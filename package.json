@@ -36,6 +36,7 @@
 		"vite": "^6.2.6"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.835.0",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.40.0",
 		"jsonwebtoken": "^9.0.2",

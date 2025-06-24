@@ -43,7 +43,10 @@ export async function GET({ url }) {
         }
     } catch (error) {
         console.warn('OAuth callback error:', error);
-        const fallbackUrl = error.message === 'Token exchange failed!' ? '/dashboard?error=auth_failed' : `/login?code=${code}&state=${encodeURIComponent(state)}`;
+        const fallbackUrl = error.message === 'Token exchange failed!'
+            ? '/dashboard?error=auth_failed'
+            : `/login?code=${code}&state=${encodeURIComponent(state)}`;
+
         return new Response(null, {
             status: 302,
             headers: { 'Location': fallbackUrl }

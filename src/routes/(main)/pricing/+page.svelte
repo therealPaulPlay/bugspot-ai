@@ -9,9 +9,9 @@
 	let loading = null;
 
 	const tiers = [
-		{ id: 0, name: "Base", price: 0, reportLimit: 25 },
-		{ id: 1, name: "Pro", price: 25, reportLimit: 300 },
-		{ id: 2, name: "Enterprise", price: 75, reportLimit: 1000 },
+		{ id: 0, name: "Base", price: 0, reportLimit: 35 },
+		{ id: 1, name: "Pro", price: 19, reportLimit: 500 },
+		{ id: 2, name: "Enterprise", price: 75, reportLimit: 2500 },
 	];
 
 	function formatPrice(price) {
@@ -33,14 +33,18 @@
 	<div class="mb-16 text-center">
 		<h1 class="mb-4 text-4xl font-bold">Simple, transparent pricing.</h1>
 		<p class="text-muted-foreground mx-auto max-w-2xl text-xl">
-			All features included. Pay only for the volume you need.
+			All features included. Save valuable dev-time.
 		</p>
 	</div>
 
 	<!-- Pricing cards -->
 	<div class="mb-8 grid gap-8 lg:grid-cols-3">
 		{#each tiers as tier, index}
-			<Card class="relative {index === 1 ? 'border-primary lg:scale-105 shadow-lg' : 'shadow-none'} transition-all hover:shadow-lg">
+			<Card
+				class="relative {index === 1
+					? 'border-primary shadow-lg lg:scale-105'
+					: 'shadow-none'} transition-all hover:shadow-lg"
+			>
 				{#if index === 1}
 					<div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
 						<Badge class="bg-primary text-primary-foreground px-3 py-1">
@@ -59,7 +63,7 @@
 						{/if}
 					</div>
 					<CardDescription class="mt-2 text-lg font-medium">
-						{tier.reportLimit} bug reports per month
+						{tier.reportLimit} bug reports / month*
 					</CardDescription>
 				</CardHeader>
 
@@ -111,6 +115,10 @@
 			</Card>
 		{/each}
 	</div>
+	<p class="text-muted-foreground text-center text-xs mb-6 max-w-1/2 mx-auto">
+		*Reports that the AI closed (e.g. spam, false positives, duplicates) <span class="text-foreground">are counted</span> as bug reports. We
+		keep abuse low with <span class="text-foreground">strict rate limits</span> and <span class="text-foreground">captchas</span>.
+	</p>
 	<div class="mb-26 flex w-full justify-center">
 		<Button variant="outline" size="lg">Manage subscription <UserRoundCog /></Button>
 	</div>

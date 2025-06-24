@@ -1,12 +1,16 @@
-import { llmLimiter, standardLimiter } from '$lib/utils/rateLimiters';
+import { fileUploadLimiter, llmLimiter, standardLimiter } from '$lib/utils/rateLimiters';
 import { json } from '@sveltejs/kit';
 
 export async function handle({ event, resolve }) {
     // API rate limits
     if (event.url.pathname.startsWith('/api')) {
         switch (true) {
-            case event.url.pathname.startsWith('/api/public/llm'):
+            case event.url.pathname.startsWith('/api/public/ai'):
                 if (await llmLimiter.isLimited(event)) return json({ error: 'Too many llm requests' }, { status: 429 });
+                break;
+
+            case event.url.pathname.startsWith('/api/public/file-upload'):
+                if (await fileUploadLimiter.isLimited(event)) return json({ error: 'Too many file upload requests' }, { status: 429 });
                 break;
 
             default:
@@ -15,7 +19,7 @@ export async function handle({ event, resolve }) {
     }
 
     // Parse JSON for API routes with body (not GET or OPTIONS)
-    if (event.url.pathname.startsWith('/api') && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(event.request.method)) {
+    if (event.url.pathname.startsWith('/api') && !event.url.pathname.startsWith('/api/public/file-upload') && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(event.request.method)) {
         try {
             event.locals.body = await event.request.json();
         } catch {

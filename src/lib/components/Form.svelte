@@ -1,5 +1,5 @@
 <script>
-	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, Mail } from "lucide-svelte";
+	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, Loader2, CheckCircle, XCircle } from "lucide-svelte";
 	import Button from "./ui/button/button.svelte";
 	import { fade, fly } from "svelte/transition";
 	import { page } from "$app/state";
@@ -7,12 +7,13 @@
 	import Textarea from "./ui/textarea/textarea.svelte";
 	import Badge from "./ui/badge/badge.svelte";
 	import { onMount, tick } from "svelte";
-	import { replaceState } from "$app/navigation";
 	import init from "overfade";
+	import { toast } from "svelte-sonner";
+	import { betterFetch } from "$lib/utils/betterFetch.js";
 
 	let { formConfig = {}, primaryColor = "black" } = $props();
 
-	let slides = [
+	const slides = [
 		"start",
 		"title",
 		"description",
@@ -23,19 +24,25 @@
 		"video",
 		"email",
 	];
+	const postSlides = ["processing", "question", "closed", "submitted"];
 
 	let currentSlideIndex = $state(0);
-	let slide = $derived(slides[currentSlideIndex]);
+	let isPostSlide = $derived(currentSlideIndex >= slides.length);
+	let slide = $derived(isPostSlide ? postSlides[currentSlideIndex - slides.length] : slides[currentSlideIndex]);
 
 	function nextSlide() {
-		if (currentSlideIndex < slides.length - 1) currentSlideIndex++;
+		const maxIndex = slides.length + postSlides.length - 1;
+		if (currentSlideIndex < maxIndex) {
+			if (currentSlideIndex === slides.length - 1) processSubmission();
+			currentSlideIndex++;
+		}
 	}
 
 	function prevSlide() {
 		if (currentSlideIndex > 0) currentSlideIndex--;
 	}
 
-	// History URL management -----------------------------------------------------------
+	// History URL management
 	onMount(() => {
 		init(); // Overfade
 		const slideIndex = page.url.searchParams.get("slide");
@@ -50,15 +57,21 @@
 		window.history.replaceState({}, "", newUrl);
 	});
 
-	// User inputs --------------------------------------------------------------------------
+	// User inputs
 	let titleInput = $state("");
 	let descriptionInput = $state("");
 	let expectedResultInput = $state("");
 	let observedResultInput = $state("");
-	let stepsInput = $state([""]); // Array of steps
+	let stepsInput = $state([""]);
 	let screenshotFile = $state(null);
 	let videoFile = $state(null);
 	let emailInput = $state("");
+	let questionAnswerInput = $state(""); // For AI follow-up questions
+
+	// Post-processing states
+	let aiResponse = $state(null);
+	let processing = $state(false);
+	let stepsScrollBox = $state();
 
 	// Validation functions
 	const isStepsValid = () => stepsInput.filter((s) => s.trim().length >= 10).length >= 1 || !formConfig.requireSteps;
@@ -66,12 +79,84 @@
 	const isScreenshotValid = () => screenshotFile || !formConfig.requireScreenshot;
 	const isVideoValid = () => videoFile || !formConfig.requireVideo;
 
-	// Elements -------------------------------------------------------------------------------
-	let stepsScrollBox = $state();
+	function validateFile(file, isImage) {
+		const maxSize = isImage ? 3 * 1024 * 1024 : 25 * 1024 * 1024;
+		if (file.size > maxSize) {
+			toast.error(`File too large. ${isImage ? "Images" : "Videos"} must be under ${isImage ? "3MB" : "25MB"}.`);
+			return false;
+		}
+		return true;
+	}
+
+	async function uploadFile(file) {
+		const formData = new FormData();
+		formData.append("file", file);
+		const response = await betterFetch("/api/public/file-upload", { method: "POST", body: formData });
+		return (await response.json()).url;
+	}
+
+	async function processSubmission(includeQuestionAnswer = false) {
+		processing = true;
+		try {
+			// Only upload files on first submission (not when answering questions)
+			let screenshotUrl = null;
+			let videoUrl = null;
+
+			if (!includeQuestionAnswer) {
+				[screenshotUrl, videoUrl] = await Promise.all([
+					screenshotFile ? uploadFile(screenshotFile) : null,
+					videoFile ? uploadFile(videoFile) : null,
+				]);
+			}
+
+			const requestBody = {
+				formId: formConfig.id,
+				title: titleInput,
+				description: descriptionInput,
+				expectedResult: expectedResultInput,
+				observedResult: observedResultInput,
+				steps: stepsInput.filter((s) => s.trim()),
+				email: emailInput,
+				userAgent: navigator.userAgent,
+				screenshotUrl,
+				videoUrl,
+			};
+
+			// Include question and answer if this is a follow-up
+			if (includeQuestionAnswer && questionAnswerInput.trim()) {
+				requestBody.previousQuestion = aiResponse?.message;
+				requestBody.questionAnswer = questionAnswerInput.trim();
+			}
+
+			const response = await betterFetch("/api/public/ai", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(requestBody),
+			});
+
+			aiResponse = await response.json();
+			const actionIndex = { question: 1, closed: 2, submitted: 3 }[aiResponse.action] || 1;
+			currentSlideIndex = slides.length + actionIndex;
+		} catch (error) {
+			console.error("Submission error:", error);
+			toast.error(error.message || "Something went wrong. Please try again.");
+			currentSlideIndex = slides.length - 1;
+		} finally {
+			processing = false;
+		}
+	}
+
+	function resubmitWithAnswer() {
+		if (!questionAnswerInput.trim()) {
+			toast.error("Please provide an answer to continue.");
+			return;
+		}
+		processSubmission(true);
+	}
 </script>
 
 <!-- General information -->
-{#if slide != "start"}
+{#if slide != "start" && !isPostSlide}
 	<div class="text-muted-foreground absolute top-6 left-6 flex items-center gap-4 text-xs" in:fade>
 		<Button variant="link" class="h-fit !p-0" onclick={prevSlide}><ArrowLeft /> Back</Button>
 		<p>{currentSlideIndex + 1} / {slides.length}</p>
@@ -128,7 +213,7 @@
 		ondrop={(e) => {
 			e.preventDefault();
 			const f = e.dataTransfer.files?.[0];
-			if (f && f.type.startsWith(type + "/")) setFile(f);
+			if (f && f.type.startsWith(type + "/") && validateFile(f, type === "image")) setFile(f);
 		}}
 		ondragover={(e) => e.preventDefault()}
 	>
@@ -154,7 +239,7 @@
 					accept="{type}/*"
 					onchange={(e) => {
 						const f = e.target.files?.[0];
-						if (f && f.type.startsWith(type + "/")) setFile(f);
+						if (f && f.type.startsWith(type + "/") && validateFile(f, type === "image")) setFile(f);
 					}}
 					class="hidden"
 				/>
@@ -288,6 +373,68 @@
 			</p>
 		</div>
 		{@render nextButton(isEmailValid())}
+	</div>
+{/if}
+
+<!-- Post slides -->
+{#if slide == "processing"}
+	<div class="flex flex-col items-center justify-center text-center" in:fade>
+		<Loader2 class="mb-4 h-12 w-12 animate-spin" />
+		<h2 class="mb-2 text-2xl font-semibold">Processing with AI...</h2>
+		<p class="text-muted-foreground">Please stand by.</p>
+	</div>
+{/if}
+
+{#if slide == "question"}
+	<div in:fade>
+		<h2 class="mb-4 text-2xl font-semibold">We need more information.</h2>
+		<div class="bg-muted/50 mb-4 rounded-xl p-4">
+			<p class="text-sm">{aiResponse?.message}</p>
+		</div>
+		<div class="mb-4">
+			<Textarea
+				bind:value={questionAnswerInput}
+				placeholder="Please provide the additional information requested above..."
+				class="h-24 w-full resize-none"
+				maxlength={500}
+			/>
+			<p class="text-muted-foreground mt-1 ml-2 text-xs">Provide an answer to help with this report. Min. 20 characters.</p>
+		</div>
+		<div class="flex gap-2">
+			<Button onclick={resubmitWithAnswer} disabled={processing || questionAnswerInput.length < 20}>
+				{#if processing}
+					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+				{/if}
+				Submit
+			</Button>
+		</div>
+	</div>
+{/if}
+
+{#if slide == "closed"}
+	<div in:fade>
+		<div class="mb-4 flex items-center gap-2">
+			<XCircle class="h-6 w-6" />
+			<h2 class="text-2xl font-semibold">Report not submitted.</h2>
+		</div>
+		<div class="bg-muted/50 max-h-48 overflow-y-auto rounded-xl">
+			<div class="of-top of-bottom of-length-2 of-top of-bottom max-h-30 overflow-y-auto p-4">
+				<p class="text-sm">{aiResponse?.message}</p>
+			</div>
+		</div>
+	</div>
+{/if}
+
+{#if slide == "submitted"}
+	<div class="flex flex-col items-center justify-center text-center" in:fade>
+		<CheckCircle class="mb-4 h-12 w-12" />
+		<h2 class="mb-2 text-2xl font-semibold">Submitted!</h2>
+		<p class="text-muted-foreground mb-4">Thank you for your report.</p>
+		{#if aiResponse?.issueUrl}
+			<Button onclick={() => window.open(aiResponse.issueUrl, "_blank")} variant="outline">
+				View on GitHub <ArrowRight class="h-4 w-4" />
+			</Button>
+		{/if}
 	</div>
 {/if}
 

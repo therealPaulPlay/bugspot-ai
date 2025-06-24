@@ -53,16 +53,29 @@ export async function POST({ request, locals }) {
         const tokenData = await tokenResponse.json();
         if (tokenData.error) return json({ error: tokenData.error_description || 'GitHub authentication failed' }, { status: 400 });
 
-        // Get user info from GitHub
-        const userResponse = await fetch('https://api.github.com/user', {
-            headers: {
-                'Authorization': `Bearer ${tokenData.access_token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
+        // Get user info and installation data from GitHub
+        const [userResponse, installationResponse] = await Promise.all([
+            fetch('https://api.github.com/user', {
+                headers: {
+                    'Authorization': `Bearer ${tokenData.access_token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            }),
+            fetch('https://api.github.com/user/installations', {
+                headers: {
+                    'Authorization': `Bearer ${tokenData.access_token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            })
+        ]);
 
         const githubUser = await userResponse.json();
         if (!githubUser.id) return json({ error: 'Failed to get user information from GitHub' }, { status: 400 });
+
+        const installations = await installationResponse.json();
+        const userInstallation = installations.installations?.find(inst =>
+            inst.account.id === githubUser.id && inst.app_id === parseInt(env.GITHUB_APP_ID)
+        );
 
         // Get user email
         const emailResponse = await fetch('https://api.github.com/user/emails', {
@@ -86,7 +99,8 @@ export async function POST({ request, locals }) {
                 username: githubUser.login,
                 email: primaryEmail,
                 avatar: githubUser.avatar_url,
-                subscriptionTier: 0
+                subscriptionTier: 0,
+                githubInstallationId: userInstallation?.id?.toString() || null
             };
 
             const insertResult = await db.insert(users).values(newUser);
@@ -97,7 +111,8 @@ export async function POST({ request, locals }) {
                 .set({
                     username: githubUser.login,
                     email: primaryEmail,
-                    avatar: githubUser.avatar_url
+                    avatar: githubUser.avatar_url,
+                    githubInstallationId: userInstallation?.id?.toString() || null
                 })
                 .where(eq(users.id, user[0].id));
 
