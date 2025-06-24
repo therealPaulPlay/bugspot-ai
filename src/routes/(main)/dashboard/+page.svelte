@@ -189,7 +189,7 @@
 									size="sm"
 									class="flex-1"
 									onclick={() => {
-										window.open(`/form/${formId}`, "_blank");
+										window.open(`/form/${form.id}`, "_blank");
 									}}
 								>
 									<ExternalLink class="h-4 w-4" />

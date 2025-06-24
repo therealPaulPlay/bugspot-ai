@@ -32,9 +32,7 @@
 	<!-- Header -->
 	<div class="mb-16 text-center">
 		<h1 class="mb-4 text-4xl font-bold">Simple, transparent pricing.</h1>
-		<p class="text-muted-foreground mx-auto max-w-2xl text-xl">
-			All features included. Save valuable dev-time.
-		</p>
+		<p class="text-muted-foreground mx-auto max-w-2xl text-xl">All features included. Save valuable dev-time.</p>
 	</div>
 
 	<!-- Pricing cards -->
@@ -76,7 +74,7 @@
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Automatic priority and tag management</span>
+							<span class="text-sm">Automatic priority management</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
@@ -115,9 +113,9 @@
 			</Card>
 		{/each}
 	</div>
-	<p class="text-muted-foreground text-center text-xs mb-6 max-w-1/2 mx-auto">
-		*Reports that the AI closed (e.g. spam, false positives, duplicates) <span class="text-foreground">are counted</span> as bug reports. We
-		keep abuse low with <span class="text-foreground">strict rate limits</span> and <span class="text-foreground">captchas</span>.
+	<p class="text-muted-foreground mx-auto mb-6 max-w-1/2 text-center text-xs">
+		*Reports that the AI closed (e.g. spam, false positives, duplicates) are counted as bug reports. We keep abuse low
+		with strict rate limits and captchas.
 	</p>
 	<div class="mb-26 flex w-full justify-center">
 		<Button variant="outline" size="lg">Manage subscription <UserRoundCog /></Button>

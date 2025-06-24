@@ -48,47 +48,69 @@ async function deleteFile(url) {
     }
 }
 
-async function processReport(title, description, expectedResult, observedResult, steps, email, userAgent, screenshotUrl, videoUrl, customPrompt, previousQuestion, questionAnswer) {
+async function processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, customPrompt, previousQuestion, questionAnswer) {
     const messages = [{
         role: 'system',
         content: `You are a bug report processor. Based on the information provided, choose ONE action:
 
 1. ASK_QUESTION - If more information is needed
-2. CLOSE_REPORT - If this is spam, user environment issue, or not actually a bug
+2. CLOSE_REPORT - If this is spam, user environment issue, not actually a bug or you were told to close this type of report in the guidelines
 3. SUBMIT_REPORT - If this is a valid bug that should be submitted to GitHub
 
 ${customPrompt ? `Additional guidelines: ${customPrompt}` : ''}
+
+---- CONTENT FORMAT (Markdown):
+### Description:
+(Detailed & concise description here)
+
+### Behavior
+**Expected:** ${expectedResult ? '(Expected result)' : 'Not provided.'}
+
+**Observed:** ${observedResult ? '(Observed result)' : 'Not provided.'}
+
+### Steps:
+${steps ? '1. (Step one – and so on)' : 'Not provided.'}
+
+### Media:
+Screenshot: ${screenshotUrl ? '(Screenshot URL)' : 'Not provided.'}
+Video: ${videoUrl ? '(Video URL)' : 'Not provided.'}
+
+### Environment details
+${userAgent ? `<details>\n<summary>User agent</summary>\n(User agent)\n</details>` : ''}
+${customData ? `<details>\n<summary>Custom data</summary>\n(Custom data)\n</details>` : ''}
+${(!customData && !userAgent) ? 'No environment information.' : ''}
+
+### Contact
+Email: ${email ? '(Email here)' : 'Not provided.'}
+---- END OF CONTENT FORMAT
+
+DO NOT alter, rephrase, or correct URLs, Custom data, User agent data and Emails.
 
 ONLY respond with this JSON format:
 {
   "action": "ASK_QUESTION|CLOSE_REPORT|SUBMIT_REPORT",
   "message": "Your response text",
   "title": "Clean title (for SUBMIT_REPORT only)",
-  "content": "GitHub issue content (for SUBMIT_REPORT only)",
+  "content": "GitHub issue content in the content format (for SUBMIT_REPORT only)",
   "priority": "P1|P2|P3|P4 (for SUBMIT_REPORT only)"
 }`
     }];
 
     let userContent = `TITLE: ${title}
 DESCRIPTION: ${description}
-EXPECTED: ${expectedResult || 'Not provided'}
-OBSERVED: ${observedResult || 'Not provided'}
-STEPS: ${steps?.filter(s => s.trim()).join(', ') || 'Not provided'}
-EMAIL: ${email || 'Not provided'}
-USER_AGENT: ${userAgent || 'Not provided'}`;
+EXPECTED: ${expectedResult || 'Not provided.'}
+OBSERVED: ${observedResult || 'Not provided.'}
+STEPS: ${steps?.filter(s => s.trim()).join(', ') || 'Not provided.'}
+EMAIL: ${email || 'Not provided.'}
+USER_AGENT: ${userAgent || 'Not provided.'}
+CUSTOM_DATA: ${customData || "Not provided."}`;
 
     // Handle media files with descriptive text instead of URLs
-    if (screenshotUrl)  userContent += `\nSCREENSHOT: User has provided a screenshot – you do not have the capability to view images, but this may be helpful to developers.`;
-    else userContent += `\nSCREENSHOT: Not provided`;
-
-    if (videoUrl) userContent += `\nVIDEO: User has provided a video – you do not have the capability to watch videos, but this may be helpful to developers.`;
-    else userContent += `\nVIDEO: Not provided`;
+    if (screenshotUrl) userContent += `\nSCREENSHOT: User has provided a screenshot – you do not have the capability to view images. Include the URL in reports: ${screenshotUrl}`;
+    if (videoUrl) userContent += `\nVIDEO: User has provided a video – you do not have the capability to watch videos. Include the URL in reports: ${videoUrl}`;
 
     // Add previous question and answer if this is a follow-up
-    if (previousQuestion && questionAnswer) {
-        userContent += `\n\nPREVIOUS QUESTION: ${previousQuestion}
-USER ANSWER: ${questionAnswer}`;
-    }
+    if (previousQuestion && questionAnswer) userContent += `\n\nPREVIOUS QUESTION: ${previousQuestion} \nUSER ANSWER: ${questionAnswer}`;
 
     messages.push({ role: 'user', content: userContent });
 
@@ -118,11 +140,10 @@ export async function POST({ request, locals }) {
     try {
         const {
             formId, title, description, expectedResult, observedResult, steps,
-            email, userAgent, screenshotUrl, videoUrl, previousQuestion, questionAnswer
+            email, userAgent, customData, screenshotUrl, videoUrl, previousQuestion, questionAnswer
         } = locals.body;
 
-        if (!formId || !title || !description)
-            return json({ error: 'Missing required fields' }, { status: 400 });
+        if (!formId || !title || !description) return json({ error: 'Missing required fields id, title and description.' }, { status: 400 });
 
         // Get form with user data
         const formData = await db
@@ -144,7 +165,7 @@ export async function POST({ request, locals }) {
         // Process with AI
         const aiResult = await processReport(
             title, description, expectedResult, observedResult,
-            steps, email, userAgent, screenshotUrl, videoUrl, form.customPrompt,
+            steps, email, userAgent, customData, screenshotUrl, videoUrl, form.customPrompt,
             previousQuestion, questionAnswer
         );
 
@@ -163,7 +184,7 @@ export async function POST({ request, locals }) {
             await incrementReportCount(user.id);
 
             // Create GitHub issue
-            const labels = ['bug', 'bugspot', aiResult.priority];
+            const labels = ['bug', aiResult.priority];
             const issueResult = await createGithubIssue(formId, aiResult.title, aiResult.content, labels);
 
             return json({

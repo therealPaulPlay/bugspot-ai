@@ -1,5 +1,5 @@
 <script>
-	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, Loader2, CheckCircle, XCircle } from "lucide-svelte";
+	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, Loader2, XCircle, Send } from "lucide-svelte";
 	import Button from "./ui/button/button.svelte";
 	import { fade, fly } from "svelte/transition";
 	import { page } from "$app/state";
@@ -7,7 +7,6 @@
 	import Textarea from "./ui/textarea/textarea.svelte";
 	import Badge from "./ui/badge/badge.svelte";
 	import { onMount, tick } from "svelte";
-	import init from "overfade";
 	import { toast } from "svelte-sonner";
 	import { betterFetch } from "$lib/utils/betterFetch.js";
 
@@ -38,13 +37,8 @@
 		}
 	}
 
-	function prevSlide() {
-		if (currentSlideIndex > 0) currentSlideIndex--;
-	}
-
 	// History URL management
 	onMount(() => {
-		init(); // Overfade
 		const slideIndex = page.url.searchParams.get("slide");
 		if (slideIndex) currentSlideIndex = parseInt(slideIndex);
 	});
@@ -67,6 +61,9 @@
 	let videoFile = $state(null);
 	let emailInput = $state("");
 	let questionAnswerInput = $state(""); // For AI follow-up questions
+
+	// Attached data TODO: allow passing it via url query
+	let customData = $state();
 
 	// Post-processing states
 	let aiResponse = $state(null);
@@ -118,6 +115,7 @@
 				steps: stepsInput.filter((s) => s.trim()),
 				email: emailInput,
 				userAgent: navigator.userAgent,
+				customData,
 				screenshotUrl,
 				videoUrl,
 			};
@@ -157,9 +155,18 @@
 
 <!-- General information -->
 {#if slide != "start" && !isPostSlide}
-	<div class="text-muted-foreground absolute top-6 left-6 flex items-center gap-4 text-xs" in:fade>
-		<Button variant="link" class="h-fit !p-0" onclick={prevSlide}><ArrowLeft /> Back</Button>
-		<p>{currentSlideIndex + 1} / {slides.length}</p>
+	<div
+		class="text-muted-foreground bg-background absolute top-6 left-6 flex items-center gap-4 rounded pr-2 text-xs"
+		in:fade
+	>
+		<Button
+			variant="link"
+			class="h-fit !p-0"
+			onclick={() => {
+				if (currentSlideIndex > 0) currentSlideIndex--;
+			}}><ArrowLeft /> Back</Button
+		>
+		<p>{currentSlideIndex} / {slides.length - 1}</p>
 	</div>
 {/if}
 
@@ -179,8 +186,8 @@
 		</div>
 
 		<p class="text-muted-foreground text-center text-xs" out:fly={{ y: 50, duration: 300 }}>
-			This form is powered by <a href={page.url.origin} target="_blank" class="hover:underline">Bugspot</a>. By clicking
-			on "Start", you accept the
+			This form is powered by <a href={page.url.origin} target="_blank" class="text-primary hover:underline">Bugspot</a
+			>. By clicking on "Start", you accept the
 			<a href="/terms" target="_blank" class="hover:underline">Terms of Use</a>
 			and <a href="/privacy" target="_blank" class="hover:underline">Privacy Policy</a>.
 		</p>
@@ -367,7 +374,7 @@
 		{@render optionalBadge(!formConfig.requireEmail)}
 		<h2 class="mb-4 text-2xl font-semibold">Provide an email address.</h2>
 		<div class="max-w-sm">
-			<Input bind:value={emailInput} type="email" placeholder="you@example.com" maxlength={100} />
+			<Input bind:value={emailInput} type="email" placeholder="your-name@example.com" maxlength={100} />
 			<p class="text-muted-foreground mt-1 ml-2 max-w-60 text-xs">
 				We might send you questions or updates regarding your report.
 			</p>
@@ -386,19 +393,23 @@
 {/if}
 
 {#if slide == "question"}
-	<div in:fade>
+	<div in:fade class="max-w-100">
 		<h2 class="mb-4 text-2xl font-semibold">We need more information.</h2>
 		<div class="bg-muted/50 mb-4 rounded-xl p-4">
-			<p class="text-sm">{aiResponse?.message}</p>
+			<p class="of-top of-bottom max-h-18 overflow-y-auto text-sm">
+				{aiResponse?.message || "No AI response (Error)."}
+			</p>
 		</div>
 		<div class="mb-4">
 			<Textarea
 				bind:value={questionAnswerInput}
-				placeholder="Please provide the additional information requested above..."
+				placeholder="Here is additional information regarding..."
 				class="h-24 w-full resize-none"
 				maxlength={500}
 			/>
-			<p class="text-muted-foreground mt-1 ml-2 text-xs">Provide an answer to help with this report. Min. 20 characters.</p>
+			<p class="text-muted-foreground mt-1 ml-2 text-xs">
+				Provide an answer to help with this report. Min. 20 characters.
+			</p>
 		</div>
 		<div class="flex gap-2">
 			<Button onclick={resubmitWithAnswer} disabled={processing || questionAnswerInput.length < 20}>
@@ -412,14 +423,14 @@
 {/if}
 
 {#if slide == "closed"}
-	<div in:fade>
+	<div in:fade class="max-w-100">
 		<div class="mb-4 flex items-center gap-2">
 			<XCircle class="h-6 w-6" />
 			<h2 class="text-2xl font-semibold">Report not submitted.</h2>
 		</div>
 		<div class="bg-muted/50 max-h-48 overflow-y-auto rounded-xl">
 			<div class="of-top of-bottom of-length-2 of-top of-bottom max-h-30 overflow-y-auto p-4">
-				<p class="text-sm">{aiResponse?.message}</p>
+				<p class="text-sm">{aiResponse?.message || "No AI response (Error)."}</p>
 			</div>
 		</div>
 	</div>
@@ -427,7 +438,7 @@
 
 {#if slide == "submitted"}
 	<div class="flex flex-col items-center justify-center text-center" in:fade>
-		<CheckCircle class="mb-4 h-12 w-12" />
+		<Send class="mb-4 h-12 w-12" />
 		<h2 class="mb-2 text-2xl font-semibold">Submitted!</h2>
 		<p class="text-muted-foreground mb-4">Thank you for your report.</p>
 		{#if aiResponse?.issueUrl}

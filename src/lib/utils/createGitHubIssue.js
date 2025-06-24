@@ -3,7 +3,7 @@ import { db } from '$lib/server/db/index.js';
 import { forms, users } from '$lib/server/db/schema.js';
 import { getInstallationToken, createGitHubIssue } from './gitHubAppAccess.js';
 
-export async function createGithubIssue(formId, title, content, labels = ['Bugspot']) {
+export async function createGithubIssue(formId, title, content, labels = []) {
     try {
         // Get form with user data
         const formData = await db

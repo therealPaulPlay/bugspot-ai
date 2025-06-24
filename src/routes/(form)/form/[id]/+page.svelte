@@ -1,9 +1,14 @@
 <script>
 	import Form from "$lib/components/Form.svelte";
 	import { onMount } from "svelte";
+	import init from "overfade";
 
 	let { data } = $props();
 	let formConfig = $derived(data?.form || {});
+
+	onMount(() => {
+		init(); // Init Overfade
+	});
 
 	// Color scheme mappings with light/dark mode variants
 	const colorSchemes = {
@@ -72,9 +77,9 @@
 
 <!-- Form box -->
 <div class="absolute inset-0 flex items-center justify-center p-8">
-	<div
-		class="bg-background relative flex h-full max-h-100 w-full max-w-2xl flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl p-6 shadow-xl"
-	>
-		<Form {formConfig} {primaryColor} />
+	<div class="bg-background relative h-100 max-h-full w-2xl max-w-full rounded-3xl p-2 shadow-xl">
+		<div class="of-top of-bottom flex flex-col w-full h-full items-center justify-center-safe gap-4 p-4 overflow-y-auto">
+			<Form {formConfig} {primaryColor} />
+		</div>
 	</div>
 </div>
