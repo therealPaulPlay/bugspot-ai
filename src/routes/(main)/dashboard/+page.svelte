@@ -3,6 +3,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "$lib/components/ui/dialog";
+	import { Progress } from "$lib/components/ui/progress/index.js";
 	import { Plus, Settings, ExternalLink, Copy, CheckCircle, Trash2, Info } from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { betterFetch } from "$lib/utils/betterFetch";
@@ -10,6 +11,7 @@
 	import { user } from "$lib/stores/account";
 	import CreateFormDialog from "$lib/components/CreateFormDialog.svelte";
 	import { page } from "$app/state";
+	import { tiers } from "$lib/stores/tiers";
 
 	let forms = $state([]);
 	let loading = $state(true);
@@ -19,6 +21,12 @@
 	let editingForm = $state(null);
 	let currentFormId = $state(null);
 	let copied = $state(false);
+	let reportAmount = $derived($user?.reportAmount || 0);
+	let subscriptionTier = $derived($user?.subscriptionTier || 0);
+
+	let currentLimit = $derived($tiers.find((e) => e.id == subscriptionTier)?.reportLimit);
+	let progressValue = $derived(Math.max(1, Math.round((reportAmount / currentLimit) * 100)));
+	let isLimitReached = $derived(reportAmount >= currentLimit);
 
 	$effect(async () => {
 		if ($user) await loadDashboard();
@@ -109,10 +117,35 @@
 
 <div class="mx-auto min-h-screen max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 	<!-- Header -->
-	<div class="mb-8">
+	<div class="mb-6">
 		<h1 class="text-3xl font-bold">Dashboard</h1>
 		<p class="text-muted-foreground mt-1">Manage your bug report forms.</p>
 	</div>
+
+	<!-- Report Usage -->
+	{#if !loading}
+		<div class="mb-12 max-w-md">
+			{#if isLimitReached}
+				<div class="rounded-lg border border-orange-200 bg-orange-50 p-4">
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="font-medium text-orange-800">Monthly report limit reached!</p>
+							<p class="text-sm">Upgrade to continue receiving reports.</p>
+						</div>
+						<Button onclick={() => goto("/pricing")} size="sm">Upgrade plan</Button>
+					</div>
+				</div>
+			{:else}
+				<div class="space-y-2">
+					<div class="flex items-center justify-between text-sm">
+						<span class="text-muted-foreground">Monthly reports</span>
+						<span class="text-muted-foreground">{reportAmount} / {currentLimit}</span>
+					</div>
+					<Progress value={progressValue} max={100} class="h-2" />
+				</div>
+			{/if}
+		</div>
+	{/if}
 
 	{#if loading}
 		<!-- Loading state -->

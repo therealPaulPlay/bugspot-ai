@@ -3,16 +3,12 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Badge } from "$lib/components/ui/badge";
-	import { Check, Crown, Mail, UserRoundCog } from "lucide-svelte";
+	import { Check, CheckCircle, Crown, Mail, UserRoundCog } from "lucide-svelte";
 	import { goto } from "$app/navigation";
+	import { tiers } from "$lib/stores/tiers";
+	import { isAuthenticated, user } from "$lib/stores/account";
 
 	let loading = null;
-
-	const tiers = [
-		{ id: 0, name: "Base", price: 0, reportLimit: 35 },
-		{ id: 1, name: "Pro", price: 19, reportLimit: 500 },
-		{ id: 2, name: "Enterprise", price: 75, reportLimit: 2500 },
-	];
 
 	function formatPrice(price) {
 		return price === 0 ? "Free" : `$${price}`;
@@ -37,7 +33,7 @@
 
 	<!-- Pricing cards -->
 	<div class="mb-8 grid gap-8 lg:grid-cols-3">
-		{#each tiers as tier, index}
+		{#each $tiers as tier, index}
 			<Card
 				class="relative {index === 1
 					? 'border-primary shadow-lg lg:scale-105'
@@ -95,14 +91,16 @@
 						class="w-full {index === 1 ? '' : 'variant-outline'}"
 						size="lg"
 						variant={index === 1 ? "default" : "outline"}
-						disabled={loading === tier.id}
+						disabled={loading === tier.id || $user?.subscriptionTier == tier.id || $user?.subscriptionTier > tier.id}
 						onclick={() => {
-							if (tier.price === 0) goto("/login");
+							if (tier.price === 0 && !$isAuthenticated) goto("/login");
 						}}
 					>
 						{#if loading === tier.id}
 							<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
 							Processing...
+						{:else if $user?.subscriptionTier == tier.id}
+							Selected <CheckCircle />
 						{:else if tier.price === 0}
 							Get started
 						{:else}
@@ -118,7 +116,13 @@
 		with strict rate limits and captchas.
 	</p>
 	<div class="mb-26 flex w-full justify-center">
-		<Button variant="outline" size="lg">Manage subscription <UserRoundCog /></Button>
+		<Button
+			variant="outline"
+			size="lg"
+			onclick={() => {
+				if (!$isAuthenticated) return goto("/login");
+			}}>Manage subscription <UserRoundCog /></Button
+		>
 	</div>
 
 	<!-- Contact section -->

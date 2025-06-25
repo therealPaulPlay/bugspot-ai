@@ -30,6 +30,35 @@ function createNewJwtToken(user) {
     }
 }
 
+// Get current user info
+export async function GET({ request, url }) {
+    const userId = url.searchParams.get('userId');
+    if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
+
+    authenticateTokenWithId(request, userId);
+
+    try {
+        const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+        if (!user.length) return json({ error: 'User not found' }, { status: 404 });
+
+        const userData = user[0];
+        return json({
+            user: {
+                id: userData.id.toString(),
+                username: userData.username,
+                email: userData.email,
+                avatar: userData.avatar,
+                subscriptionTier: userData.subscriptionTier,
+                reportAmount: userData.reportAmount || 0
+            }
+        });
+
+    } catch (error) {
+        console.error('Account info error:', error);
+        return json({ error: 'Failed to get account info' }, { status: 500 });
+    }
+}
+
 // GitHub App OAuth login/signup
 export async function POST({ request, locals }) {
     const { code, state } = locals.body;
@@ -131,7 +160,8 @@ export async function POST({ request, locals }) {
                 username: user[0].username,
                 email: user[0].email,
                 avatar: user[0].avatar,
-                subscriptionTier: user[0].subscriptionTier
+                subscriptionTier: user[0].subscriptionTier,
+                reportAmount: user[0].reportAmount || 0
             }
         });
 
