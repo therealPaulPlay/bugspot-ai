@@ -1,5 +1,19 @@
+import { db } from '$lib/server/db';
+import { users } from '$lib/server/db/schema';
 import { fileUploadLimiter, llmLimiter, standardLimiter } from '$lib/utils/rateLimiters';
 import { json } from '@sveltejs/kit';
+import cron from 'node-cron';
+
+// Monthly reset job - runs on the 1st of every month at midnight UTC
+cron.schedule('0 0 1 * *', async () => {
+    try {
+        console.log('Running monthly report amount reset...');
+        await db.update(users).set({ reportAmount: 0 });
+        console.log('Successfully reset all user report amounts.');
+    } catch (error) {
+        console.error('Monthly reset error:', error);
+    }
+});
 
 export async function handle({ event, resolve }) {
     // API rate limits

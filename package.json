@@ -43,6 +43,7 @@
 		"lucide-svelte": "^0.515.0",
 		"mode-watcher": "^1.0.8",
 		"mysql2": "^3.12.0",
+		"node-cron": "^4.1.1",
 		"overfade": "^0.0.5",
 		"sveltekit-rate-limiter": "^0.7.0"
 	}
