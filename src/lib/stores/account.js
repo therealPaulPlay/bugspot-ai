@@ -8,25 +8,6 @@ import { goto } from '$app/navigation';
 // User
 export const user = writable(null);
 
-// Initialize from localStorage on load
-if (browser) {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-        try {
-            const token = localStorage.getItem("bearer");
-            if (!isTokenExpired(token)) user.set(JSON.parse(storedUser));
-            else {
-                authStore.logout();
-                toast.info("Your session has expired. Please sign in again.")
-                if (page.url.pathname.startsWith("/dashboard")) goto("/login");
-            }
-        } catch (error) {
-            console.error('Failed to parse stored user:', error);
-            authStore.logout();
-        }
-    }
-}
-
 // Auth helpers
 export const authStore = {
     login: (loginData) => {
@@ -45,6 +26,25 @@ export const authStore = {
         }
     }
 };
+
+// Initialize from localStorage on load
+if (browser) {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+        try {
+            const token = localStorage.getItem("bearer");
+            if (!isTokenExpired(token)) user.set(JSON.parse(storedUser));
+            else {
+                authStore.logout();
+                toast.info("Your session has expired. Please sign in again.")
+                if (page.url.pathname.startsWith("/dashboard")) goto("/login");
+            }
+        } catch (error) {
+            console.error('Failed to parse stored user:', error);
+            authStore.logout();
+        }
+    }
+}
 
 // Derived
 export const isAuthenticated = derived(user, ($user) => !!$user);

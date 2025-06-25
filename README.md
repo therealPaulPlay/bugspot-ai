@@ -1,5 +1,5 @@
 # Bugspot
-Bugspot uses [Svelte 5](https://svelte.dev) & SvelteKit. For styling, [Tailwind](https://tailwindcss.com) is used together with [shadcn-svelte](https://www.shadcn-svelte.com).
+Bugspot uses [Svelte 5](https://svelte.dev) & SvelteKit. For styling, [Tailwind](https://tailwindcss.com) is used together with [Shadcn-svelte](https://www.shadcn-svelte.com).
 LLMs are being interfaced with using [OpenRouter](https://openrouter.ai). 
 
 ## Developing
