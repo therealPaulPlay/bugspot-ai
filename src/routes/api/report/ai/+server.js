@@ -5,6 +5,7 @@ import { forms, users } from '$lib/server/db/schema.js';
 import { createGithubIssue } from '$lib/utils/createGithubIssue.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getBaseURL } from '$lib/server/s3/index.js';
+import { validateCaptcha } from '$lib/utils/validateCaptcha.js';
 import { env } from '$env/dynamic/private';
 
 const OPENROUTER_API_KEY = env.OPENROUTER_API_KEY;
@@ -47,7 +48,7 @@ async function deleteFile(url) {
     }
 }
 
-async function processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, customPrompt, previousQuestion, questionAnswer) {
+async function processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, customPrompt, questionAnswerHistory) {
     const messages = [{
         role: 'system',
         content: `You are a bug report processor. Based on the information provided, choose ONE action:
@@ -85,6 +86,7 @@ Email: ${email ? '(Email here)' : 'Not provided.'}
 
 DO NOT alter, rephrase, or correct URLs, Custom data, User agent data and Emails.
 DO NOT capitalize random words in the title of the report and follow the rules of English grammar. 
+DO NOT use markdown or any other special formatting when closing a report or simply asking a question.
 
 ONLY respond with this JSON format:
 {
@@ -109,13 +111,13 @@ CUSTOM_DATA: ${customData || "Not provided."}`;
     if (screenshotUrl) userContent += `\nSCREENSHOT: User has provided a screenshot – you do not have the capability to view images. Include the URL in reports: ${screenshotUrl}`;
     if (videoUrl) userContent += `\nVIDEO: User has provided a video – you do not have the capability to watch videos. Include the URL in reports: ${videoUrl}`;
 
-    // Add previous question and answer if this is a follow-up
-    if (previousQuestion && questionAnswer) userContent += `\n\nPREVIOUS QUESTION: ${previousQuestion} \nUSER ANSWER: ${questionAnswer}`;
+    // Add question/answer history if present
+    if (questionAnswerHistory) userContent += `\n\nQUESTION/ANSWER HISTORY:\n${questionAnswerHistory}`;
 
-    // Check user content length to prevent abuse
     if (userContent.length > 10000) throw new Error('Input too large!');
 
     messages.push({ role: 'user', content: userContent });
+    console.log(messages);
 
     const response = await makeAIRequest(messages);
 
@@ -138,11 +140,15 @@ async function incrementReportCount(userId) {
         .where(eq(users.id, userId));
 }
 
-export async function POST({ request, locals }) {
+export async function POST({ request, locals, getClientAddress }) {
     try {
+        // Validate captcha
+        const captchaToken = request.headers.get('cf-turnstile-response');
+        await validateCaptcha(captchaToken, getClientAddress());
+
         const {
             formId, title, description, expectedResult, observedResult, steps,
-            email, userAgent, customData, screenshotUrl, videoUrl, previousQuestion, questionAnswer
+            email, userAgent, customData, screenshotUrl, videoUrl, questionAnswerHistory
         } = locals.body;
 
         if (!formId || !title || !description) return json({ error: 'Missing required fields id, title and description.' }, { status: 400 });
@@ -167,7 +173,7 @@ export async function POST({ request, locals }) {
         const aiResult = await processReport(
             title, description, expectedResult, observedResult,
             steps, email, userAgent, customData, screenshotUrl, videoUrl, form.customPrompt,
-            previousQuestion, questionAnswer
+            questionAnswerHistory
         );
 
         if (aiResult.action === 'ASK_QUESTION') {
@@ -199,6 +205,6 @@ export async function POST({ request, locals }) {
 
     } catch (error) {
         console.error('AI processing error:', error);
-        return json({ error: 'AI processing failed: ' + error }, { status: 500 });
+        return json({ error: 'AI processing failed.' }, { status: 500 });
     }
 }

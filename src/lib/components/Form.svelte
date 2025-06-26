@@ -1,7 +1,7 @@
 <script>
 	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, Loader2, XCircle, Send } from "lucide-svelte";
 	import Button from "./ui/button/button.svelte";
-	import { fade, fly } from "svelte/transition";
+	import { fade, fly, scale } from "svelte/transition";
 	import { page } from "$app/state";
 	import Input from "./ui/input/input.svelte";
 	import Textarea from "./ui/textarea/textarea.svelte";
@@ -9,6 +9,7 @@
 	import { onMount, tick } from "svelte";
 	import { toast } from "svelte-sonner";
 	import { betterFetch } from "$lib/utils/betterFetch.js";
+	import { renderCaptcha } from "$lib/utils/renderCaptcha.js";
 
 	let { formConfig = {}, primaryColor = "black" } = $props();
 
@@ -38,15 +39,24 @@
 		const topHostname = isInIframe ? window.top?.location.hostname : null;
 		const referrerHostname = document.referrer ? new URL(document.referrer).hostname : null;
 
-		// Reject if neither referrer nor top window hostname is available
 		if (!topHostname && !referrerHostname) return false;
 
 		const checkDomain = topHostname || referrerHostname;
 		return checkDomain === page.url.hostname || allowedDomains.includes(checkDomain);
 	}
 
+	// Captcha
+	let captchaVisible = $state(false);
+	let captchaToken = $state(null);
+
 	onMount(() => {
 		isDomainAllowed = checkDomainAccess();
+
+		window.onFormCaptchaCompleted = function (token) {
+			captchaToken = token;
+			captchaVisible = false;
+			processSubmission(); // Continue with submission
+		};
 	});
 
 	function nextSlide() {
@@ -76,7 +86,8 @@
 	let screenshotFile = $state(null);
 	let videoFile = $state(null);
 	let emailInput = $state("");
-	let questionAnswerInput = $state(""); // For AI follow-up questions
+	let questionAnswerInput = $state("");
+	let questionAnswerHistory = $state(""); // Complete Q&A history
 
 	// Attached data
 	let customData = $state();
@@ -108,18 +119,29 @@
 		return (await response.json()).url;
 	}
 
-	async function processSubmission(includeQuestionAnswer = false) {
+	async function processSubmission() {
+		// Check captcha first
+		if (!captchaToken) return (captchaVisible = true);
+
 		processing = true;
+		currentSlideIndex = slides.length; // Go to processing slide
+
 		try {
-			// Only upload files on first submission (not when answering questions)
+			// Only upload files on first submission
 			let screenshotUrl = null;
 			let videoUrl = null;
 
-			if (!includeQuestionAnswer) {
+			if (!questionAnswerInput.trim()) {
 				[screenshotUrl, videoUrl] = await Promise.all([
 					screenshotFile ? uploadFile(screenshotFile) : null,
 					videoFile ? uploadFile(videoFile) : null,
 				]);
+			}
+
+			// Add current Q&A to history if this is a follow-up
+			if (questionAnswerInput.trim()) {
+				questionAnswerHistory += `YOU ASKED: ${aiResponse.message}\nUSER ANSWERED: ${questionAnswerInput.trim()}\n`;
+				questionAnswerInput = ""; // Reset the question input!
 			}
 
 			const requestBody = {
@@ -134,23 +156,22 @@
 				customData,
 				screenshotUrl,
 				videoUrl,
+				questionAnswerHistory,
 			};
-
-			// Include question and answer if this is a follow-up
-			if (includeQuestionAnswer && questionAnswerInput.trim()) {
-				requestBody.previousQuestion = aiResponse?.message;
-				requestBody.questionAnswer = questionAnswerInput.trim();
-			}
 
 			const response = await betterFetch("/api/report/ai", {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
+				headers: {
+					"Content-Type": "application/json",
+					"cf-turnstile-response": captchaToken,
+				},
 				body: JSON.stringify(requestBody),
 			});
 
 			aiResponse = await response.json();
 			const actionIndex = { question: 1, closed: 2, submitted: 3 }[aiResponse.action] || 1;
 			currentSlideIndex = slides.length + actionIndex;
+			captchaToken = null; // Reset, as this token was used
 		} catch (error) {
 			console.error("Submission error:", error);
 			toast.error(error.message || "Something went wrong. Please try again.");
@@ -160,13 +181,10 @@
 		}
 	}
 
-	function resubmitWithAnswer() {
-		if (!questionAnswerInput.trim()) {
-			toast.error("Please provide an answer to continue.");
-			return;
-		}
-		processSubmission(true);
-	}
+	// Captcha effect
+	$effect(() => {
+		if (captchaVisible) renderCaptcha("#captchaContainer", window.onFormCaptchaCompleted);
+	});
 </script>
 
 {#if isDomainAllowed}
@@ -414,7 +432,7 @@
 		<div in:fade class="max-w-100">
 			<h2 class="mb-4 text-2xl font-semibold">We need more information.</h2>
 			<div class="bg-muted/50 mb-4 rounded-xl p-4">
-				<p class="of-top of-bottom max-h-18 overflow-y-auto text-sm">
+				<p class="of-top of-bottom no-scrollbar max-h-18 overflow-y-auto text-sm">
 					{aiResponse?.message || "No AI response (Error)."}
 				</p>
 			</div>
@@ -430,12 +448,12 @@
 				</p>
 			</div>
 			<div class="flex gap-2">
-				<Button onclick={resubmitWithAnswer} disabled={processing || questionAnswerInput.length < 20}>
-					{#if processing}
-						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-					{/if}
-					Submit
-				</Button>
+				<Button
+					onclick={() => {
+						processSubmission();
+					}}
+					disabled={questionAnswerInput.length < 20}>Submit</Button
+				>
 			</div>
 		</div>
 	{/if}
@@ -476,6 +494,16 @@
 			/><br /> Note that that links using target="_blank" do not provide a referrer by default. Consider using a direct link
 			or embedding the form in an iframe instead.
 		</p>
+	</div>
+{/if}
+
+<!-- Captcha overlay -->
+{#if captchaVisible}
+	<div class="bg-background/75 absolute inset-0 z-50 flex items-center justify-center p-4" transition:fade>
+		<div class="bg-background mx-4 max-h-full max-w-full overflow-x-auto rounded-lg p-6 shadow-lg" transition:scale>
+			<h3 class="mb-4 text-lg font-semibold">Captcha.</h3>
+			<div id="captchaContainer"></div>
+		</div>
 	</div>
 {/if}
 

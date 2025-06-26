@@ -69,6 +69,12 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Form</title>
+	<!-- Turnstile Captcha -->
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+</svelte:head>
+
 <!-- Gradient background -->
 <div
 	class="absolute inset-0 bg-gradient-to-br from-[var(--gradient-from-light)] to-[var(--gradient-to-light)] dark:from-[var(--gradient-from-dark)] dark:to-[var(--gradient-to-dark)] dark:brightness-75"
@@ -78,7 +84,7 @@
 <!-- Form box -->
 <div class="absolute inset-0 flex items-center justify-center p-8">
 	<div class="bg-background relative h-100 max-h-full w-2xl max-w-full rounded-3xl p-2 shadow-xl">
-		<div class="of-top of-bottom flex flex-col w-full h-full items-center justify-center-safe p-4 overflow-y-auto">
+		<div class="of-top of-bottom flex h-full w-full flex-col items-center justify-center-safe overflow-y-auto p-4">
 			<Form {formConfig} {primaryColor} />
 		</div>
 	</div>
