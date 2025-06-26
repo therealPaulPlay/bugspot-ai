@@ -179,6 +179,7 @@
 						id="customPrompt"
 						bind:value={formData.customPrompt}
 						placeholder="Do not allow bug reports about..."
+						maxlength={1500}
 						rows={2}
 					/>
 				</div>

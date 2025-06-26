@@ -46,6 +46,7 @@ export async function POST({ request, locals }) {
         // Check form limit
         const formCount = await db.select({ count: count() }).from(forms).where(eq(forms.userId, userId.toString()));
         if (formCount[0].count >= 50) return json({ error: 'Maximum form limit reached (50 forms)' }, { status: 400 });
+        if (locals.body.customPrompt?.length > 3000) throw new Error("Custom prompt is too long!");
 
         const formId = crypto.randomUUID();
 
@@ -75,7 +76,7 @@ export async function POST({ request, locals }) {
         return json({ formId, success: true });
     } catch (error) {
         console.error('Form creation error:', error);
-        return json({ error: 'Failed to create form!' }, { status: 500 });
+        return json({ error: 'Failed to create form: ' + error }, { status: 500 });
     }
 }
 
