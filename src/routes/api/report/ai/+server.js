@@ -112,6 +112,9 @@ CUSTOM_DATA: ${customData || "Not provided."}`;
     // Add previous question and answer if this is a follow-up
     if (previousQuestion && questionAnswer) userContent += `\n\nPREVIOUS QUESTION: ${previousQuestion} \nUSER ANSWER: ${questionAnswer}`;
 
+    // Check user content length to prevent abuse
+    if (userContent.length > 10000) throw new Error('Input too large!');
+
     messages.push({ role: 'user', content: userContent });
 
     const response = await makeAIRequest(messages);
@@ -121,8 +124,7 @@ CUSTOM_DATA: ${customData || "Not provided."}`;
         if (!jsonMatch) throw new Error('No JSON found');
 
         const parsed = JSON.parse(jsonMatch[0]);
-        if (!parsed || typeof parsed !== 'object' || !parsed.action)
-            throw new Error('Invalid structure');
+        if (!parsed || typeof parsed !== 'object' || !parsed.action) throw new Error('Invalid structure');
 
         return parsed;
     } catch (error) {
@@ -153,8 +155,7 @@ export async function POST({ request, locals }) {
             .where(eq(forms.id, formId))
             .limit(1);
 
-        if (!formData.length)
-            return json({ error: 'Form not found' }, { status: 404 });
+        if (!formData.length) return json({ error: 'Form not found' }, { status: 404 });
 
         const { form, user } = formData[0];
 
