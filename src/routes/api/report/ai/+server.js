@@ -1,4 +1,3 @@
-// api/public/ai/+server.js
 import { json } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
@@ -65,6 +64,7 @@ ${customPrompt ? `Additional guidelines: ${customPrompt}` : ''}
 
 ## Behavior
 **Expected:** ${expectedResult ? '(Expected result)' : 'Not provided.'}
+
 **Observed:** ${observedResult ? '(Observed result)' : 'Not provided.'}
 
 ## Steps to reproduce
@@ -84,6 +84,7 @@ Email: ${email ? '(Email here)' : 'Not provided.'}
 ---- END OF CONTENT FORMAT
 
 DO NOT alter, rephrase, or correct URLs, Custom data, User agent data and Emails.
+DO NOT capitalize random words in the title of the report and follow the rules of English grammar. 
 
 ONLY respond with this JSON format:
 {

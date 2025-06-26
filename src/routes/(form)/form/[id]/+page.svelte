@@ -78,7 +78,7 @@
 <!-- Form box -->
 <div class="absolute inset-0 flex items-center justify-center p-8">
 	<div class="bg-background relative h-100 max-h-full w-2xl max-w-full rounded-3xl p-2 shadow-xl">
-		<div class="of-top of-bottom flex flex-col w-full h-full items-center justify-center-safe gap-4 p-4 overflow-y-auto">
+		<div class="of-top of-bottom flex flex-col w-full h-full items-center justify-center-safe p-4 overflow-y-auto">
 			<Form {formConfig} {primaryColor} />
 		</div>
 	</div>
