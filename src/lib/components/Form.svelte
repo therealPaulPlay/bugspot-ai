@@ -454,6 +454,7 @@
 					}}
 					disabled={questionAnswerInput.length < 20}>Submit</Button
 				>
+				<Button onclick={() => (currentSlideIndex = slides.length - 1)} variant="outline">Go back</Button>
 			</div>
 		</div>
 	{/if}

@@ -117,7 +117,6 @@ CUSTOM_DATA: ${customData || "Not provided."}`;
     if (userContent.length > 10000) throw new Error('Input too large!');
 
     messages.push({ role: 'user', content: userContent });
-    console.log(messages);
 
     const response = await makeAIRequest(messages);
 
