@@ -2,7 +2,8 @@ import { json } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { forms, users } from '$lib/server/db/schema.js';
-import { createGithubIssue } from '$lib/utils/createGithubIssue.js';
+import { createGithubIssue, upvoteIssue, addCommentToIssue } from '$lib/utils/createGithubIssue.js';
+import { getIssuesTitles, getIssueContent } from '$lib/utils/getGitHubIssue.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getBaseURL } from '$lib/server/s3/index.js';
 import { validateCaptcha } from '$lib/utils/validateCaptcha.js';
@@ -10,6 +11,7 @@ import { env } from '$env/dynamic/private';
 
 const OPENROUTER_API_KEY = env.OPENROUTER_API_KEY;
 const TIER_LIMITS = { 0: 35, 1: 500, 2: 2500 };
+const pendingReports = new Map();
 
 async function makeAIRequest(messages) {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -26,14 +28,12 @@ async function makeAIRequest(messages) {
     });
 
     if (!response.ok) throw new Error('AI request failed');
-
     const data = await response.json();
     return data.choices[0].message.content;
 }
 
 async function deleteFile(url) {
     if (!url) return;
-
     try {
         const baseURL = getBaseURL();
         if (!url.startsWith(baseURL)) return;
@@ -107,13 +107,9 @@ EMAIL: ${email || 'Not provided.'}
 USER_AGENT: ${userAgent || 'Not provided.'}
 CUSTOM_DATA: ${customData || "Not provided."}`;
 
-    // Handle media files with descriptive text instead of URLs
     if (screenshotUrl) userContent += `\nSCREENSHOT: User has provided a screenshot – you do not have the capability to view images. Include the URL in reports: ${screenshotUrl}`;
     if (videoUrl) userContent += `\nVIDEO: User has provided a video – you do not have the capability to watch videos. Include the URL in reports: ${videoUrl}`;
-
-    // Add question/answer history if present
     if (questionAnswerHistory) userContent += `\n\nQUESTION/ANSWER HISTORY:\n${questionAnswerHistory}`;
-
     if (userContent.length > 10000) throw new Error('Input too large!');
 
     messages.push({ role: 'user', content: userContent });
@@ -133,6 +129,68 @@ CUSTOM_DATA: ${customData || "Not provided."}`;
     }
 }
 
+async function checkForDuplicates(title, formId) {
+    try {
+        const issues = await getIssuesTitles(formId);
+        if (!issues.length) return null;
+
+        const aiResponse = await makeAIRequest([{
+            role: 'user',
+            content: `Given this bug report title: "${title}"
+
+And these existing issue titles:
+${issues.map(issue => `${issue.id}: ${issue.title}`).join('\n')}
+
+Find up to 3 potential duplicates. Only include issues that are very likely to be the same bug.
+
+Respond with JSON format:
+{
+  "duplicates": [1, 2, 3]
+}`
+        }]);
+
+        const duplicateMatch = aiResponse.match(/\{[\s\S]*\}/);
+        if (!duplicateMatch) return null;
+
+        const parsed = JSON.parse(duplicateMatch[0]);
+        if (!parsed.duplicates?.length) return null;
+
+        const duplicateIssues = await Promise.all(
+            parsed.duplicates.slice(0, 3).map(id => getIssueContent(formId, id))
+        );
+
+        return duplicateIssues;
+    } catch (error) {
+        console.error('Duplicate check error:', error);
+        return null;
+    }
+}
+
+async function checkDuplicateForNewInfo(originalIssue, newTitle, newContent) {
+    const aiResponse = await makeAIRequest([{
+        role: 'user',
+        content: `Compare this original issue with a new report to see if the new report contains important additional information:
+
+ORIGINAL ISSUE:
+Title: ${originalIssue.title}
+Body: ${originalIssue.body}
+
+NEW REPORT:
+Title: ${newTitle}
+Content: ${newContent}
+
+
+Respond with JSON:
+{
+  "hasNewInfo": true/false,
+  "comment": "Additional information to add as comment (if hasNewInfo is true)"
+}`
+    }]);
+
+    const match = aiResponse.match(/\{[\s\S]*\}/);
+    return match ? JSON.parse(match[0]) : null;
+}
+
 async function incrementReportCount(userId) {
     await db.update(users)
         .set({ reportAmount: sql`${users.reportAmount} + 1` })
@@ -141,14 +199,10 @@ async function incrementReportCount(userId) {
 
 export async function POST({ request, locals, getClientAddress }) {
     try {
-        // Validate captcha
         const captchaToken = request.headers.get('cf-turnstile-response');
         await validateCaptcha(captchaToken, getClientAddress());
 
-        const {
-            formId, title, description, expectedResult, observedResult, steps,
-            email, userAgent, customData, screenshotUrl, videoUrl, questionAnswerHistory
-        } = locals.body;
+        const { formId, title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, questionAnswerHistory } = locals.body;
 
         if (!formId || !title || !description) return json({ error: 'Missing required fields id, title and description.' }, { status: 400 });
 
@@ -168,16 +222,9 @@ export async function POST({ request, locals, getClientAddress }) {
         const limit = TIER_LIMITS[user.subscriptionTier];
         if (user.reportAmount >= limit) return json({ error: 'Monthly report limit reached. Please upgrade your plan.' }, { status: 429 });
 
-        // Process with AI
-        const aiResult = await processReport(
-            title, description, expectedResult, observedResult,
-            steps, email, userAgent, customData, screenshotUrl, videoUrl, form.customPrompt,
-            questionAnswerHistory
-        );
+        const aiResult = await processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, form.customPrompt, questionAnswerHistory);
 
-        if (aiResult.action === 'ASK_QUESTION') {
-            return json({ action: 'question', message: aiResult.message });
-        }
+        if (aiResult.action === 'ASK_QUESTION') return json({ action: 'question', message: aiResult.message });
 
         if (aiResult.action === 'CLOSE_REPORT') {
             await incrementReportCount(user.id);
@@ -187,17 +234,19 @@ export async function POST({ request, locals, getClientAddress }) {
         }
 
         if (aiResult.action === 'SUBMIT_REPORT') {
+            const duplicates = await checkForDuplicates(aiResult.title, formId);
+
+            if (duplicates) {
+                const reportId = crypto.randomUUID();
+                const reportData = { formId, title: aiResult.title, content: aiResult.content, priority: aiResult.priority };
+                pendingReports.set(reportId, reportData);
+                setTimeout(() => pendingReports.delete(reportId), 30 * 60 * 1000);
+                return json({ action: 'duplicates', reportId, duplicates });
+            }
+
             await incrementReportCount(user.id);
-
-            // Create GitHub issue
-            const labels = ['bug', aiResult.priority];
-            const issueResult = await createGithubIssue(formId, aiResult.title, aiResult.content, labels);
-
-            return json({
-                action: 'submitted',
-                message: aiResult.message,
-                issueUrl: issueResult.issueUrl
-            });
+            const issueResult = await createGithubIssue(formId, aiResult.title, aiResult.content, ['bug', aiResult.priority]);
+            return json({ action: 'submitted', message: aiResult.message, issueUrl: issueResult.issueUrl });
         }
 
         return json({ error: 'Invalid AI response.' }, { status: 500 });
@@ -205,5 +254,46 @@ export async function POST({ request, locals, getClientAddress }) {
     } catch (error) {
         console.error('AI processing error:', error);
         return json({ error: 'AI processing failed.' }, { status: 500 });
+    }
+}
+
+export async function PUT({ request, locals }) {
+    try {
+        const { reportId, duplicateIssueId } = locals.body;
+        if (!reportId || !pendingReports.has(reportId)) return json({ error: 'Invalid or expired report.' }, { status: 400 });
+
+        const reportData = pendingReports.get(reportId);
+        pendingReports.delete(reportId);
+
+        // Get user for report counting
+        const formData = await db
+            .select({ form: forms, user: users })
+            .from(forms)
+            .innerJoin(users, eq(forms.userId, users.id))
+            .where(eq(forms.id, reportData.formId))
+            .limit(1);
+
+        if (!formData.length) return json({ error: 'Form not found' }, { status: 404 });
+
+        const { form, user } = formData[0];
+
+        if (duplicateIssueId) {
+            const originalIssue = await getIssueContent(reportData.formId, duplicateIssueId);
+            const newInfoCheck = await checkDuplicateForNewInfo(originalIssue, reportData.title, reportData.content);
+
+            await upvoteIssue(reportData.formId, duplicateIssueId);
+            if (newInfoCheck?.hasNewInfo) await addCommentToIssue(reportData.formId, duplicateIssueId, newInfoCheck.comment);
+            await incrementReportCount(user.id);
+
+            const [owner, repo] = form.githubRepo.split('/');
+            return json({ action: 'duplicate_handled', issueUrl: `https://github.com/${owner}/${repo}/issues/${duplicateIssueId}` });
+        } else {
+            const issueResult = await createGithubIssue(reportData.formId, reportData.title, reportData.content, ['bug', reportData.priority]);
+            await incrementReportCount(user.id);
+            return json({ action: 'submitted', issueUrl: issueResult.issueUrl });
+        }
+    } catch (error) {
+        console.error('Duplicate handling error:', error);
+        return json({ error: 'Processing failed.' }, { status: 500 });
     }
 }

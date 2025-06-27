@@ -1,42 +1,61 @@
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { forms, users } from '$lib/server/db/schema.js';
-import { getInstallationToken, createGitHubIssue } from './gitHubAppAccess.js';
+import { createGitHubIssue, getInstallationTokenFromFormId } from './gitHubAppAccess.js';
 
 export async function createGithubIssue(formId, title, content, labels = []) {
     try {
-        // Get form with user data
-        const formData = await db
-            .select({ form: forms, user: users })
-            .from(forms)
-            .innerJoin(users, eq(forms.userId, users.id))
-            .where(eq(forms.id, formId))
-            .limit(1);
+        const { token, owner, repo } = await getInstallationTokenFromFormId(formId);
 
-        if (!formData.length) throw new Error('Form not found');
+        const issue = await createGitHubIssue(token, owner, repo, { title, body: content, labels });
 
-        const { form, user } = formData[0];
-
-        if (!form.githubRepo) throw new Error('No GitHub repository configured');
-        if (!user.githubInstallationId) throw new Error('GitHub App not installed');
-
-        const [owner, repo] = form.githubRepo.split('/');
-        const token = await getInstallationToken(user.githubInstallationId);
-
-        const issue = await createGitHubIssue(token, owner, repo, {
-            title,
-            body: content,
-            labels
-        });
-
-        return {
-            success: true,
-            issueUrl: issue.html_url,
-            issueNumber: issue.number
-        };
-
+        return { success: true, issueUrl: issue.html_url, issueNumber: issue.number };
     } catch (error) {
         console.error('GitHub issue creation error:', error);
+        throw error;
+    }
+}
+
+export async function upvoteIssue(formId, issueNumber) {
+    try {
+        const { token, owner, repo } = await getInstallationTokenFromFormId(formId);
+
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/reactions`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: '+1' })
+        });
+
+        if (!response.ok) throw new Error(`Failed to upvote issue: ${response.status}`);
+        return response.json();
+    } catch (error) {
+        console.error('Issue upvote error:', error);
+        throw error;
+    }
+}
+
+export async function addCommentToIssue(formId, issueNumber, comment) {
+    try {
+        const { token, owner, repo } = await getInstallationTokenFromFormId(formId);
+
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/comments`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ body: comment })
+        });
+
+        if (!response.ok) throw new Error(`Failed to add comment: ${response.status}`);
+        return response.json();
+    } catch (error) {
+        console.error('Comment creation error:', error);
         throw error;
     }
 }

@@ -10,6 +10,8 @@
 	import { toast } from "svelte-sonner";
 	import { betterFetch } from "$lib/utils/betterFetch.js";
 	import { renderCaptcha } from "$lib/utils/renderCaptcha.js";
+	import { formatMarkdownText } from "$lib/utils/formatMarkdownText.js";
+	import * as Carousel from "$lib/components/ui/carousel/index.js";
 
 	let { formConfig = {}, primaryColor = "black" } = $props();
 
@@ -24,7 +26,7 @@
 		"video",
 		"email",
 	];
-	const postSlides = ["processing", "question", "closed", "submitted"];
+	const postSlides = ["processing", "question", "duplicates", "closed", "submitted"];
 
 	let currentSlideIndex = $state(0);
 	let isPostSlide = $derived(currentSlideIndex >= slides.length);
@@ -55,8 +57,16 @@
 		window.onFormCaptchaCompleted = function (token) {
 			captchaToken = token;
 			captchaVisible = false;
-			processSubmission(); // Continue with submission
+			processSubmission();
 		};
+
+		// Custom data from URL
+		const customDataFromURL = page.url.searchParams.get("custom-data");
+		try {
+			if (customDataFromURL) customData = decodeURIComponent(customDataFromURL);
+		} catch {
+			console.warn("Failed to decode customData URI component.");
+		}
 	});
 
 	function nextSlide() {
@@ -66,16 +76,6 @@
 			currentSlideIndex++;
 		}
 	}
-
-	// Custom data from URL
-	onMount(() => {
-		const customDataFromURL = page.url.searchParams.get("custom-data");
-		try {
-			if (customDataFromURL) customData = decodeURIComponent(customDataFromURL);
-		} catch {
-			console.warn("Failed to decode customData URI component.");
-		}
-	});
 
 	// User inputs
 	let titleInput = $state("");
@@ -87,15 +87,15 @@
 	let videoFile = $state(null);
 	let emailInput = $state("");
 	let questionAnswerInput = $state("");
-	let questionAnswerHistory = $state(""); // Complete Q&A history
-
-	// Attached data
+	let questionAnswerHistory = $state("");
 	let customData = $state();
 
 	// Post-processing states
 	let aiResponse = $state(null);
 	let processing = $state(false);
 	let stepsScrollBox = $state();
+	let reportId = $state(null);
+	let duplicates = $state([]);
 
 	// Validation functions
 	const isStepsValid = () => stepsInput.filter((s) => s.trim().length >= 10).length >= 1 || !formConfig.requireSteps;
@@ -120,17 +120,16 @@
 	}
 
 	async function processSubmission() {
-		// Check captcha first
 		if (!captchaToken) return (captchaVisible = true);
 
 		processing = true;
 		currentSlideIndex = slides.length; // Go to processing slide
 
 		try {
-			// Only upload files on first submission
 			let screenshotUrl = null;
 			let videoUrl = null;
 
+			// Only upload files on first submission
 			if (!questionAnswerInput.trim()) {
 				[screenshotUrl, videoUrl] = await Promise.all([
 					screenshotFile ? uploadFile(screenshotFile) : null,
@@ -138,26 +137,10 @@
 				]);
 			}
 
-			// Add current Q&A to history if this is a follow-up
 			if (questionAnswerInput.trim()) {
 				questionAnswerHistory += `YOU ASKED: ${aiResponse.message}\nUSER ANSWERED: ${questionAnswerInput.trim()}\n`;
 				questionAnswerInput = ""; // Reset the question input!
 			}
-
-			const requestBody = {
-				formId: formConfig.id,
-				title: titleInput,
-				description: descriptionInput,
-				expectedResult: expectedResultInput,
-				observedResult: observedResultInput,
-				steps: stepsInput.filter((s) => s.trim()),
-				email: emailInput,
-				userAgent: navigator.userAgent,
-				customData,
-				screenshotUrl,
-				videoUrl,
-				questionAnswerHistory,
-			};
 
 			const response = await betterFetch("/api/report/ai", {
 				method: "POST",
@@ -165,13 +148,34 @@
 					"Content-Type": "application/json",
 					"cf-turnstile-response": captchaToken,
 				},
-				body: JSON.stringify(requestBody),
+				body: JSON.stringify({
+					formId: formConfig.id,
+					title: titleInput,
+					description: descriptionInput,
+					expectedResult: expectedResultInput,
+					observedResult: observedResultInput,
+					steps: stepsInput.filter((s) => s.trim()),
+					email: emailInput,
+					userAgent: navigator.userAgent,
+					customData,
+					screenshotUrl,
+					videoUrl,
+					questionAnswerHistory,
+				}),
 			});
 
 			aiResponse = await response.json();
-			const actionIndex = { question: 1, closed: 2, submitted: 3 }[aiResponse.action] || 1;
-			currentSlideIndex = slides.length + actionIndex;
-			captchaToken = null; // Reset, as this token was used
+
+			if (aiResponse.action === "duplicates") {
+				reportId = aiResponse.reportId;
+				duplicates = aiResponse.duplicates;
+				currentSlideIndex = slides.length + 2;
+			} else {
+				const actionIndex = { question: 1, closed: 3, submitted: 4 }[aiResponse.action] || 1;
+				currentSlideIndex = slides.length + actionIndex;
+			}
+
+			captchaToken = null; // Reset, as tokens are single-use
 		} catch (error) {
 			console.error("Submission error:", error);
 			toast.error(error.message || "Something went wrong. Please try again.");
@@ -181,7 +185,27 @@
 		}
 	}
 
-	// Captcha effect
+	async function handleDuplicateSelection(duplicateIssueId = null) {
+		processing = true;
+		currentSlideIndex = slides.length;
+
+		try {
+			const response = await betterFetch("/api/report/ai", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ reportId, duplicateIssueId }),
+			});
+
+			aiResponse = await response.json();
+			currentSlideIndex = slides.length + 4;
+		} catch (error) {
+			console.error("Duplicate handling error:", error);
+			toast.error("Something went wrong. Please try again.");
+		} finally {
+			processing = false;
+		}
+	}
+
 	$effect(() => {
 		if (captchaVisible) renderCaptcha("#captchaContainer", window.onFormCaptchaCompleted);
 	});
@@ -448,13 +472,41 @@
 				</p>
 			</div>
 			<div class="flex gap-2">
-				<Button
-					onclick={() => {
-						processSubmission();
-					}}
-					disabled={questionAnswerInput.length < 20}>Submit</Button
-				>
+				<Button onclick={processSubmission} disabled={questionAnswerInput.length < 20}>Submit</Button>
 				<Button onclick={() => (currentSlideIndex = slides.length - 1)} variant="outline">Go back</Button>
+			</div>
+		</div>
+	{/if}
+
+	{#if slide == "duplicates"}
+		<div in:fade class="max-w-4xl">
+			<h2 class="mb-4 text-2xl font-semibold">We found similar issues.</h2>
+			<p class="text-muted-foreground mb-6">Please check if any of these describe your bug.</p>
+
+			<Carousel.Root class="mb-6">
+				<Carousel.Content>
+					{#each duplicates as duplicate}
+						<Carousel.Item>
+							<div class="bg-muted/50 flex h-96 flex-col rounded-xl p-6">
+								<h3 class="mb-3 text-lg font-semibold">{duplicate.title}</h3>
+								<div class="flex-1 overflow-y-auto text-sm">
+									{@html formatMarkdownText(duplicate.body)}
+								</div>
+								<Button onclick={() => handleDuplicateSelection(duplicate.id)} class="mt-4 w-full" variant="outline">
+									This describes my bug
+								</Button>
+							</div>
+						</Carousel.Item>
+					{/each}
+				</Carousel.Content>
+				<Carousel.Previous />
+				<Carousel.Next />
+			</Carousel.Root>
+
+			<div class="text-center">
+				<Button onclick={() => handleDuplicateSelection()} size="lg">
+					Next <ArrowRight />
+				</Button>
 			</div>
 		</div>
 	{/if}

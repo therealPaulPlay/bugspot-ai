@@ -24,6 +24,7 @@
 		"bits-ui": "^2.8.8",
 		"clsx": "^2.1.1",
 		"drizzle-kit": "^0.30.2",
+		"embla-carousel-svelte": "^8.6.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.11",
