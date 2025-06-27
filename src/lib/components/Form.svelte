@@ -530,7 +530,7 @@
 			<Send class="mb-4 h-12 w-12" />
 			<h2 class="mb-2 text-2xl font-semibold">Submitted!</h2>
 			<p class="text-muted-foreground">Thank you for your report.</p>
-			{#if aiResponse?.issueUrl}
+			{#if aiResponse?.issueUrl && formConfig?.showIssueLink}
 				<Button onclick={() => window.open(aiResponse.issueUrl, "_blank")} variant="outline" class="mt-4">
 					View on GitHub <ArrowRight class="h-4 w-4" />
 				</Button>

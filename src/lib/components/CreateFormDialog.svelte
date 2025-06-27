@@ -29,6 +29,7 @@
 			formData = {
 				name: editingForm?.name || "",
 				domains: editingForm?.domains?.map((d) => d.domain).join(", ") || "",
+				showIssueLink: editingForm?.showIssueLink ?? true,
 				customPrompt: editingForm?.customPrompt || "",
 				colorScheme: editingForm?.colorScheme || "default",
 				requireEmail: editingForm?.requireEmail ?? true,
@@ -138,6 +139,18 @@
 					<Input id="domains" bind:value={formData.domains} placeholder="your-site.com, www.your-site.com" rows={2} />
 				</div>
 
+				<!-- Custom Prompt -->
+				<div class="space-y-2">
+					<Label for="customPrompt">Custom prompt addition (optional)</Label>
+					<Textarea
+						id="customPrompt"
+						bind:value={formData.customPrompt}
+						placeholder="Do not allow bug reports about..."
+						maxlength={1500}
+						rows={2}
+					/>
+				</div>
+
 				<!-- Required Fields -->
 				<div class="space-y-3">
 					<div class="space-y-0">
@@ -172,16 +185,13 @@
 					</div>
 				</div>
 
-				<!-- Custom Prompt -->
-				<div class="space-y-2">
-					<Label for="customPrompt">Custom prompt addition (optional)</Label>
-					<Textarea
-						id="customPrompt"
-						bind:value={formData.customPrompt}
-						placeholder="Do not allow bug reports about..."
-						maxlength={1500}
-						rows={2}
-					/>
+				<div class="space-y-3">
+					<Label class="text-base font-medium mb-2">Additional settings</Label>
+
+					<div class="flex items-center space-x-2">
+						<Checkbox id="showIssueLink" bind:checked={formData.showIssueLink} />
+						<Label for="showIssueLink" class="text-sm">Show link to issue on completion</Label>
+					</div>
 				</div>
 
 				<!-- Actions -->

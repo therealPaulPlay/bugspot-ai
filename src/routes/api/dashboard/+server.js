@@ -55,6 +55,7 @@ export async function POST({ request, locals }) {
             userId: userId.toString(),
             name: locals.body.name.trim(),
             githubRepo: locals.body.githubRepo || null,
+            showIssueLink: locals.body.showIssueLink ?? true,
             customPrompt: locals.body.customPrompt?.trim() || null,
             colorScheme: locals.body.colorScheme || null,
             requireEmail: locals.body.requireEmail ?? true,
@@ -98,6 +99,7 @@ export async function PUT({ request, locals }) {
             .set({
                 name: locals.body.name.trim(),
                 githubRepo: locals.body.githubRepo || null,
+                showIssueLink: locals.body.showIssueLink ?? true,
                 customPrompt: locals.body.customPrompt?.trim() || null,
                 colorScheme: locals.body.colorScheme || null,
                 requireEmail: locals.body.requireEmail ?? true,

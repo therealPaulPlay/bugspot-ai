@@ -21,6 +21,7 @@ export const forms = mysqlTable('forms', {
 	userId: bigint('user_id', { unsigned: true }).references(() => users.id, { onDelete: 'cascade' }).notNull(),
 	name: varchar('name', { length: 255 }).notNull(),
 	githubRepo: varchar('github_repo', { length: 255 }), // e.g. "owner/repo"
+	showIssueLink: boolean('show_issue_link').default(true),
 	customPrompt: text('custom_prompt'),
 	colorScheme: varchar('color_scheme', { length: 255 }),
 	requireEmail: boolean('require_email').default(true),

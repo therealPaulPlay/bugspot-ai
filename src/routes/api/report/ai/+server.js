@@ -169,7 +169,8 @@ Respond with JSON format:
 async function checkDuplicateForNewInfo(originalIssue, newTitle, newContent) {
     const aiResponse = await makeAIRequest([{
         role: 'user',
-        content: `Compare this original issue with a new report to see if the new report contains important additional information:
+        content: `Compare this original issue with a new report to see if the new report contains important additional information. 
+If the new report contains additional media (video and/or screenshot URLs), always include these in your comment.
 
 ORIGINAL ISSUE:
 Title: ${originalIssue.title}
