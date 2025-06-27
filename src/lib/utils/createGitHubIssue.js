@@ -16,9 +16,12 @@ export async function createGithubIssue(formId, title, content, labels = []) {
     }
 }
 
-export async function upvoteIssue(formId, issueNumber) {
+const REACTIONS = ['+1', '-1', 'laugh', 'confused', 'heart', 'hooray', 'rocket', 'eyes'];
+
+export async function addReactionToIssue(formId, issueNumber) {
     try {
         const { token, owner, repo } = await getInstallationTokenFromFormId(formId);
+        const randomReaction = REACTIONS[Math.floor(Math.random() * REACTIONS.length)];
 
         const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}/reactions`, {
             method: 'POST',
@@ -27,13 +30,13 @@ export async function upvoteIssue(formId, issueNumber) {
                 'Accept': 'application/vnd.github.v3+json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ content: '+1' })
+            body: JSON.stringify({ content: randomReaction })
         });
 
-        if (!response.ok) throw new Error(`Failed to upvote issue: ${response.status}`);
-        return response.json();
+        if (!response.ok && response.status != 422) throw new Error(`Failed to add reaction: ${response.status}`); // 422 just means that this reaction has already been added – which is okay
+
     } catch (error) {
-        console.error('Issue upvote error:', error);
+        console.error('Issue reaction add error:', error);
         throw error;
     }
 }
@@ -53,7 +56,6 @@ export async function addCommentToIssue(formId, issueNumber, comment) {
         });
 
         if (!response.ok) throw new Error(`Failed to add comment: ${response.status}`);
-        return response.json();
     } catch (error) {
         console.error('Comment creation error:', error);
         throw error;

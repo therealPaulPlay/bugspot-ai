@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { forms, users } from '$lib/server/db/schema.js';
-import { createGithubIssue, upvoteIssue, addCommentToIssue } from '$lib/utils/createGithubIssue.js';
+import { createGithubIssue, addReactionToIssue, addCommentToIssue } from '$lib/utils/createGithubIssue.js';
 import { getIssuesTitles, getIssueContent } from '$lib/utils/getGitHubIssue.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getBaseURL } from '$lib/server/s3/index.js';
@@ -72,8 +72,8 @@ ${customPrompt ? `Additional guidelines: ${customPrompt}` : ''}
 ${steps ? '1. (Step one – and so on)' : 'Not provided.'}
 
 ## Media
-**Screenshot**: ${screenshotUrl ? '(Screenshot URL)' : 'Not provided.'}
-**Video**: ${videoUrl ? '(Video URL)' : 'Not provided.'}
+**Screenshot**: ${screenshotUrl ? '(Screenshot URL as clickable link)' : 'Not provided.'}
+**Video**: ${videoUrl ? '(Video URL as clickable link)' : 'Not provided.'}
 
 ## Environment details
 ${userAgent ? `<details>\n<summary>User agent</summary>\n(User agent)\n</details>` : ''}
@@ -87,6 +87,7 @@ Email: ${email ? '(Email here)' : 'Not provided.'}
 DO NOT alter, rephrase, or correct URLs, Custom data, User agent data and Emails.
 DO NOT capitalize random words in the title of the report and follow the rules of English grammar. 
 DO NOT use markdown or any other special formatting when closing a report or simply asking a question.
+DO correct grammar mistakes or typos.
 
 ONLY respond with this JSON format:
 {
@@ -170,7 +171,8 @@ async function checkDuplicateForNewInfo(originalIssue, newTitle, newContent) {
     const aiResponse = await makeAIRequest([{
         role: 'user',
         content: `Compare this original issue with a new report to see if the new report contains important additional information. 
-If the new report contains additional media (video and/or screenshot URLs), always include these in your comment.
+If the new report contains additional media (video and/or screenshot URLs), include these as clickable links in your comment.
+If you choose to add a comment, keep it concise and start with 'An additional report...'.
 
 ORIGINAL ISSUE:
 Title: ${originalIssue.title}
@@ -180,11 +182,10 @@ NEW REPORT:
 Title: ${newTitle}
 Content: ${newContent}
 
-
 Respond with JSON:
 {
   "hasNewInfo": true/false,
-  "comment": "Additional information to add as comment (if hasNewInfo is true)"
+  "comment": "Additional information to add as a comment (if hasNewInfo is true)"
 }`
     }]);
 
@@ -282,7 +283,7 @@ export async function PUT({ request, locals }) {
             const originalIssue = await getIssueContent(reportData.formId, duplicateIssueId);
             const newInfoCheck = await checkDuplicateForNewInfo(originalIssue, reportData.title, reportData.content);
 
-            await upvoteIssue(reportData.formId, duplicateIssueId);
+            await addReactionToIssue(reportData.formId, duplicateIssueId);
             if (newInfoCheck?.hasNewInfo) await addCommentToIssue(reportData.formId, duplicateIssueId, newInfoCheck.comment);
             await incrementReportCount(user.id);
 

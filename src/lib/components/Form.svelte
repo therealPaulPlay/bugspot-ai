@@ -453,7 +453,7 @@
 	{/if}
 
 	{#if slide == "question"}
-		<div in:fade class="max-w-100">
+		<div in:fade class="flex h-full w-100 max-w-full flex-col">
 			<h2 class="mb-4 text-2xl font-semibold">We need more information.</h2>
 			<div class="bg-muted/50 mb-4 rounded-xl p-4">
 				<p class="of-top of-bottom no-scrollbar max-h-18 overflow-y-auto text-sm">
@@ -464,55 +464,56 @@
 				<Textarea
 					bind:value={questionAnswerInput}
 					placeholder="Here is additional information regarding..."
-					class="h-24 w-full resize-none"
+					class="h-16 w-full resize-none sm:h-24"
 					maxlength={500}
 				/>
 				<p class="text-muted-foreground mt-1 ml-2 text-xs">
 					Provide an answer to help with this report. Min. 20 characters.
 				</p>
 			</div>
-			<div class="flex gap-2">
-				<Button onclick={processSubmission} disabled={questionAnswerInput.length < 20}>Submit</Button>
+			<div class="mt-auto flex w-full justify-end gap-2">
 				<Button onclick={() => (currentSlideIndex = slides.length - 1)} variant="outline">Go back</Button>
+				<Button onclick={processSubmission} disabled={questionAnswerInput.length < 20}>Submit</Button>
 			</div>
 		</div>
 	{/if}
 
 	{#if slide == "duplicates"}
-		<div in:fade class="max-w-4xl">
-			<h2 class="mb-4 text-2xl font-semibold">We found similar issues.</h2>
-			<p class="text-muted-foreground mb-6">Please check if any of these describe your bug.</p>
+		<div in:fade class="flex h-full w-100 max-w-full flex-col">
+			<h2 class="mb-4 text-2xl font-semibold">We found similar reports.</h2>
 
-			<Carousel.Root class="mb-6">
-				<Carousel.Content>
-					{#each duplicates as duplicate}
-						<Carousel.Item>
-							<div class="bg-muted/50 flex h-96 flex-col rounded-xl p-6">
-								<h3 class="mb-3 text-lg font-semibold">{duplicate.title}</h3>
-								<div class="flex-1 overflow-y-auto text-sm">
-									{@html formatMarkdownText(duplicate.body)}
+			<div class="bg-accent/50 mb-4 rounded-xl">
+				<Carousel.Root>
+					<Carousel.Content class="h-54 sm:h-58">
+						{#each duplicates as duplicate}
+							<Carousel.Item class="h-full">
+								<div class="flex h-full flex-col rounded-lg p-4">
+									<div class="of-top of-bottom flex-1 overflow-y-auto text-sm">
+										<h3 class="text-foreground/75 mb-3 text-lg font-semibold">{duplicate.title || "Default title"}</h3>
+										{@html formatMarkdownText(duplicate.body) || "<p>Default body text.</p>"}
+									</div>
+									<Button onclick={() => handleDuplicateSelection(duplicate.id)} class="mt-4 w-full" variant="outline">
+										This describes my bug
+									</Button>
 								</div>
-								<Button onclick={() => handleDuplicateSelection(duplicate.id)} class="mt-4 w-full" variant="outline">
-									This describes my bug
-								</Button>
-							</div>
-						</Carousel.Item>
-					{/each}
-				</Carousel.Content>
-				<Carousel.Previous />
-				<Carousel.Next />
-			</Carousel.Root>
+							</Carousel.Item>
+						{/each}
+					</Carousel.Content>
+					<Carousel.Previous style="margin-left: 3.75rem;" />
+					<Carousel.Next style="margin-right: 3.75rem;" />
+				</Carousel.Root>
+			</div>
 
-			<div class="text-center">
-				<Button onclick={() => handleDuplicateSelection()} size="lg">
-					Next <ArrowRight />
+			<div class="mt-auto flex justify-end">
+				<Button onclick={() => handleDuplicateSelection()}>
+					Skip <ArrowRight />
 				</Button>
 			</div>
 		</div>
 	{/if}
 
 	{#if slide == "closed"}
-		<div in:fade class="max-w-100">
+		<div in:fade class="w-100 max-w-full">
 			<div class="mb-4 flex items-center gap-2">
 				<XCircle class="h-6 w-6" />
 				<h2 class="text-2xl font-semibold">Report not submitted.</h2>
