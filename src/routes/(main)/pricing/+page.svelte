@@ -7,11 +7,73 @@
 	import { goto } from "$app/navigation";
 	import { tiers } from "$lib/stores/tiers";
 	import { isAuthenticated, user } from "$lib/stores/account";
+	import { betterFetch } from "$lib/utils/betterFetch.js";
+	import { toast } from "svelte-sonner";
 
-	let loading = null;
+	let loading = $state(null);
+
+	// Add lookup keys to tiers
+	const tiersWithLookup = [
+		{ ...$tiers[0], lookupKey: null }, // Free / Base (no price needed)
+		{ ...$tiers[1], lookupKey: "bugspot_monthly_pro" }, // Pro
+		{ ...$tiers[2], lookupKey: "bugspot_monthly_enterprise" }, // Enterprise
+	];
 
 	function formatPrice(price) {
 		return price === 0 ? "Free" : `$${price}`;
+	}
+
+	async function handleSubscription(tier) {
+		if (!$isAuthenticated) {
+			goto("/login");
+			return;
+		}
+		
+		loading = tier.id;
+
+		try {
+			const response = await betterFetch("/api/account/billing", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("bearer")}` },
+				body: JSON.stringify({
+					userId: $user.id,
+					lookupKey: tier.lookupKey, // You'll need to add this to your tiers
+				}),
+			});
+
+			const data = await response.json();
+
+			if (data.url) window.location.href = data.url;
+			else throw new Error(data.error || "Failed to create checkout session");
+		} catch (error) {
+			console.error("Subscription error:", error);
+			toast.error(error.message || "Something went wrong. Please try again.");
+		} finally {
+			loading = null;
+		}
+	}
+
+	async function openBillingPortal() {
+		if (!$isAuthenticated) {
+			goto("/login");
+			return;
+		}
+
+		try {
+			const response = await betterFetch("/api/account/billing", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("bearer")}` },
+				body: JSON.stringify({ userId: $user.id }),
+			});
+
+			const data = await response.json();
+
+			if (data.url) window.location.href = data.url;
+			else throw new Error(data.error || "Failed to open billing portal");
+		} catch (error) {
+			console.error("Billing portal error:", error);
+			toast.error(error.message || "Something went wrong. Please try again.");
+		}
 	}
 </script>
 
@@ -33,7 +95,7 @@
 
 	<!-- Pricing cards -->
 	<div class="mb-8 grid gap-8 lg:grid-cols-3">
-		{#each $tiers as tier, index}
+		{#each tiersWithLookup as tier, index}
 			<Card
 				class="relative {index === 1
 					? 'border-primary shadow-lg lg:scale-105'
@@ -92,9 +154,7 @@
 						size="lg"
 						variant={index === 1 ? "default" : "outline"}
 						disabled={loading === tier.id || $user?.subscriptionTier == tier.id || $user?.subscriptionTier > tier.id}
-						onclick={() => {
-							if (tier.price === 0 && !$isAuthenticated) goto("/login");
-						}}
+						onclick={() => handleSubscription(tier)}
 					>
 						{#if loading === tier.id}
 							<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
@@ -116,13 +176,9 @@
 		with strict rate limits and captchas.
 	</p>
 	<div class="mb-26 flex w-full justify-center">
-		<Button
-			variant="outline"
-			size="lg"
-			onclick={() => {
-				if (!$isAuthenticated) return goto("/login");
-			}}>Manage subscription <UserRoundCog /></Button
-		>
+		<Button variant="outline" size="lg" onclick={openBillingPortal} disabled={!$isAuthenticated}>
+			Manage subscription <UserRoundCog />
+		</Button>
 	</div>
 
 	<!-- Contact section -->

@@ -12,6 +12,7 @@
 	import CreateFormDialog from "$lib/components/CreateFormDialog.svelte";
 	import { page } from "$app/state";
 	import { tiers } from "$lib/stores/tiers";
+	import Badge from "$lib/components/ui/badge/badge.svelte";
 
 	let forms = $state([]);
 	let loading = $state(true);
@@ -107,15 +108,15 @@
 	<title>Dashboard</title>
 </svelte:head>
 
-{#if !$user}
-	<div class="bg-background/20 fixed inset-0 z-99 flex items-center justify-center backdrop-blur-lg">
-		<div>
-			<h2>Please <a href="/login" class="underline">sign in</a> to use the dashboard.</h2>
-		</div>
-	</div>
-{/if}
-
 <div class="mx-auto min-h-screen max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+	{#if !$user}
+		<div class="bg-background/20 absolute inset-0 z-30 flex items-center justify-center backdrop-blur-lg">
+			<div>
+				<h2>Please <a href="/login" class="underline">sign in</a> to use the dashboard.</h2>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Header -->
 	<div class="mb-6">
 		<h1 class="text-3xl font-bold">Dashboard</h1>
@@ -138,8 +139,8 @@
 			{:else}
 				<div class="space-y-2">
 					<div class="flex items-center justify-between text-sm">
-						<span class="text-muted-foreground">Monthly reports</span>
-						<span class="text-muted-foreground">{reportAmount} / {currentLimit}</span>
+						<span class="text-muted-foreground"><Badge>{$tiers[$user?.subscriptionTier || 0]?.name} tier</Badge></span>
+						<span class="text-muted-foreground">{reportAmount} / {currentLimit} Monthly reports</span>
 					</div>
 					<Progress value={progressValue} max={100} class="h-2" />
 				</div>

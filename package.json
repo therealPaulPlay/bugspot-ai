@@ -45,7 +45,9 @@
 		"mode-watcher": "^1.0.8",
 		"mysql2": "^3.12.0",
 		"node-cron": "^4.1.1",
+		"nodemailer": "^7.0.3",
 		"overfade": "^0.0.5",
+		"stripe": "^18.2.1",
 		"sveltekit-rate-limiter": "^0.7.0"
 	}
 }

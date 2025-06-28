@@ -8,9 +8,10 @@ import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getBaseURL } from '$lib/server/s3/index.js';
 import { validateCaptcha } from '$lib/utils/validateCaptcha.js';
 import { env } from '$env/dynamic/private';
+import { get } from 'svelte/store';
+import { tiers } from '$lib/stores/tiers.js';
 
 const OPENROUTER_API_KEY = env.OPENROUTER_API_KEY;
-const TIER_LIMITS = { 0: 35, 1: 500, 2: 2500 };
 const pendingReports = new Map();
 
 async function makeAIRequest(messages) {
@@ -170,7 +171,7 @@ Respond with JSON format:
 async function checkDuplicateForNewInfo(originalIssue, newTitle, newContent) {
     const aiResponse = await makeAIRequest([{
         role: 'user',
-        content: `Compare this original issue with a new report to see if the new report contains important additional information. 
+        content: `Compare this original issue with a new report to see if the new report contains crucial additional information. 
 If the new report contains additional media (video and/or screenshot URLs), include these as clickable links in your comment.
 If you choose to add a comment, keep it concise and start with 'An additional report...'.
 
@@ -221,7 +222,7 @@ export async function POST({ request, locals, getClientAddress }) {
         const { form, user } = formData[0];
 
         // Check report limit
-        const limit = TIER_LIMITS[user.subscriptionTier];
+        const limit = get(tiers)?.[user.subscriptionTier]?.reportLimit;
         if (user.reportAmount >= limit) return json({ error: 'Monthly report limit reached. Please upgrade your plan.' }, { status: 429 });
 
         const aiResult = await processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, form.customPrompt, questionAnswerHistory);

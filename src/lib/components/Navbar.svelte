@@ -37,7 +37,7 @@
 	let deletingAccount = $state(false);
 
 	const navigation = [
-		{ name: "Home", href: "/" },
+		{ name: "Dashboard", href: "/dashboard" },
 		{ name: "Pricing", href: "/pricing" },
 	];
 

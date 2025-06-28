@@ -33,11 +33,11 @@ export async function handle({ event, resolve }) {
     }
 
     // Parse JSON for API routes with body (not GET or OPTIONS)
-    if (event.url.pathname.startsWith('/api') && !event.url.pathname.startsWith('/api/report/file-upload') && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(event.request.method)) {
+    if (event.url.pathname.startsWith('/api') && !event.url.pathname.startsWith('/api/report/file-upload') && !event.url.pathname.startsWith('/api/account/billing/webhook') && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(event.request.method)) {
         try {
             event.locals.body = await event.request.json();
         } catch {
-            return json({ error: 'Invalid JSON in request body' }, { status: 400 });
+            return json({ error: 'Invalid JSON in request body!' }, { status: 400 });
         }
     }
 
