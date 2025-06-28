@@ -58,11 +58,11 @@ export async function POST({ request, locals }) {
             showIssueLink: locals.body.showIssueLink ?? true,
             customPrompt: locals.body.customPrompt?.trim() || null,
             colorScheme: locals.body.colorScheme || null,
-            requireEmail: locals.body.requireEmail ?? true,
-            requireSteps: locals.body.requireSteps ?? true,
+            requireEmail: locals.body.requireEmail ?? false,
+            requireSteps: locals.body.requireSteps ?? false,
             requireVideo: locals.body.requireVideo ?? false,
             requireScreenshot: locals.body.requireScreenshot ?? false,
-            requireExpectedResult: locals.body.requireExpectedResult ?? true,
+            requireExpectedResult: locals.body.requireExpectedResult ?? false,
             requireObservedResult: locals.body.requireObservedResult ?? true
         });
 
@@ -102,12 +102,12 @@ export async function PUT({ request, locals }) {
                 showIssueLink: locals.body.showIssueLink ?? true,
                 customPrompt: locals.body.customPrompt?.trim() || null,
                 colorScheme: locals.body.colorScheme || null,
-                requireEmail: locals.body.requireEmail ?? true,
-                requireSteps: locals.body.requireSteps ?? true,
+                requireEmail: locals.body.requireEmail ?? false,
+                requireSteps: locals.body.requireSteps ?? false,
                 requireVideo: locals.body.requireVideo ?? false,
                 requireScreenshot: locals.body.requireScreenshot ?? false,
-                requireExpectedResult: locals.body.requireExpectedResult ?? true,
-                requireObservedResult: locals.body.requireObservedResult ?? true
+                requireExpectedResult: locals.body.requireExpectedResult ?? false,
+                requireObservedResult: locals.body.requireObservedResult ?? false
             })
             .where(eq(forms.id, formId));
 

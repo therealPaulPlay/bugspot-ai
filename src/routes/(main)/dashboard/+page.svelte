@@ -19,8 +19,10 @@
 	let showCreateDialog = $state(false);
 	let showIframeDialog = $state(false);
 	let showInfoDialog = $state(false);
+	let showDeleteDialog = $state(false);
 	let editingForm = $state(null);
 	let currentFormId = $state(null);
+	let formToDelete = $state(null);
 	let copied = $state(false);
 	let reportAmount = $derived($user?.reportAmount || 0);
 	let subscriptionTier = $derived($user?.subscriptionTier || 0);
@@ -58,11 +60,7 @@
 		showCreateDialog = true;
 	}
 
-	async function deleteForm(formId, formName) {
-		if (!confirm(`Are you sure you want to delete "${formName}"? This cannot be undone.`)) {
-			return;
-		}
-
+	async function confirmDelete() {
 		try {
 			await betterFetch("/api/dashboard", {
 				method: "DELETE",
@@ -72,11 +70,12 @@
 				},
 				body: JSON.stringify({
 					userId: $user.id,
-					formId,
+					formId: formToDelete.id,
 				}),
 			});
 
 			toast.success("Form deleted successfully");
+			showDeleteDialog = false;
 			await loadDashboard();
 		} catch (error) {
 			console.error("Delete form error:", error);
@@ -198,7 +197,10 @@
 								<Button
 									variant="ghost"
 									size="sm"
-									onclick={() => deleteForm(form.id, form.name)}
+									onclick={() => {
+										formToDelete = form;
+										showDeleteDialog = true;
+									}}
 									class="text-destructive hover:text-destructive"
 								>
 									<Trash2 class="h-4 w-4" />
@@ -270,6 +272,21 @@
 
 <!-- Create/Edit Form Dialog -->
 <CreateFormDialog bind:open={showCreateDialog} {editingForm} onSuccess={loadDashboard} />
+
+<!-- Delete confirmation dialog -->
+<Dialog bind:open={showDeleteDialog}>
+	<DialogContent class="max-w-md">
+		<DialogHeader>
+			<DialogTitle>Delete {formToDelete?.name}?</DialogTitle>
+			<DialogDescription>
+				This action cannot be undone. The form and all its data (excluding created issues) will be permanently deleted.
+			</DialogDescription>
+		</DialogHeader>
+		<div class="flex justify-end">
+			<Button variant="destructive" onclick={confirmDelete}>Delete</Button>
+		</div>
+	</DialogContent>
+</Dialog>
 
 <!-- Iframe code dialog -->
 <Dialog bind:open={showIframeDialog}>

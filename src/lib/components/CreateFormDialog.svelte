@@ -35,7 +35,7 @@
 				requireEmail: editingForm?.requireEmail ?? true,
 				requireSteps: editingForm?.requireSteps ?? true,
 				requireVideo: editingForm?.requireVideo ?? false,
-				requireScreenshot: editingForm?.requireScreenshot ?? true,
+				requireScreenshot: editingForm?.requireScreenshot ?? false,
 				requireExpectedResult: editingForm?.requireExpectedResult ?? true,
 				requireObservedResult: editingForm?.requireObservedResult ?? true,
 			};
