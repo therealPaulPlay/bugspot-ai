@@ -38,7 +38,7 @@
 	function checkDomainAccess() {
 		const allowedDomains = formConfig.domains?.map((d) => d.domain) || [];
 		const isInIframe = window !== window.top;
-		const topHostname = isInIframe ? window.top?.location.hostname : null;
+		const topHostname = isInIframe ? window.top?.location?.hostname : null;
 		const referrerHostname = document.referrer ? new URL(document.referrer).hostname : null;
 
 		if (!topHostname && !referrerHostname) return false;
