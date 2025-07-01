@@ -47,6 +47,7 @@ export async function POST({ request, locals }) {
         const formCount = await db.select({ count: count() }).from(forms).where(eq(forms.userId, userId.toString()));
         if (formCount[0].count >= 50) return json({ error: 'Maximum form limit reached (50 forms)' }, { status: 400 });
         if (locals.body.customPrompt?.length > 3000) throw new Error("Custom prompt is too long!");
+        if (locals.body.domains?.length > 20) throw new Error("Please use less than 20 domains per form!");
 
         const formId = crypto.randomUUID();
 

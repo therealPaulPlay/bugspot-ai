@@ -54,7 +54,7 @@
 
 		const domains = formData.domains
 			.split(",")
-			.map((d) => d.toLowerCase().trim().replace("https://", "").replace("http://", "").split("/")[0])
+			.map((d) => d.toLowerCase().trim().replace("https://", "").replace("http://", "").split("/")[0].split(":")[0])
 			.filter((d) => d);
 
 		if (domains.length == 0) return toast.error("At least one domain is required!");
@@ -186,7 +186,7 @@
 				</div>
 
 				<div class="space-y-3">
-					<Label class="text-base font-medium mb-2">Additional settings</Label>
+					<Label class="mb-2 text-base font-medium">Additional settings</Label>
 
 					<div class="flex items-center space-x-2">
 						<Checkbox id="showIssueLink" bind:checked={formData.showIssueLink} />
