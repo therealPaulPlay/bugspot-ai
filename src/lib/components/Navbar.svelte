@@ -57,20 +57,7 @@
 	function toggleTheme() {
 		const currentIndex = themes.findIndex((item) => item === userPrefersMode.current);
 		const nextIndex = (currentIndex + 1) % 3;
-		const newTheme = themes[nextIndex];
-
-		setMode(newTheme);
-
-		// Always ensure DOM is in sync (mode-watcher sometimes fails on rapid cycles)
-		requestAnimationFrame(() => {
-			const shouldHaveDark =
-				newTheme === "dark" || (newTheme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-			const currentlyHasDark = document.documentElement.classList.contains("dark");
-
-			if (shouldHaveDark !== currentlyHasDark) {
-				document.documentElement.classList.toggle("dark", shouldHaveDark);
-			}
-		});
+		setMode(themes[nextIndex]);
 	}
 
 	let pageScrollY = $state(0);
