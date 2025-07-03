@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { Button } from "$lib/components/ui/button";
+	import { Button, buttonVariants } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Badge } from "$lib/components/ui/badge";
 	import {
@@ -21,9 +21,11 @@
 	} from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { user } from "$lib/stores/account";
+	import * as Dialog from "$lib/components/ui/dialog";
 
 	let scrollY = $state(0);
 	let errorSection = $state(null);
+	let demoIframeLoaded = $state(false);
 
 	const messyReports = [
 		{
@@ -302,8 +304,8 @@
 								<p class="mb-2 font-medium">We need more information.</p>
 								<div class="bg-muted/50 rounded-lg p-3 text-xs">
 									<p>
-										What browser are you using? Does this happen with other form fields or just the login field? Can
-										you describe what happens when you try to click the button again?
+										What browser are you using? Does this happen with other form fields or just the login field? Can you
+										describe what happens when you try to click the button again?
 									</p>
 								</div>
 							</div>
@@ -331,7 +333,7 @@
 					<div class="bg-background rounded-xl p-4 shadow-sm">
 						<div class="mb-4 flex items-center gap-2">
 							<Palette class="text-primary h-4 w-4" />
-							<span class="font-medium text-sm">Form config</span>
+							<span class="text-sm font-medium">Form config</span>
 						</div>
 						<div class="space-y-3">
 							<div class="flex items-center justify-between">
@@ -426,7 +428,7 @@
 					<div class="bg-background rounded-xl p-4 shadow-sm">
 						<div class="mb-3 flex items-center gap-2">
 							<MessageSquare class="text-primary h-4 w-4" />
-							<span class="font-medium text-sm">Discord</span>
+							<span class="text-sm font-medium">Discord</span>
 						</div>
 						<div class="bg-muted/50 rounded-lg p-3">
 							<div class="flex gap-2">
@@ -460,7 +462,7 @@
 			<p class="text-muted-foreground text-lg">See how Bugspot helps your customers create beautiful reports.</p>
 		</div>
 
-		<!-- Windows-style overlapping error showcase -->
+		<!-- Overlapping error showcase -->
 		<div
 			class="relative mx-auto mb-12 h-[400px] max-w-5xl overflow-hidden mask-y-from-95% mask-y-to-100% mask-x-from-80% mask-x-to-100%"
 		>
@@ -495,9 +497,29 @@
 		</div>
 
 		<!-- Simple report button -->
-		<div class="text-center">
-			<Button size="lg" onclick={() => goto("/demo")}>Try the demo</Button>
-		</div>
+		<Dialog.Root onOpenChange={() => (demoIframeLoaded = false)}>
+			<div class="text-center">
+				<Dialog.Trigger class={buttonVariants({ size: "lg" })}>Try the demo</Dialog.Trigger>
+			</div>
+			<Dialog.Content class="max-w-5xl!">
+				<Dialog.Header>
+					<Dialog.Title>Demo</Dialog.Title>
+				</Dialog.Header>
+				<div class="relative">
+					{#if !demoIframeLoaded}
+						<div class="bg-muted absolute inset-0 flex animate-pulse items-center justify-center rounded"></div>
+					{/if}
+					<iframe
+						class="bg-muted/50 h-[50dvh] w-full rounded transition duration-300"
+						style:opacity={!demoIframeLoaded ? "0" : "1"}
+						src="/form/demo"
+						title="Demo iframe"
+						onload={() => (demoIframeLoaded = true)}
+					>
+					</iframe>
+				</div>
+			</Dialog.Content>
+		</Dialog.Root>
 	</div>
 </section>
 

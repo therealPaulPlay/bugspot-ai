@@ -207,7 +207,7 @@ export async function POST({ request, locals, getClientAddress }) {
         const captchaToken = request.headers.get('cf-turnstile-response');
         await validateCaptcha(captchaToken, getClientAddress());
 
-        const { formId, title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, questionAnswerHistory } = locals.body;
+        const { formId, title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, questionAnswerHistory, demo } = locals.body;
 
         if (!formId || !title || !description) return json({ error: 'Missing required fields id, title and description.' }, { status: 400 });
 
@@ -232,7 +232,7 @@ export async function POST({ request, locals, getClientAddress }) {
         if (aiResult.action === 'ASK_QUESTION') return json({ action: 'question', message: aiResult.message });
 
         if (aiResult.action === 'CLOSE_REPORT') {
-            await incrementReportCount(user.id);
+            if (!demo) await incrementReportCount(user.id);
             // Delete uploaded files
             await Promise.all([deleteFile(screenshotUrl), deleteFile(videoUrl)]);
             return json({ action: 'closed', message: aiResult.message });
@@ -247,11 +247,11 @@ export async function POST({ request, locals, getClientAddress }) {
                 pendingReports.set(reportId, reportData);
                 setTimeout(() => pendingReports.delete(reportId), 30 * 60 * 1000);
                 return json({ action: 'duplicates', reportId, duplicates });
+            } else {
+                if (!demo) await incrementReportCount(user.id);
+                const issueResult = await createGithubIssue(formId, aiResult.title, aiResult.content, ['bug', aiResult.priority]);
+                return json({ action: 'submitted', message: aiResult.message, issueUrl: issueResult.issueUrl });
             }
-
-            await incrementReportCount(user.id);
-            const issueResult = await createGithubIssue(formId, aiResult.title, aiResult.content, ['bug', aiResult.priority]);
-            return json({ action: 'submitted', message: aiResult.message, issueUrl: issueResult.issueUrl });
         }
 
         return json({ error: 'Invalid AI response.' }, { status: 500 });
@@ -264,7 +264,7 @@ export async function POST({ request, locals, getClientAddress }) {
 
 export async function PUT({ request, locals }) {
     try {
-        const { reportId, duplicateIssueId } = locals.body;
+        const { reportId, duplicateIssueId, demo } = locals.body;
         if (!reportId || !pendingReports.has(reportId)) return json({ error: 'Invalid or expired report.' }, { status: 400 });
 
         const reportData = pendingReports.get(reportId);
@@ -288,13 +288,13 @@ export async function PUT({ request, locals }) {
 
             await addReactionToIssue(reportData.formId, duplicateIssueId);
             if (newInfoCheck?.hasNewInfo) await addCommentToIssue(reportData.formId, duplicateIssueId, newInfoCheck.comment);
-            await incrementReportCount(user.id);
+            if (!demo) await incrementReportCount(user.id);
 
             const [owner, repo] = form.githubRepo.split('/');
             return json({ action: 'duplicate_handled', issueUrl: `https://github.com/${owner}/${repo}/issues/${duplicateIssueId}` });
         } else {
             const issueResult = await createGithubIssue(reportData.formId, reportData.title, reportData.content, ['bug', reportData.priority]);
-            await incrementReportCount(user.id);
+            if (!demo) await incrementReportCount(user.id);
             return json({ action: 'submitted', issueUrl: issueResult.issueUrl });
         }
     } catch (error) {

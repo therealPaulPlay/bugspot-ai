@@ -15,6 +15,7 @@
 
 	let { formConfig = {}, primaryColor = "black" } = $props();
 
+	// Slides -------------------------------------------------------------------------------------------
 	const slides = [
 		"start",
 		"title",
@@ -27,13 +28,22 @@
 		"email",
 	];
 	const postSlides = ["processing", "question", "duplicates", "closed", "submitted"];
-
 	let currentSlideIndex = $state(0);
 	let isPostSlide = $derived(currentSlideIndex >= slides.length);
 	let slide = $derived(isPostSlide ? postSlides[currentSlideIndex - slides.length] : slides[currentSlideIndex]);
 
-	// Domain verification
+	function nextSlide() {
+		const maxIndex = slides.length + postSlides.length - 1;
+		if (currentSlideIndex < maxIndex) {
+			if (currentSlideIndex === slides.length - 1) processSubmission();
+			currentSlideIndex++;
+		}
+	}
+
+	// Domain verification & Captcha -------------------------------------------------------------------------------
 	let isDomainAllowed = $state(true);
+	let captchaVisible = $state(false);
+	let captchaToken = $state(null);
 
 	function checkDomainAccess() {
 		const allowedDomains = formConfig.domains?.map((d) => d.domain) || [];
@@ -46,10 +56,6 @@
 		const checkDomain = topHostname || referrerHostname;
 		return checkDomain === page.url.hostname || allowedDomains.includes(checkDomain);
 	}
-
-	// Captcha
-	let captchaVisible = $state(false);
-	let captchaToken = $state(null);
 
 	onMount(() => {
 		isDomainAllowed = checkDomainAccess();
@@ -69,14 +75,7 @@
 		}
 	});
 
-	function nextSlide() {
-		const maxIndex = slides.length + postSlides.length - 1;
-		if (currentSlideIndex < maxIndex) {
-			if (currentSlideIndex === slides.length - 1) processSubmission();
-			currentSlideIndex++;
-		}
-	}
-
+	// Input handling --------------------------------------------------------------------------------------------
 	// User inputs
 	let titleInput = $state("");
 	let descriptionInput = $state("");
@@ -119,6 +118,7 @@
 		return (await response.json()).url;
 	}
 
+	// Form submission ----------------------------------------------------------------------------------------------
 	async function processSubmission() {
 		if (!captchaToken) return (captchaVisible = true);
 
@@ -161,6 +161,7 @@
 					screenshotUrl,
 					videoUrl,
 					questionAnswerHistory,
+					demo: formConfig.id == "demo",
 				}),
 			});
 
@@ -193,7 +194,7 @@
 			const response = await betterFetch("/api/report/ai", {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ reportId, duplicateIssueId }),
+				body: JSON.stringify({ reportId, duplicateIssueId, demo: formConfig.id == "demo" }),
 			});
 
 			aiResponse = await response.json();

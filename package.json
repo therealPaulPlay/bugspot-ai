@@ -42,7 +42,7 @@
 		"drizzle-orm": "^0.40.0",
 		"jsonwebtoken": "^9.0.2",
 		"lucide-svelte": "^0.515.0",
-		"mode-watcher": "^1.0.8",
+		"mode-watcher": "^1.1.0",
 		"mysql2": "^3.12.0",
 		"node-cron": "^4.1.1",
 		"nodemailer": "^7.0.3",

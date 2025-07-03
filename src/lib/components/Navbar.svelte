@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { Sun, Moon, Bug, User, LogOut, Trash2, CreditCard, ChevronDown, Github, Monitor } from "lucide-svelte";
+	import { Sun, Moon, Bug, User, LogOut, Trash2, CreditCard, ChevronDown, Github, Eclipse } from "lucide-svelte";
 	import Button from "./ui/button/button.svelte";
 	import {
 		DropdownMenu,
@@ -13,7 +13,7 @@
 	import { Input } from "./ui/input";
 	import { Label } from "./ui/label";
 	import { page } from "$app/state";
-	import { mode, setMode, userPrefersMode } from "mode-watcher";
+	import { setMode, userPrefersMode } from "mode-watcher";
 	import { goto } from "$app/navigation";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
@@ -29,7 +29,6 @@
 	];
 
 	const themes = ["light", "dark", "system"];
-	let currentMode = $state(userPrefersMode.current);
 
 	async function deleteAccount() {
 		deletingAccount = true;
@@ -56,9 +55,22 @@
 	}
 
 	function toggleTheme() {
-		const nextIndex = (themes.findIndex((item) => item === currentMode) + 1) % 3;
-		currentMode = themes[nextIndex];
-		setMode(currentMode);
+		const currentIndex = themes.findIndex((item) => item === userPrefersMode.current);
+		const nextIndex = (currentIndex + 1) % 3;
+		const newTheme = themes[nextIndex];
+
+		setMode(newTheme);
+
+		// Always ensure DOM is in sync (mode-watcher sometimes fails on rapid cycles)
+		requestAnimationFrame(() => {
+			const shouldHaveDark =
+				newTheme === "dark" || (newTheme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+			const currentlyHasDark = document.documentElement.classList.contains("dark");
+
+			if (shouldHaveDark !== currentlyHasDark) {
+				document.documentElement.classList.toggle("dark", shouldHaveDark);
+			}
+		});
 	}
 
 	let pageScrollY = $state(0);
@@ -159,12 +171,12 @@
 
 				<!-- Theme toggle -->
 				<Button variant="ghost" size="sm" onclick={toggleTheme}>
-					{#if currentMode === "light"}
+					{#if userPrefersMode.current === "light"}
 						<Sun class="h-4 w-4" />
-					{:else if currentMode === "dark"}
+					{:else if userPrefersMode.current === "dark"}
 						<Moon class="h-4 w-4" />
 					{:else}
-						<Monitor class="h-4 w-4" />
+						<Eclipse class="h-4 w-4" />
 					{/if}
 				</Button>
 			</div>

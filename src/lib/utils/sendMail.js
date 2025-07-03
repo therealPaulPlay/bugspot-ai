@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import { env } from '$env/dynamic/private';
 
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
     host: env.EMAIL_HOST,
     port: Number(env.EMAIL_PORT),
     secure: true,
