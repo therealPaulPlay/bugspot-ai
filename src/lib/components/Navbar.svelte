@@ -1,19 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import {
-		Sun,
-		Moon,
-		Bug,
-		User,
-		Bell,
-		Plus,
-		Search,
-		LogOut,
-		Trash2,
-		CreditCard,
-		ChevronDown,
-		Github,
-	} from "lucide-svelte";
+	import { Sun, Moon, Bug, User, LogOut, Trash2, CreditCard, ChevronDown, Github, Monitor } from "lucide-svelte";
 	import Button from "./ui/button/button.svelte";
 	import {
 		DropdownMenu,
@@ -26,7 +13,7 @@
 	import { Input } from "./ui/input";
 	import { Label } from "./ui/label";
 	import { page } from "$app/state";
-	import { mode, setMode } from "mode-watcher";
+	import { mode, setMode, userPrefersMode } from "mode-watcher";
 	import { goto } from "$app/navigation";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
@@ -40,6 +27,9 @@
 		{ name: "Dashboard", href: "/dashboard" },
 		{ name: "Pricing", href: "/pricing" },
 	];
+
+	const themes = ["light", "dark", "system"];
+	let currentMode = $state(userPrefersMode.current);
 
 	async function deleteAccount() {
 		deletingAccount = true;
@@ -65,13 +55,21 @@
 		}
 	}
 
+	function toggleTheme() {
+		const nextIndex = (themes.findIndex((item) => item === currentMode) + 1) % 3;
+		currentMode = themes[nextIndex];
+		setMode(currentMode);
+	}
+
 	let pageScrollY = $state(0);
 </script>
 
 <svelte:window bind:scrollY={pageScrollY} />
 
 <nav class="fixed top-0 right-0 left-0 z-50">
-	<div class="flex w-full justify-center transition-[padding] duration-300 {pageScrollY > 10 ? 'p-4' : 'bg-background'}">
+	<div
+		class="flex w-full justify-center transition-[padding] duration-300 {pageScrollY > 10 ? 'p-4' : 'bg-background'}"
+	>
 		<div
 			class="bg-background flex h-18 w-full max-w-7xl justify-between rounded-xl border p-4 duration-300 {pageScrollY >
 			10
@@ -147,7 +145,7 @@
 						</DropdownMenu>
 					</div>
 				{:else}
-					<!-- Guest user - use anchor instead of Button with href -->
+					<!-- For signed-out users -->
 					<Button href="/login" variant="outline">
 						<User class="h-4 w-4" />
 						<span class="max-sm:hidden">Sign in</span>
@@ -160,11 +158,13 @@
 				</Button>
 
 				<!-- Theme toggle -->
-				<Button variant="ghost" size="sm" onclick={() => setMode(mode.current === "dark" ? "light" : "dark")}>
-					{#if mode.current === "dark"}
+				<Button variant="ghost" size="sm" onclick={toggleTheme}>
+					{#if currentMode === "light"}
+						<Sun class="h-4 w-4" />
+					{:else if currentMode === "dark"}
 						<Moon class="h-4 w-4" />
 					{:else}
-						<Sun class="h-4 w-4" />
+						<Monitor class="h-4 w-4" />
 					{/if}
 				</Button>
 			</div>
