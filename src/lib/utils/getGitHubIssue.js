@@ -10,9 +10,12 @@ export async function getIssuesTitles(formId) {
     });
 
     if (!response.ok) throw new Error(`Failed to fetch issues: ${response.status}`);
-
     const issues = await response.json();
-    return issues.map(issue => ({ id: issue.number, title: issue.title }));
+
+    // Filter out pull requests - PRs have a pull_request property
+    return issues
+        .filter(issue => !issue.pull_request)
+        .map(issue => ({ id: issue.number, title: issue.title }));
 }
 
 export async function getIssueContent(formId, issueNumber) {
