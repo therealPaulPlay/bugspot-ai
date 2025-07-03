@@ -302,8 +302,8 @@
 								<p class="mb-2 font-medium">We need more information.</p>
 								<div class="bg-muted/50 rounded-lg p-3 text-xs">
 									<p>
-										"What browser are you using? Does this happen with other form fields or just the login field? Can
-										you describe what happens when you try to click the button again?"
+										What browser are you using? Does this happen with other form fields or just the login field? Can
+										you describe what happens when you try to click the button again?
 									</p>
 								</div>
 							</div>
@@ -375,8 +375,8 @@
 						</div>
 						<div class="bg-muted/50 w-full rounded-lg p-3 text-xs">
 							<p>
-								"This appears to be an issue related to your internet connection. Specifically, your VPN is likely
-								causing the WebSocket instability. Please try testing without it and file another report if needed."
+								This appears to be an issue related to your internet connection. Specifically, your VPN is likely
+								causing the WebSocket instability. Please try testing without it and file another report if needed.
 							</p>
 						</div>
 					</div>
