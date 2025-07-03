@@ -56,6 +56,7 @@ export async function POST({ request, locals }) {
             userId: userId.toString(),
             name: locals.body.name.trim(),
             githubRepo: locals.body.githubRepo || null,
+            discordWebhook: locals.body.discordWebhook?.trim() || null,
             showIssueLink: locals.body.showIssueLink ?? true,
             customPrompt: locals.body.customPrompt?.trim() || null,
             colorScheme: locals.body.colorScheme || null,
@@ -100,6 +101,7 @@ export async function PUT({ request, locals }) {
             .set({
                 name: locals.body.name.trim(),
                 githubRepo: locals.body.githubRepo || null,
+                discordWebhook: locals.body.discordWebhook?.trim() || null,
                 showIssueLink: locals.body.showIssueLink ?? true,
                 customPrompt: locals.body.customPrompt?.trim() || null,
                 colorScheme: locals.body.colorScheme || null,

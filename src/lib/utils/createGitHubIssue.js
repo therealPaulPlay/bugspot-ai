@@ -2,12 +2,27 @@ import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { forms, users } from '$lib/server/db/schema.js';
 import { createGitHubIssue, getInstallationTokenFromFormId } from './gitHubAppAccess.js';
+import { sendDiscordMessage } from './sendDiscordMessage.js';
 
 export async function createGithubIssue(formId, title, content, labels = []) {
     try {
         const { token, owner, repo } = await getInstallationTokenFromFormId(formId);
-
         const issue = await createGitHubIssue(token, owner, repo, { title, body: content, labels });
+
+        // Send Discord notification if configured
+        const formData = await db.select({ discordWebhook: forms.discordWebhook, githubRepo: forms.githubRepo })
+            .from(forms)
+            .where(eq(forms.id, formId))
+            .limit(1);
+
+        if (formData.length && formData[0].discordWebhook) {
+            await sendDiscordMessage(
+                formData[0].discordWebhook,
+                title,
+                issue.html_url,
+                formData[0].githubRepo
+            );
+        }
 
         return { success: true, issueUrl: issue.html_url, issueNumber: issue.number };
     } catch (error) {

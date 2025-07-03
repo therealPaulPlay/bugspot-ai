@@ -29,6 +29,7 @@
 			formData = {
 				name: editingForm?.name || "",
 				domains: editingForm?.domains?.map((d) => d.domain).join(", ") || "",
+				discordWebhook: editingForm?.discordWebhook || "",
 				showIssueLink: editingForm?.showIssueLink ?? true,
 				customPrompt: editingForm?.customPrompt || "",
 				colorScheme: editingForm?.colorScheme || "default",
@@ -185,6 +186,23 @@
 					</div>
 				</div>
 
+				<!-- Integrations -->
+				<div class="space-y-3">
+					<Label class="text-base font-medium">Integrations</Label>
+
+					<div class="space-y-2">
+						<Label for="discordWebhook">Discord webhook URL (optional)</Label>
+						<Input
+							id="discordWebhook"
+							bind:value={formData.discordWebhook}
+							placeholder="https://discord.com/api/webhooks/..."
+							type="url"
+						/>
+						<p class="text-muted-foreground text-xs">Get notified in Discord when new bugs are reported.</p>
+					</div>
+				</div>
+
+				<!-- Additional Settings -->
 				<div class="space-y-3">
 					<Label class="mb-2 text-base font-medium">Additional settings</Label>
 
