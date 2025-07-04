@@ -3,6 +3,7 @@ import mysql from 'mysql2/promise';
 import * as schema from './schema';
 import { env } from '$env/dynamic/private';
 
+console.log(env.PORT);
 if (!env.DB_HOST) throw new Error('DB_HOST is not set');
 
 const client = mysql.createPool({
