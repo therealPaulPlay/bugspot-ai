@@ -46,7 +46,7 @@ export async function GET({ url }) {
 
         } else {
             // Login flow
-            if (!code) throw new Error("Missing code parameter in login callback – cancelled?");
+            if (!code) throw new Error("Cancelled (Code parameter is missing).");
             return new Response(null, {
                 status: 302,
                 headers: { 'Location': `/login?code=${code}&state=${encodeURIComponent(state)}` }
