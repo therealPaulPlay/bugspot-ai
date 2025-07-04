@@ -51,22 +51,3 @@ export async function getInstallationTokenFromFormId(formId) {
   const token = await getInstallationToken(user.githubInstallationId);
   return { token, owner, repo };
 }
-
-export async function createGitHubIssue(token, owner, repo, issueData) {
-  const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(issueData)
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(`Issue creation failed: ${error.message || response.status}`);
-  }
-
-  return response.json();
-}

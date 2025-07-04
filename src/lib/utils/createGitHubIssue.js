@@ -1,13 +1,32 @@
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { forms, users } from '$lib/server/db/schema.js';
-import { createGitHubIssue, getInstallationTokenFromFormId } from './gitHubAppAccess.js';
+import { getInstallationTokenFromFormId } from './gitHubAppAccess.js';
 import { sendDiscordMessage } from './sendDiscordMessage.js';
 
-export async function createGithubIssue(formId, title, content, labels = []) {
+async function createIssueRequest(token, owner, repo, issueData) {
+    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(issueData)
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`Issue creation failed: ${error.message || response.status}`);
+    }
+
+    return response.json();
+}
+
+export async function createGitHubIssue(formId, title, content, labels = []) {
     try {
         const { token, owner, repo } = await getInstallationTokenFromFormId(formId);
-        const issue = await createGitHubIssue(token, owner, repo, { title, body: content, labels });
+        const issue = await createIssueRequest(token, owner, repo, { title, body: content, labels });
 
         // Send Discord notification if configured
         const formData = await db.select({ discordWebhook: forms.discordWebhook, githubRepo: forms.githubRepo })

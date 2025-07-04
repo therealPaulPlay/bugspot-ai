@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { forms, users, submittedReports } from '$lib/server/db/schema.js';
-import { createGitHubIssue, addReactionToIssue, addCommentToIssue } from '$lib/utils/createGithubIssue.js';
+import { createGitHubIssue, addReactionToIssue, addCommentToIssue } from '$lib/utils/createGitHubIssue.js';
 import { getIssuesTitles, getIssueContent } from '$lib/utils/getGitHubIssue.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getBaseURL } from '$lib/server/s3/index.js';
@@ -268,7 +268,7 @@ export async function POST({ request, locals, getClientAddress }) {
                 return json({ action: 'duplicates', reportId, duplicates });
             } else {
                 if (!demo) await incrementReportCount(user.id);
-                const issueResult = await createGithubIssue(formId, aiResult.title, aiResult.content, ['bug', aiResult.priority]);
+                const issueResult = await createGitHubIssue(formId, aiResult.title, aiResult.content, ['bug', aiResult.priority]);
                 await saveSubmittedReport(formId, issueResult.issueNumber, email, screenshotUrl, videoUrl);
                 return json({ action: 'submitted', message: aiResult.message, issueUrl: issueResult.issueUrl });
             }
@@ -315,7 +315,7 @@ export async function PUT({ request, locals }) {
             return json({ action: 'duplicate_handled', issueUrl: `https://github.com/${owner}/${repo}/issues/${duplicateIssueId}` });
         } else {
             if (!demo) await incrementReportCount(user.id);
-            const issueResult = await createGithubIssue(reportData.formId, reportData.title, reportData.content, ['bug', reportData.priority]);
+            const issueResult = await createGitHubIssue(reportData.formId, reportData.title, reportData.content, ['bug', reportData.priority]);
             await saveSubmittedReport(reportData.formId, issueResult.issueNumber, reportData.email, reportData.screenshotUrl, reportData.videoUrl);
             return json({ action: 'submitted', issueUrl: issueResult.issueUrl });
         }
