@@ -34,12 +34,12 @@ jobs:
             # Check if container exists
             if ! docker ps -a --format '{{.Names}}' | grep -q "^bugspot-app$"; then
               echo "Container bugspot-app does not exist, creating..."
-              docker run -d -p 3005:3005 --network host --restart unless-stopped --name bugspot-app bugspot-app
+              docker run -d -p 3010:3010 --network host --restart unless-stopped --name bugspot-app bugspot-app
             else
               echo "Container bugspot-app exists, stopping and removing..."
               docker stop bugspot-app || true
               docker rm bugspot-app || true
-              docker run -d -p 3005:3005 --network host --restart unless-stopped --name bugspot-app bugspot-app
+              docker run -d -p 3010:3010 --network host --restart unless-stopped --name bugspot-app bugspot-app
             fi
           EOF
 
