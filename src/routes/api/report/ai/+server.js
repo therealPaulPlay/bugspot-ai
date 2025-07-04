@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { forms, users, submittedReports } from '$lib/server/db/schema.js';
-import { createGithubIssue, addReactionToIssue, addCommentToIssue } from '$lib/utils/createGithubIssue.js';
+import { createGitHubIssue, addReactionToIssue, addCommentToIssue } from '$lib/utils/createGithubIssue.js';
 import { getIssuesTitles, getIssueContent } from '$lib/utils/getGitHubIssue.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getBaseURL } from '$lib/server/s3/index.js';
