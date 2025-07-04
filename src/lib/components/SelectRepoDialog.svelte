@@ -7,7 +7,7 @@
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
 	import { page } from "$app/state";
-	import { env } from "$env/dynamic/public";
+	import * as env from "$env/static/public";
 	import { onMount } from "svelte";
 
 	let { open = $bindable(false), onRepoSelected, onClosed } = $props();

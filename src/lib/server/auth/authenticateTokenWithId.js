@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 
 export function authenticateTokenWithId(request, requestedId) {
     const authorizationHeader = request.headers.get('authorization');

@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { users } from '$lib/server/db/schema.js';
 import { authenticateTokenWithId } from '$lib/server/auth/authenticateTokenWithId.js';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 
 export async function POST({ request, locals }) {
   try {

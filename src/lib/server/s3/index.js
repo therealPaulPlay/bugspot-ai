@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 import { S3Client } from '@aws-sdk/client-s3';
 
 const baseDomain = "fra1.digitaloceanspaces.com";

@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 
 export async function GET({ url }) {
     const code = url.searchParams.get('code');

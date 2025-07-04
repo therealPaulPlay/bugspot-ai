@@ -5,7 +5,7 @@ import { submittedReports, forms } from '$lib/server/db/schema.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient } from '$lib/server/s3/index.js';
 import { sendMail } from '$lib/utils/sendMail.js';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 
 async function deleteS3File(key) {
     if (!key) return;

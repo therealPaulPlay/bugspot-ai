@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 
 // Get user's GitHub repositories with installation status
 export async function GET({ request, url }) {

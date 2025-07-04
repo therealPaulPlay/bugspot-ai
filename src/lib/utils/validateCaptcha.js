@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 import { error } from '@sveltejs/kit';
 
 export async function validateCaptcha(token, clientIp) {

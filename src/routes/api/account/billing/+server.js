@@ -4,7 +4,7 @@ import { db } from '$lib/server/db/index.js';
 import { users } from '$lib/server/db/schema.js';
 import { authenticateTokenWithId } from '$lib/server/auth/authenticateTokenWithId.js';
 import Stripe from 'stripe';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 

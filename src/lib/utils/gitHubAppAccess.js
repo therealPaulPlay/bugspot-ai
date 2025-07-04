@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 import { db } from '$lib/server/db';
 import { forms, users } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';

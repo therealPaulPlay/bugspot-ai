@@ -7,7 +7,7 @@
 	import { Github, Bug } from "lucide-svelte";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
-	import { env } from "$env/dynamic/public";
+	import * as env from "$env/static/public";
 	import { authStore } from "$lib/stores/account";
 
 	let loading = $state(false);

@@ -1,4 +1,4 @@
-import { env } from "$env/dynamic/public";
+import * as env from "$env/static/public";
 
 export function renderCaptcha(elementId, callback) {
     try {

@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getPublicObjectURL } from '$lib/server/s3/index.js';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 import { randomUUID } from 'crypto';
 
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB

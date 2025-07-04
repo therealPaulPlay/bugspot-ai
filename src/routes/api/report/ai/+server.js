@@ -7,7 +7,7 @@ import { getIssuesTitles, getIssueContent } from '$lib/utils/getGitHubIssue.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getBaseURL } from '$lib/server/s3/index.js';
 import { validateCaptcha } from '$lib/utils/validateCaptcha.js';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 import { get } from 'svelte/store';
 import { tiers } from '$lib/stores/tiers.js';
 

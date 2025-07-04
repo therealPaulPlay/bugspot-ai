@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { users } from '$lib/server/db/schema';
 import jwt from 'jsonwebtoken';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 import { authenticateTokenWithId } from '$lib/server/auth/authenticateTokenWithId';
 
 const GITHUB_APP_CLIENT_ID = env.GITHUB_APP_CLIENT_ID;

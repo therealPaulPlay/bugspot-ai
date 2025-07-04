@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { env } from '$env/dynamic/private';
+import * as env from '$env/static/private';
 
 const transporter = nodemailer.createTransport({
     host: env.EMAIL_HOST,
