@@ -38,6 +38,7 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.842.0",
+		"@sveltejs/adapter-node": "^5.2.12",
 		"dotenv": "^17.0.1",
 		"drizzle-orm": "^0.44.2",
 		"jsonwebtoken": "^9.0.2",

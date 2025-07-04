@@ -99,6 +99,6 @@ export async function PUT({ request, locals, url }) {
         return json({ url: portalSession.url });
     } catch (error) {
         console.error('Portal session error:', error);
-        return json({ error: 'Failed to create portal session.' }, { status: 500 });
+        return json({ error: 'Failed to create portal session: ' + error.message }, { status: 500 });
     }
 }

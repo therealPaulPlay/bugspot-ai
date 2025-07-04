@@ -100,13 +100,14 @@ ${customData ? `<details>\n<summary>Custom data</summary>\n(Custom data)\n</deta
 ${(!customData && !userAgent) ? 'No environment information.' : ''}
 
 ### Contact
-Email: ${email ? '(Email address here)' : 'Not provided.'}
+Email: ${email ? '(Clickable email link with subject "Your bug report", displays only the address)' : 'Not provided.'}
 ---- END OF CONTENT FORMAT
 
 DO NOT alter, rephrase, or correct URLs, Custom data, User agent data and email addresses.
 DO NOT capitalize random words in the title of the report; follow English grammar rules. 
 DO NOT use markdown or other special formatting when closing a report or simply asking a question.
 DO NOT use filler words; always keep it concise.
+DO NOT ask the user to provide any of the 'Not provided' fields unless crucial to the report.
 DO correct grammar mistakes or typos and enhance the readability of the description, behavior, and steps.
 DO ensure that all steps start with a capital letter and end with a period.
 
