@@ -1,4 +1,4 @@
-import { mysqlTable, varchar, text, int, timestamp, boolean, bigint } from 'drizzle-orm/mysql-core';
+import { mysqlTable, varchar, text, int, timestamp, boolean, bigint, index } from 'drizzle-orm/mysql-core';
 import { relations } from 'drizzle-orm';
 
 // Users table
@@ -32,7 +32,9 @@ export const forms = mysqlTable('forms', {
 	requireExpectedResult: boolean('require_expected_result').default(true),
 	requireObservedResult: boolean('require_observed_result').default(true),
 	createdAt: timestamp('created_at').defaultNow()
-});
+}, (table) => ({
+	githubRepoIdx: index('idx_forms_github_repo').on(table.githubRepo),
+}));
 
 // Form domains table (whitelisted domains per form)
 export const formDomains = mysqlTable('form_domains', {
@@ -42,9 +44,26 @@ export const formDomains = mysqlTable('form_domains', {
 	createdAt: timestamp('created_at').defaultNow()
 });
 
+export const submittedReports = mysqlTable('submitted_reports', {
+	id: varchar('id', { length: 36 }).primaryKey(), // UUID
+	formId: varchar('form_id', { length: 36 }).references(() => forms.id, { onDelete: 'cascade' }).notNull(),
+	issueNumber: int('issue_number').notNull(),
+	email: varchar('email', { length: 255 }), // Reporter's email
+	screenshotKey: varchar('screenshot_key', { length: 500 }), // S3 key for screenshot
+	videoKey: varchar('video_key', { length: 500 }), // S3 key for video
+	createdAt: timestamp('created_at').defaultNow()
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
 	forms: many(forms)
+}));
+
+export const submittedReportsRelations = relations(submittedReports, ({ one }) => ({
+	form: one(forms, {
+		fields: [submittedReports.formId],
+		references: [forms.id]
+	})
 }));
 
 export const formsRelations = relations(forms, ({ one, many }) => ({
@@ -52,7 +71,8 @@ export const formsRelations = relations(forms, ({ one, many }) => ({
 		fields: [forms.userId],
 		references: [users.id]
 	}),
-	domains: many(formDomains)
+	domains: many(formDomains),
+	reports: many(submittedReports)
 }));
 
 export const formDomainsRelations = relations(formDomains, ({ one }) => ({

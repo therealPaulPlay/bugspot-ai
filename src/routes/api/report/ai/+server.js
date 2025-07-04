@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { eq, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
-import { forms, users } from '$lib/server/db/schema.js';
+import { forms, users, submittedReports } from '$lib/server/db/schema.js';
 import { createGithubIssue, addReactionToIssue, addCommentToIssue } from '$lib/utils/createGithubIssue.js';
 import { getIssuesTitles, getIssueContent } from '$lib/utils/getGitHubIssue.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
@@ -31,6 +31,24 @@ async function makeAIRequest(messages) {
     if (!response.ok) throw new Error('AI request failed');
     const data = await response.json();
     return data.choices[0].message.content;
+}
+
+function getS3KeyFromUrl(url) {
+    if (!url) return null;
+    const baseURL = getBaseURL();
+    return url.startsWith(baseURL) ? url.replace(baseURL + '/', '') : null;
+}
+
+async function saveSubmittedReport(formId, issueNumber, email, screenshotUrl, videoUrl) {
+    const reportId = crypto.randomUUID();
+    await db.insert(submittedReports).values({
+        id: reportId,
+        formId,
+        issueNumber,
+        email,
+        screenshotKey: getS3KeyFromUrl(screenshotUrl),
+        videoKey: getS3KeyFromUrl(videoUrl)
+    });
 }
 
 async function deleteFile(url) {
@@ -250,6 +268,7 @@ export async function POST({ request, locals, getClientAddress }) {
             } else {
                 if (!demo) await incrementReportCount(user.id);
                 const issueResult = await createGithubIssue(formId, aiResult.title, aiResult.content, ['bug', aiResult.priority]);
+                await saveSubmittedReport(formId, issueResult.issueNumber, email, screenshotUrl, videoUrl);
                 return json({ action: 'submitted', message: aiResult.message, issueUrl: issueResult.issueUrl });
             }
         }
@@ -286,15 +305,17 @@ export async function PUT({ request, locals }) {
             const originalIssue = await getIssueContent(reportData.formId, duplicateIssueId);
             const newInfoCheck = await checkDuplicateForNewInfo(originalIssue, reportData.title, reportData.content);
 
+            if (!demo) await incrementReportCount(user.id);
             await addReactionToIssue(reportData.formId, duplicateIssueId);
             if (newInfoCheck?.hasNewInfo) await addCommentToIssue(reportData.formId, duplicateIssueId, newInfoCheck.comment);
-            if (!demo) await incrementReportCount(user.id);
+            await saveSubmittedReport(reportData.formId, duplicateIssueId, reportData.email, reportData.screenshotUrl, reportData.videoUrl);
 
             const [owner, repo] = form.githubRepo.split('/');
             return json({ action: 'duplicate_handled', issueUrl: `https://github.com/${owner}/${repo}/issues/${duplicateIssueId}` });
         } else {
-            const issueResult = await createGithubIssue(reportData.formId, reportData.title, reportData.content, ['bug', reportData.priority]);
             if (!demo) await incrementReportCount(user.id);
+            const issueResult = await createGithubIssue(reportData.formId, reportData.title, reportData.content, ['bug', reportData.priority]);
+            await saveSubmittedReport(reportData.formId, issueResult.issueNumber, reportData.email, reportData.screenshotUrl, reportData.videoUrl);
             return json({ action: 'submitted', issueUrl: issueResult.issueUrl });
         }
     } catch (error) {
