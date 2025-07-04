@@ -17,4 +17,4 @@ COPY .env .
 # Purely informational since we use --network host
 EXPOSE 3010
 
-CMD ["node", "build"]
+CMD ["node", "--env-file=.env", "build"]
