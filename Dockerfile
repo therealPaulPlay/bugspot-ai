@@ -12,7 +12,9 @@ WORKDIR /app
 COPY --from=builder /app/build build/
 COPY --from=builder /app/node_modules node_modules/
 COPY package.json .
+COPY .env .
 
 # Purely informational since we use --network host
 EXPOSE 3010
+
 CMD ["node", "build"]
