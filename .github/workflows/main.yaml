@@ -22,9 +22,7 @@ jobs:
             cd ${{ secrets.WORK_DIR }}
 
             # Write .env file from secret
-            cat > .env << 'ENVEOF'
-            ${{ secrets.ENV_FILE }}
-            ENVEOF
+            echo '${{ secrets.ENV_FILE }}' > .env
 
             # Pull latest changes from Git
             git checkout main
