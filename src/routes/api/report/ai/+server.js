@@ -184,7 +184,7 @@ Respond with JSON format:
 
         return duplicateIssues;
     } catch (error) {
-        console.error('Duplicate check error:', error);
+        console.error('Failed to check for duplicates:', error.message);
         return null;
     }
 }
@@ -277,8 +277,8 @@ export async function POST({ request, locals, getClientAddress }) {
         return json({ error: 'Invalid AI response.' }, { status: 500 });
 
     } catch (error) {
-        console.error('AI processing error:', error);
-        return json({ error: 'AI processing failed.' }, { status: 500 });
+        console.error('Processing error:', error);
+        return json({ error: 'Report processing failed.' }, { status: 500 });
     }
 }
 
@@ -321,6 +321,6 @@ export async function PUT({ request, locals }) {
         }
     } catch (error) {
         console.error('Duplicate handling error:', error);
-        return json({ error: 'Processing failed.' }, { status: 500 });
+        return json({ error: 'Report processing failed for potential duplicate.' }, { status: 500 });
     }
 }
