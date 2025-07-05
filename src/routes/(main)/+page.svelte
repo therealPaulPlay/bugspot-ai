@@ -454,10 +454,10 @@
 <section class="bg-muted/50 py-24" bind:this={errorSection}>
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-8 text-center">
-			<h2 class="text-3xl font-bold">
+			<h2 class="text-3xl font-bold mb-4">
 				When things go wrong, <span class="text-muted-foreground">let's make it right.</span>
 			</h2>
-			<p class="text-muted-foreground text-lg">See how Bugspot helps your customers create beautiful reports.</p>
+			<p class="text-muted-foreground text-lg">See how Bugspot helps your users create beautiful bug reports.</p>
 		</div>
 
 		<!-- Overlapping error showcase -->
