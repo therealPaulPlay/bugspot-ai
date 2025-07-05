@@ -60,9 +60,11 @@ export async function POST({ request }) {
 
             if (session.mode === 'subscription') {
                 const subscription = await stripe.subscriptions.retrieve(session.subscription);
-                const product = await stripe.products.retrieve(subscription.items.data[0].price.product);
-                const user = await getUserByStripeCustomerId(session.customer);
+                const price = subscription.items.data[0].price;
+                if (!price.lookup_key?.startsWith('bugspot_')) return new Response(); // Only process Bugspot-related events (but still return 200)
 
+                const product = await stripe.products.retrieve(price.product);
+                const user = await getUserByStripeCustomerId(session.customer);
                 if (user) {
                     const subscriptionTier = parseInt(product.metadata?.subscription_tier || '0');
                     await updateUserSubscription(user.id, subscriptionTier);
@@ -71,11 +73,14 @@ export async function POST({ request }) {
             }
         } else if (['customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted'].includes(event.type)) {
             const subscription = event.data.object;
+            const price = subscription.items.data[0].price;
+            if (!price.lookup_key?.startsWith('bugspot_')) return new Response(); // Only process Bugspot-related events (but still return 200)
+
             const user = await getUserByStripeCustomerId(subscription.customer);
 
             if (user) {
                 if (subscription.status === 'active' && event.type !== 'customer.subscription.deleted') {
-                    const product = await stripe.products.retrieve(subscription.items.data[0].price.product);
+                    const product = await stripe.products.retrieve(price.product);
                     const subscriptionTier = parseInt(product.metadata?.subscription_tier || '0');
                     await updateUserSubscription(user.id, subscriptionTier);
                 } else {
@@ -84,7 +89,7 @@ export async function POST({ request }) {
             }
         }
 
-        return json({ received: true });
+        return new Response();
     } catch (error) {
         console.error('Webhook error:', error);
         return json({ error: 'Webhook processing failed' }, { status: 500 });
