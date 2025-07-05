@@ -87,9 +87,7 @@ export async function PUT({ request, locals, url }) {
 
         const user = userData[0];
 
-        if (!user.stripeCustomerId) {
-            return json({ error: 'No subscription found.' }, { status: 400 });
-        }
+        if (!user.stripeCustomerId) return json({ error: 'No active or inactive subscription found.' }, { status: 400 });
 
         const portalSession = await stripe.billingPortal.sessions.create({
             customer: user.stripeCustomerId,
@@ -99,6 +97,6 @@ export async function PUT({ request, locals, url }) {
         return json({ url: portalSession.url });
     } catch (error) {
         console.error('Portal session error:', error);
-        return json({ error: 'Failed to create portal session: ' + error.message }, { status: 500 });
+        return json({ error: 'Failed to create portal session.' }, { status: 500 });
     }
 }
