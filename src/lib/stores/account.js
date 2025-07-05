@@ -45,7 +45,7 @@ export const authStore = {
             user.set(data.user);
             localStorage.setItem('user', JSON.stringify(data.user));
         } catch (error) {
-            console.error('Failed to refresh user data:', error);
+            toast.error("Failed to refresh user data: " + error.message);
         }
     }
 };
@@ -61,7 +61,7 @@ if (browser) {
                 authStore.refreshUser();
             } else {
                 authStore.logout();
-                toast.info("Your session has expired. Please sign in again.");
+                toast.info("Your session has expired.");
                 if (page.url.pathname.startsWith("/dashboard")) goto("/login");
             }
         } catch (error) {
