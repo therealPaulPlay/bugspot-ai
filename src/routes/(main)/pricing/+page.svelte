@@ -79,11 +79,6 @@
 
 <svelte:head>
 	<title>Pricing</title>
-	<script id="stripe-js" src="https://js.stripe.com/v3/" async></script>
-	<meta
-		name="description"
-		content="Simple, transparent pricing that scales with your bug volume. All features included in every plan."
-	/>
 </svelte:head>
 
 <div class="mx-auto max-w-6xl px-8 py-24">

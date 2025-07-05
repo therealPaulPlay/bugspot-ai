@@ -86,10 +86,6 @@
 
 <svelte:head>
 	<title>Sign in</title>
-	<meta
-		name="description"
-		content="Sign in to Bugspot with your GitHub account to start creating AI-enhanced bug report forms."
-	/>
 </svelte:head>
 
 <div class="flex min-h-screen items-center justify-center px-4">

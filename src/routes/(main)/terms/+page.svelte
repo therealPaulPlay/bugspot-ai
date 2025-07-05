@@ -1,6 +1,5 @@
 <svelte:head>
 	<title>Terms of Use</title>
-	<meta name="description" content="Terms of Use" />
 </svelte:head>
 
 <div class="mx-auto min-h-screen max-w-screen-xl p-4 py-12">

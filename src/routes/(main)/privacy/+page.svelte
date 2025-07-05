@@ -1,6 +1,5 @@
 <svelte:head>
 	<title>Privacy Policy</title>
-	<meta name="description" content="Privacy Policy for Bugspot - learn how we protect and handle your data." />
 </svelte:head>
 
 <div class="mx-auto min-h-screen max-w-screen-xl p-4 py-12">
