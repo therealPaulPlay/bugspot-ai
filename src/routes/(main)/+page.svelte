@@ -128,102 +128,100 @@
 		</div>
 
 		<!-- Bug report transformation -->
-		<div class="relative mx-auto mt-20 max-w-6xl">
-			<div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-				<!-- Before -->
-				<div class="relative h-[340px]">
-					{#each messyReports as report, index}
-						<Card
-							class="bg-background dark:border-accent absolute h-45 w-full gap-2 border-transparent shadow-lg"
-							style="
+		<div class="relative mx-auto mt-20 grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+			<!-- Before -->
+			<div class="relative h-[340px]">
+				{#each messyReports as report, index}
+					<Card
+						class="bg-background dark:border-accent absolute h-45 w-full gap-2 border-transparent shadow-lg"
+						style="
 									top: {index * 25}px;
 									left: {index * 8}px;
 									z-index: {messyReports.length - index};
 									transform: rotate({(index - 1) * 1.5}deg);
 									opacity: {100 - index * 20}%;
 								"
-						>
-							<CardHeader class="pb-3">
-								<div class="text-muted-foreground flex items-center justify-between text-xs">
-									<span>@{report?.author}</span>
-									<span>{report?.timestamp}</span>
-								</div>
-								<CardTitle class="text-base">{report?.title}</CardTitle>
-							</CardHeader>
-							<CardContent>
-								<p class="text-muted-foreground h-3/5 text-sm">{report?.content}</p>
-								<div class="mt-3 flex gap-2">
-									<Badge variant="secondary" class="text-xs">no repro</Badge>
-									<Badge variant="secondary" class="text-xs">missing info</Badge>
-								</div>
-							</CardContent>
-						</Card>
-					{/each}
-				</div>
-
-				<!-- After -->
-				<Card class="bg-background dark:border-accent flex flex-1 flex-col gap-4 border-transparent shadow-xl">
-					<CardHeader class="border-b">
-						<div class="flex items-start justify-between">
-							<div class="flex items-center gap-2">
-								<div class="border-primary flex h-5 w-5 items-center justify-center rounded-full border-2">
-									<Dot class="text-primary h-3 w-3 fill-current" />
-								</div>
-								<span class="text-primary text-sm font-medium">#16</span>
+					>
+						<CardHeader class="pb-3">
+							<div class="text-muted-foreground flex items-center justify-between text-xs">
+								<span>@{report?.author}</span>
+								<span>{report?.timestamp}</span>
 							</div>
-							<Badge class="bg-primary text-xs text-white">Open</Badge>
-						</div>
-
-						<CardTitle class="text-primary mt-1 text-base leading-tight"
-							>Login button unresponsive on mobile Safari</CardTitle
-						>
-
-						<div class="text-muted-foreground mt-1 flex items-center text-xs">
-							<span>@bugspot</span>
-						</div>
-					</CardHeader>
-
-					<!-- GitHub Issue Content -->
-					<CardContent class="flex flex-1 flex-col">
-						<div class="flex-1 space-y-3 text-sm">
-							<div>
-								<h4 class="mb-1 font-semibold">Steps to reproduce</h4>
-								<div class="text-muted-foreground space-y-0.5 text-sm">
-									<div>1. Visit the /login page</div>
-									<div>2. Click login without filling form</div>
-								</div>
+							<CardTitle class="text-base">{report?.title}</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<p class="text-muted-foreground h-3/5 truncate text-sm">{report?.content}</p>
+							<div class="mt-3 flex gap-2">
+								<Badge variant="secondary" class="text-xs">no repro</Badge>
+								<Badge variant="secondary" class="text-xs">missing info</Badge>
 							</div>
-
-							<div>
-								<div>
-									<span class="font-semibold">Expected:</span>
-									<span class="text-muted-foreground"> Button remains clickable after validation errors.</span>
-								</div>
-								<div>
-									<span class="font-semibold">Observed:</span>
-									<span class="text-muted-foreground"> Button becomes unresponsive, requires page refresh.</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="text-muted-foreground mt-3 flex items-center justify-between gap-4 border-t pt-3 text-xs">
-							<div class="flex gap-4">
-								<span class="flex items-center gap-1">
-									<MessageSquare class="h-3 w-3" /> 3
-								</span>
-								<Badge variant="secondary" class="text-xs">P1 - high</Badge>
-							</div>
-							<div>
-								<p class="text-muted-foreground text-xs">Safari 17.1, iOS 17.1.1</p>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
+						</CardContent>
+					</Card>
+				{/each}
 			</div>
+
+			<!-- After -->
+			<Card
+				class="bg-background dark:border-accent flex max-w-full flex-1 flex-col gap-4 overflow-hidden border-transparent shadow-xl"
+			>
+				<CardHeader class="border-b">
+					<div class="flex items-start justify-between">
+						<div class="flex items-center gap-2">
+							<div class="border-primary flex h-5 w-5 items-center justify-center rounded-full border-2">
+								<Dot class="text-primary h-3 w-3 fill-current" />
+							</div>
+							<span class="text-primary text-sm font-medium">#16</span>
+						</div>
+						<Badge class="bg-primary text-xs text-white">Open</Badge>
+					</div>
+
+					<CardTitle class="text-primary mt-1 text-base leading-tight truncate"
+						>Login button unresponsive on mobile Safari</CardTitle
+					>
+
+					<div class="text-muted-foreground mt-1 flex items-center text-xs">
+						<span>@bugspot</span>
+					</div>
+				</CardHeader>
+				<CardContent class="flex flex-1 flex-col">
+					<div class="flex-1 space-y-3 text-sm">
+						<div>
+							<h4 class="mb-1 font-semibold">Steps to reproduce</h4>
+							<div class="text-muted-foreground space-y-0.5 text-sm">
+								<div>1. Visit the /login page</div>
+								<div>2. Click login without filling form</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="text-nowrap">
+								<span class="font-semibold">Expected:</span>
+								<p class="text-muted-foreground truncate">Button remains clickable after validation errors.</p>
+							</div>
+							<div class="text-nowrap">
+								<span class="font-semibold">Observed:</span>
+								<p class="text-muted-foreground truncate">Button becomes unresponsive, requires page refresh.</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="text-muted-foreground mt-3 flex items-center justify-between gap-4 border-t pt-3 text-xs">
+						<div class="flex gap-4">
+							<span class="flex items-center gap-1">
+								<MessageSquare class="h-3 w-3" /> 3
+							</span>
+							<Badge variant="secondary" class="text-xs">P1 - high</Badge>
+						</div>
+						<div>
+							<p class="text-muted-foreground text-xs">Safari 17.1, iOS 17.1.1</p>
+						</div>
+					</div>
+				</CardContent>
+			</Card>
 
 			<!-- Arrow indicator -->
 			<div
-				class="oveflow-hidden bg-background text-primary border-primary absolute top-3/7 left-1/2 z-20 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 shadow-xl lg:top-1/2"
+				class="oveflow-hidden bg-background text-primary border-primary absolute top-[42%] left-1/2 z-20 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 shadow-xl lg:top-1/2"
 			>
 				<ArrowRight class="hidden h-8 w-8 lg:block" />
 				<ArrowDown class="h-8 w-8 lg:hidden" />
@@ -457,7 +455,7 @@
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-8 text-center">
 			<h2 class="text-3xl font-bold">
-				When things go wrong... <span class="text-muted-foreground">let's make it right.</span>
+				When things go wrong, <span class="text-muted-foreground">let's make it right.</span>
 			</h2>
 			<p class="text-muted-foreground text-lg">See how Bugspot helps your customers create beautiful reports.</p>
 		</div>
@@ -510,7 +508,7 @@
 						<div class="bg-muted absolute inset-0 flex animate-pulse items-center justify-center rounded"></div>
 					{/if}
 					<iframe
-						class="bg-muted/50 h-[50dvh] w-full rounded transition duration-300"
+						class="bg-muted/50 h-[50dvh] min-h-120 w-full rounded transition duration-300"
 						style:opacity={!demoIframeLoaded ? "0" : "1"}
 						src="/form/demo"
 						title="Demo iframe"
