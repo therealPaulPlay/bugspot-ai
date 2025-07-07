@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { eq, and } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
-import { submittedReports, forms } from '$lib/server/db/schema.js';
+import { submittedReports, forms, users } from '$lib/server/db/schema.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient } from '$lib/server/s3/index.js';
 import { sendMail } from '$lib/utils/sendMail.js';
