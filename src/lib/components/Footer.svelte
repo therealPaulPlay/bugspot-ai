@@ -12,8 +12,8 @@
 					<span class="text-lg font-bold">Bugspot</span>
 				</div>
 				<p class="text-muted-foreground mb-4 text-sm">
-					Professional bug reporting powered by AI. Help users create better bug reports, reduce back-and-forth, and
-					improve your development workflow.
+					Super smart bug report forms powered by AI. Help users communicate bugs, reduce back-and-forth,
+					and take your issue management to the next level.
 				</p>
 			</div>
 

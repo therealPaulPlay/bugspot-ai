@@ -103,9 +103,9 @@
 				<span class="text-primary">Super smart</span> bug report forms.
 			</h1>
 
-			<p class="text-muted-foreground mx-auto mb-8 max-w-3xl sm:text-lg">
-				Our AI-powered forms guide users to create detailed, actionable bug reports that meet your guidelines. No more
-				non-issues or endless back-and-forth.
+			<p class="text-muted-foreground mx-auto mb-8 max-w-xl text-lg">
+				Our AI-powered forms guide users to create detailed & actionable bug reports. No more non-issues or endless
+				back-and-forth.
 			</p>
 
 			<div class="flex flex-col justify-center gap-4 sm:flex-row">
@@ -175,7 +175,7 @@
 						<Badge class="bg-primary text-xs text-white">Open</Badge>
 					</div>
 
-					<CardTitle class="text-primary mt-1 text-base leading-tight truncate"
+					<CardTitle class="text-primary mt-1 truncate text-base leading-tight"
 						>Login button unresponsive on mobile Safari</CardTitle
 					>
 
@@ -258,10 +258,10 @@
 			<Card class="group bg-accent/50 border-none shadow-none transition">
 				<CardHeader>
 					<Link class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">Integrate in seconds</CardTitle>
+					<CardTitle class="group-hover:text-primary transition">Set up in seconds</CardTitle>
 					<CardDescription>
-						Add our smart bug report form to your app with a simple iframe or direct link. No setup required - just
-						copy, paste, and you're ready.
+						Add our smart bug report form to your app with a simple iframe or direct link. No code required - just copy,
+						paste, and you're ready.
 					</CardDescription>
 				</CardHeader>
 			</Card>
@@ -386,7 +386,7 @@
 			<!-- Duplicate Management -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Intelligent duplicate handling.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Smart duplicate handling.</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
 						Before creating new issues, users may see similar existing reports. If they confirm it's the same bug, their
 						additional information gets added to the original issue.
@@ -454,7 +454,7 @@
 <section class="bg-muted/50 py-24" bind:this={errorSection}>
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-8 text-center">
-			<h2 class="text-3xl font-bold mb-4">
+			<h2 class="mb-4 text-3xl font-bold">
 				When things go wrong, <span class="text-muted-foreground">let's make it right.</span>
 			</h2>
 			<p class="text-muted-foreground text-lg">See how Bugspot helps your users create beautiful bug reports.</p>
@@ -528,7 +528,7 @@
 		<h2 class="mb-4 text-3xl font-bold">
 			You debug faster. <span class="opacity-80">We clear the clutter.</span>
 		</h2>
-		<p class="mx-auto mb-8 max-w-xl text-xl opacity-90">
+		<p class="mx-auto mb-8 max-w-xl text-lg opacity-90">
 			Join a growing community of developers streamlining their bug report management.
 		</p>
 		<div class="flex flex-col justify-center gap-4 sm:flex-row">

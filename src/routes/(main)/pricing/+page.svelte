@@ -84,8 +84,8 @@
 <div class="mx-auto max-w-6xl px-8 py-24">
 	<!-- Header -->
 	<div class="mb-16 text-center">
-		<h1 class="mb-4 text-4xl font-bold">Simple, transparent pricing.</h1>
-		<p class="text-muted-foreground mx-auto max-w-2xl text-xl">All features included. Save valuable dev-time.</p>
+		<h1 class="mb-4 text-4xl font-bold">Transparent pricing.</h1>
+		<p class="text-muted-foreground mx-auto max-w-2xl text-lg">All features included. Save valuable dev-time.</p>
 	</div>
 
 	<!-- Pricing cards -->
@@ -166,7 +166,7 @@
 			</Card>
 		{/each}
 	</div>
-	<p class="text-muted-foreground mx-auto mb-6 max-w-1/2 text-center text-xs">
+	<p class="text-muted-foreground mx-auto mb-6 max-w-125 text-center text-xs">
 		*Reports that the AI closed (e.g. spam, false positives, duplicates) are counted as bug reports. We keep abuse low
 		with strict rate limits and captchas.
 	</p>
