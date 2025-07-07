@@ -82,11 +82,15 @@
 ></div>
 
 <!-- Form box -->
-<div class="absolute inset-0 flex items-center justify-center sm:p-8 overflow-hidden">
+<div class="absolute inset-0 flex items-center justify-center overflow-hidden sm:p-8">
 	<!-- Form container -->
-	<div class="bg-background relative h-full sm:h-100 max-h-full w-2xl max-w-full sm:rounded-3xl shadow-xl overflow-hidden">
-		<div class="of-top of-bottom flex h-full w-full flex-col items-center justify-center-safe overflow-y-auto p-6">
-			<Form {formConfig} {primaryColor} />
+	<div
+		class="bg-background relative h-full max-h-full w-2xl max-w-full overflow-hidden shadow-xl sm:h-100 sm:rounded-3xl"
+	>
+		<div class="h-full w-full p-6 relative">
+			<div class="of-top of-bottom flex h-full w-full flex-col items-center justify-center-safe overflow-y-auto">
+				<Form {formConfig} {primaryColor} />
+			</div>
 		</div>
 	</div>
 </div>

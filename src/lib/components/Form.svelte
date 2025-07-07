@@ -285,7 +285,7 @@
 		>
 			{#if file}
 				<div class="flex flex-col items-center justify-center gap-3">
-					<div class="bg-accent inline-flex max-w-40 items-center gap-2 rounded-md px-3 py-2 text-sm">
+					<div class="bg-muted inline-flex max-w-40 items-center gap-2 rounded-md px-3 py-2 text-sm">
 						<p class="truncate">{file.name}</p>
 					</div>
 					<Button variant="outline" onclick={() => setFile(null)}>Remove</Button>
@@ -455,7 +455,7 @@
 		<div in:fade class="flex h-full w-100 max-w-full flex-col">
 			<h2 class="mb-4 text-2xl font-semibold">We need more information.</h2>
 			<div class="bg-muted/50 mb-4 rounded-xl p-4">
-				<p class="of-top of-bottom no-scrollbar max-h-18 overflow-y-auto text-sm">
+				<p class="of-top of-bottom no-scrollbar h-18 overflow-y-auto text-sm">
 					{aiResponse?.message || "No AI response (Error)."}
 				</p>
 			</div>
@@ -478,12 +478,12 @@
 	{/if}
 
 	{#if slide == "duplicates"}
-		<div in:fade class="flex h-fit w-100 max-w-full flex-col">
+		<div in:fade class="flex h-full w-100 max-w-full flex-col">
 			<h2 class="mb-4 text-2xl font-semibold">We found similar reports.</h2>
 
-			<div class="bg-accent/50 mb-4 rounded-xl">
-				<Carousel.Root>
-					<Carousel.Content class="h-54 sm:h-58">
+			<div class="bg-muted/50 relative mb-4 min-h-50 grow rounded-xl">
+				<Carousel.Root class="h-full">
+					<Carousel.Content class="h-full">
 						{#each duplicates as duplicate}
 							<Carousel.Item class="h-full">
 								<div class="flex h-full flex-col rounded-lg p-4">
@@ -503,7 +503,7 @@
 				</Carousel.Root>
 			</div>
 
-			<div class="mt-auto flex justify-end">
+			<div class="flex justify-end">
 				<Button onclick={() => handleDuplicateSelection()}>
 					Skip <ArrowRight />
 				</Button>
