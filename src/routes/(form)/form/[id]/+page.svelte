@@ -82,8 +82,9 @@
 ></div>
 
 <!-- Form box -->
-<div class="absolute inset-0 flex items-center justify-center p-8">
-	<div class="bg-background relative h-100 max-h-full w-2xl max-w-full rounded-3xl p-2 shadow-xl">
+<div class="absolute inset-0 flex items-center justify-center sm:p-8 overflow-hidden">
+	<!-- Form container -->
+	<div class="bg-background relative h-full sm:h-100 max-h-full w-2xl max-w-full sm:rounded-3xl shadow-xl">
 		<div class="of-top of-bottom flex h-full w-full flex-col items-center justify-center-safe overflow-y-auto p-6">
 			<Form {formConfig} {primaryColor} />
 		</div>

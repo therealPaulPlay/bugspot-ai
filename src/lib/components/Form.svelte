@@ -170,16 +170,14 @@
 			if (aiResponse.action === "duplicates") {
 				reportId = aiResponse.reportId;
 				duplicates = aiResponse.duplicates;
-				currentSlideIndex = slides.length + 2;
-			} else {
-				const actionIndex = { question: 1, closed: 3, submitted: 4 }[aiResponse.action] || 1;
-				currentSlideIndex = slides.length + actionIndex;
 			}
+			const actionIndex = { question: 1, duplicates: 2, closed: 3, submitted: 4 }[aiResponse.action] || 0;
+			currentSlideIndex = slides.length + actionIndex;
 
 			captchaToken = null; // Reset, as tokens are single-use
 		} catch (error) {
 			console.error("Submission error:", error);
-			toast.error(error.message || "Something went wrong. Please try again.");
+			toast.error(error.message || "Unknown error.");
 			currentSlideIndex = slides.length - 1;
 		} finally {
 			processing = false;

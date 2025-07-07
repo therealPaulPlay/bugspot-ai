@@ -278,7 +278,7 @@ export async function POST({ request, locals, getClientAddress }) {
 
     } catch (error) {
         console.error('Processing error:', error);
-        return json({ error: 'Report processing failed: ' + error.message || "Please refer to the logs." }, { status: 500 });
+        return json({ error: 'Report processing failed: ' + (error.message || "Please refer to the logs.") }, { status: 500 });
     }
 }
 
@@ -321,6 +321,6 @@ export async function PUT({ request, locals }) {
         }
     } catch (error) {
         console.error('Duplicate handling error:', error);
-        return json({ error: 'Report processing failed for potential duplicate: ' + error.message || "Please refer to the logs." }, { status: 500 });
+        return json({ error: 'Report processing failed for potential duplicate: ' + (error.message || "Please refer to the logs.") }, { status: 500 });
     }
 }
