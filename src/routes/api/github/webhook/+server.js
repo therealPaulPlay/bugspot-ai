@@ -26,16 +26,18 @@ async function cleanupReport(reportData, repoName, issueNumber, showIssueLink) {
             await sendMail({
                 from: env.EMAIL_USER,
                 to: reportData.email,
-                subject: `Issue #${issueNumber} – ${repoName} via Bugspot`,
+                subject: `Issue #${issueNumber} – ${repoName}`,
                 html: `
                     <h3>Your bug report has been closed.</h3>
                     <p><strong>Repository:</strong> ${repoName}</p>
                     <p><strong>Issue:</strong> #${issueNumber}</p>
                     <p>${showIssueLink
-                        ? `For more information on how your report was handled, please visit this page: <a href="https://github.com/${repoName}/issues/${issueNumber}">https://github.com/${repoName}/issues/${issueNumber}</a>`
-                        : 'You cannot access this issue, as this form was configured to keep the link hidden.'
+                        ? `View the issue page for more details: <a href="https://github.com/${repoName}/issues/${issueNumber}">https://github.com/${repoName}/issues/${issueNumber}</a>`
+                        : "The issue page link is not shown for this form."
                     }</p>
                     <p>Thank you for your help!</p>
+                    <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+                    <p style="font-size: 11px; color: #888;">This automated email was sent out by Bugspot.</p>
                 `
             });
         } catch (error) {
