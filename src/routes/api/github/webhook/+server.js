@@ -50,7 +50,7 @@ async function cleanupReport(reportData, repoName, issueNumber, showIssueLink) {
     ]);
 }
 
-async function processReports(repoFullName, issueNumber = null) {
+async function processReportsForCleanup(repoFullName, issueNumber = null) {
     const reports = await db
         .select()
         .from(submittedReports)
@@ -85,10 +85,27 @@ export async function POST({ request, locals }) {
         const event = request.headers.get('x-github-event');
 
         if (event === 'issues' && (payload.action === 'closed' || payload.action === 'deleted')) {
-            await processReports(payload.repository.full_name, payload.issue?.number || -1);
+            await processReportsForCleanup(payload.repository.full_name, payload.issue?.number || -1);
+
+        } else if (event === 'repository' && payload.action === 'renamed') {
+            const oldName = payload.changes?.name?.from;
+            const newName = payload.repository.name;
+            const owner = payload.repository.owner.login;
+
+            if (oldName && newName) {
+                const oldFullName = `${owner}/${oldName}`;
+                const newFullName = `${owner}/${newName}`;
+
+                // Update all forms that reference the old repo name
+                const updateResult = await db.update(forms)
+                    .set({ githubRepo: newFullName })
+                    .where(eq(forms.githubRepo, oldFullName));
+
+                console.log(`User renamed repository from ${oldFullName} to ${newFullName}, updated ${updateResult.rowsAffected || 0} forms.`);
+            }
 
         } else if (event === 'repository' && payload.action === 'deleted') {
-            await processReports(payload.repository.full_name);
+            await processReportsForCleanup(payload.repository.full_name);
 
         } else if (event === 'installation' && payload.action === 'created') {
             const installationId = payload.installation?.id;
