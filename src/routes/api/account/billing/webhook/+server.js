@@ -23,19 +23,17 @@ async function sendSubscriptionEmail(email, sessionId, amountTotal, productName)
     const mailOptions = {
         from: env.EMAIL_USER,
         to: email,
-        subject: 'Thank you for subscribing to Bugspot!',
+        subject: 'Bugspot subscription',
         text: `Hi,
 
 Thank you for subscribing to Bugspot!
 
-Product: ${productName}
-Session ID: ${sessionId}
+Tier: ${productName}
+Checkout session ID: ${sessionId}
 Amount: ${((amountTotal || 0) / 100).toFixed(2)}
 
 If you have any questions, please reach out to us via the contact form on https://paulplay.studio. 
 For business details, please refer to https://paulplay.studio/imprint. 
-
-Please note: This is not an invoice – You should receive a dedicated invoice from Stripe shortly.
 
 Best regards,
 The Bugspot Team`

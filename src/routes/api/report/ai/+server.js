@@ -99,7 +99,7 @@ ${userAgent ? `<details>\n<summary>User agent</summary>\n(User agent)\n</details
 ${customData ? `<details>\n<summary>Custom data</summary>\n(Custom data)\n</details>` : ''}
 ${(!customData && !userAgent) ? 'No environment information.' : ''}
 
-### Contact
+## Contact
 Email: ${email ? '(Clickable email link with subject "Your bug report", displays only the address)' : 'Not provided.'}
 ---- END OF CONTENT FORMAT
 

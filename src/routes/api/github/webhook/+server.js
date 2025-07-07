@@ -32,7 +32,7 @@ async function cleanupReport(reportData, repoName, issueNumber, showIssueLink) {
                     <p><strong>Repository:</strong> ${repoName}</p>
                     <p><strong>Issue:</strong> #${issueNumber}</p>
                     <p>${showIssueLink
-                        ? `For more information on how your report was handled, please check the issue page: <a href="https://github.com/${repoName}/issues/${issueNumber}">https://github.com/${repoName}/issues/${issueNumber}</a>`
+                        ? `For more information on how your report was handled, please visit this page: <a href="https://github.com/${repoName}/issues/${issueNumber}">https://github.com/${repoName}/issues/${issueNumber}</a>`
                         : 'You cannot access this issue, as this form was configured to keep the link hidden.'
                     }</p>
                     <p>Thank you for your help!</p>

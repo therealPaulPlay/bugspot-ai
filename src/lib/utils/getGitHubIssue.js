@@ -1,5 +1,6 @@
 import { getInstallationTokenFromFormId } from "./gitHubAppAccess";
 
+// Fetch titles + numbers of OPEN GitHub issues
 export async function getIssuesTitles(formId) {
     const { token, owner, repo } = await getInstallationTokenFromFormId(formId);
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues?state=open&per_page=100`, {
