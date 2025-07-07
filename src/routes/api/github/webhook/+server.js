@@ -84,15 +84,11 @@ export async function POST({ request, locals }) {
         const payload = locals.body;
         const event = request.headers.get('x-github-event');
 
-        console.log(event);
-
         if (event === 'issues' && (payload.action === 'closed' || payload.action === 'deleted')) {
             await processReportsForCleanup(payload.repository.full_name, payload.issue?.number || -1);
 
         } else if (event === 'repository' && payload.action === 'renamed') {
-            console.log('Repository renamed event received:', JSON.stringify(payload, null, 2));
-
-            const oldName = payload.changes?.name?.from;
+            const oldName = payload.changes?.repository?.name?.from;
             const newName = payload.repository.name;
             const owner = payload.repository.owner.login;
 
