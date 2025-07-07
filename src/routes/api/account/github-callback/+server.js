@@ -8,10 +8,9 @@ export async function GET({ url }) {
     if (installationId && !state) {
         return new Response(null, {
             status: 302,
-            headers: { 'Location': url.host + "/dashboard" }
+            headers: { 'Location': new URL("/dashboard", url.origin).toString() }
         });
     }
-
 
     if (!state) {
         return new Response(null, {
@@ -39,7 +38,7 @@ export async function GET({ url }) {
             const tokenData = await tokenResponse.json();
             if (tokenData.error) throw new Error('Token exchange failed!');
 
-            const redirectUrl = new URL(url.origin + "/dashboard");
+            const redirectUrl = new URL("/dashboard", url.origin);
             redirectUrl.searchParams.set('github_token', tokenData.access_token);
             return new Response(null, { status: 302, headers: { 'Location': redirectUrl.toString() } });
 
