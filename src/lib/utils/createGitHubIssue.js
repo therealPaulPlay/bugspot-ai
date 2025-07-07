@@ -50,7 +50,7 @@ export async function createGitHubIssue(formId, title, content, labels = []) {
     }
 }
 
-const REACTIONS = ['+1', '-1', 'laugh', 'confused', 'heart', 'hooray', 'rocket', 'eyes'];
+const REACTIONS = ['+1', 'laugh', 'confused', 'heart', 'hooray', 'rocket', 'eyes'];
 
 export async function addReactionToIssue(formId, issueNumber) {
     try {
