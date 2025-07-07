@@ -5,6 +5,7 @@ import { submittedReports, forms } from '$lib/server/db/schema.js';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient } from '$lib/server/s3/index.js';
 import { sendMail } from '$lib/utils/sendMail.js';
+import crypto from "crypto";
 import * as env from '$env/static/private';
 
 async function deleteS3File(key) {
@@ -76,14 +77,8 @@ export async function POST({ request, locals }) {
         const signature = request.headers.get('x-hub-signature-256');
         if (env.GITHUB_WEBHOOK_SECRET && signature) {
             const body = JSON.stringify(locals.body);
-            const expectedSignature = 'sha256=' + crypto
-                .createHmac('sha256', env.GITHUB_WEBHOOK_SECRET)
-                .update(body)
-                .digest('hex');
-
-            if (signature !== expectedSignature) {
-                return json({ error: 'Invalid signature' }, { status: 401 });
-            }
+            const expectedSignature = 'sha256=' + crypto.createHmac('sha256', env.GITHUB_WEBHOOK_SECRET).update(body).digest('hex');
+            if (signature !== expectedSignature) return json({ error: 'Invalid signature' }, { status: 401 });
         }
 
         const payload = locals.body;
