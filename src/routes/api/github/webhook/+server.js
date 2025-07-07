@@ -80,21 +80,40 @@ export async function POST({ request, locals }) {
                 .createHmac('sha256', env.GITHUB_WEBHOOK_SECRET)
                 .update(body)
                 .digest('hex');
-            
+
             if (signature !== expectedSignature) {
                 return json({ error: 'Invalid signature' }, { status: 401 });
             }
         }
-        
+
         const payload = locals.body;
         const event = request.headers.get('x-github-event');
-        
+
         if (event === 'issues' && (payload.action === 'closed' || payload.action === 'deleted')) {
             await processReports(payload.repository.full_name, payload.issue?.number || -1);
         } else if (event === 'repository' && payload.action === 'deleted') {
             await processReports(payload.repository.full_name);
+        } else if (event === 'github_app_authorization' && payload.action === 'revoked') {
+            const userId = payload.sender?.id; // GitHub user ID
+
+            // Find user by GitHub user ID and clear installation
+            const userData = await db
+                .select()
+                .from(users)
+                .where(eq(users.githubId, userId.toString()))
+                .limit(1);
+
+            if (userData.length > 0) {
+                await db.update(users)
+                    .set({ githubInstallationId: null })
+                    .where(eq(users.id, userData[0].id));
+
+                console.log(`User revoked access, cleared GitHub installation ID for user ${userData[0].id}.`);
+            }
+
+            return json({ success: true });
         }
-        
+
         return json({ success: true });
     } catch (error) {
         console.error('Webhook error:', error);

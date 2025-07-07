@@ -18,7 +18,6 @@ function generateAppJWT() {
 
 async function getInstallationToken(installationId) {
   const appJWT = generateAppJWT();
-
   const response = await fetch(`https://api.github.com/app/installations/${installationId}/access_tokens`, {
     method: 'POST',
     headers: {
@@ -45,7 +44,7 @@ export async function getInstallationTokenFromFormId(formId) {
 
   const { form, user } = formData[0];
   if (!form.githubRepo) throw new Error('No GitHub repository configured');
-  if (!user.githubInstallationId) throw new Error('GitHub App not installed');
+  if (!user.githubInstallationId) throw new Error('GitHub App not installed or access revoked.');
 
   const [owner, repo] = form.githubRepo.split('/');
   const token = await getInstallationToken(user.githubInstallationId);

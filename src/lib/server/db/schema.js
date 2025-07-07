@@ -13,7 +13,9 @@ export const users = mysqlTable('users', {
 	reportAmount: int('report_amount').default(0), // Monthly used form submissions
 	githubInstallationId: varchar('github_installation_id', { length: 100 }), // GitHub App installation ID
 	createdAt: timestamp('created_at').defaultNow()
-});
+}, (table) => ({
+	githubId: index('idx_users_github_id').on(table.githubId),
+}));
 
 // Forms table
 export const forms = mysqlTable('forms', {
