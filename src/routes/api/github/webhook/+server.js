@@ -86,9 +86,32 @@ export async function POST({ request, locals }) {
 
         if (event === 'issues' && (payload.action === 'closed' || payload.action === 'deleted')) {
             await processReports(payload.repository.full_name, payload.issue?.number || -1);
+
         } else if (event === 'repository' && payload.action === 'deleted') {
             await processReports(payload.repository.full_name);
-        } else if (event === 'github_app_authorization' && payload.action === 'revoked') {
+
+        } else if (event === 'installation' && payload.action === 'created') {
+            const installationId = payload.installation?.id;
+            const installerId = payload.sender?.id; // GitHub user ID who installed the app
+
+            if (installationId && installerId) {
+                // Find user by GitHub user ID and set installation ID
+                const userData = await db
+                    .select()
+                    .from(users)
+                    .where(eq(users.githubId, installerId.toString()))
+                    .limit(1);
+
+                if (userData.length > 0) {
+                    await db.update(users)
+                        .set({ githubInstallationId: installationId.toString() })
+                        .where(eq(users.id, userData[0].id));
+
+                    console.log(`User installed App, set installation ID for user ${userData[0].id}.`);
+                }
+            }
+
+        } else if (event === 'installation' && payload.action === 'deleted') {
             const userId = payload.sender?.id; // GitHub user ID
 
             // Find user by GitHub user ID and clear installation
@@ -103,7 +126,7 @@ export async function POST({ request, locals }) {
                     .set({ githubInstallationId: null })
                     .where(eq(users.id, userData[0].id));
 
-                console.log(`User revoked access, cleared GitHub installation ID for user ${userData[0].id}.`);
+                console.log(`User uninstalled the GitHub App, cleared installation ID for user ${userData[0].id}.`);
             }
 
             return json({ success: true });

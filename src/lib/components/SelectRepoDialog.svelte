@@ -38,25 +38,6 @@
 		}
 	}
 
-	async function updateInstallationId() {
-		try {
-			await betterFetch("/api/github/update-installation", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${localStorage.getItem("token")}`,
-				},
-				body: JSON.stringify({
-					userId: localStorage.getItem("userId"),
-					githubToken: token,
-				}),
-			});
-		} catch (error) {
-			console.error("Failed to update installation ID for user:", error);
-			toast.error("Failed to update GitHub installation ID for user: " + error);
-		}
-	}
-
 	function connect() {
 		const stateData = JSON.stringify({
 			type: "repo_access",

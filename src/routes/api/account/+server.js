@@ -82,7 +82,7 @@ export async function POST({ request, locals }) {
         const tokenData = await tokenResponse.json();
         if (tokenData.error) return json({ error: tokenData.error_description || 'GitHub authentication failed' }, { status: 400 });
 
-        // Get user info and installation data from GitHub
+        // Get user info and installation data from GitHub (installation ID for recovery situations – normally gets set via webhook)
         const [userResponse, installationResponse] = await Promise.all([
             fetch('https://api.github.com/user', {
                 headers: {
