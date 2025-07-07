@@ -84,7 +84,6 @@ ${customPrompt ? `Additional guidelines: ${customPrompt}` : ''}
 
 ## Behavior
 **Expected:** ${expectedResult ? '(Expected result)' : 'Not provided.'}
-
 **Observed:** ${observedResult ? '(Observed result)' : 'Not provided.'}
 
 ## Steps to reproduce

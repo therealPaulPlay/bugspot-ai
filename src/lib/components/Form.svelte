@@ -478,7 +478,7 @@
 	{/if}
 
 	{#if slide == "duplicates"}
-		<div in:fade class="flex h-full w-100 max-w-full flex-col">
+		<div in:fade class="flex h-fit w-100 max-w-full flex-col">
 			<h2 class="mb-4 text-2xl font-semibold">We found similar reports.</h2>
 
 			<div class="bg-accent/50 mb-4 rounded-xl">
