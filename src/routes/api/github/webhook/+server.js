@@ -26,7 +26,7 @@ async function cleanupReport(reportData, repoName, issueNumber, showIssueLink) {
             await sendMail({
                 from: env.EMAIL_USER,
                 to: reportData.email,
-                subject: `Bugspot (${repoName} - Issue #${issueNumber})`,
+                subject: `Issue #${issueNumber} – ${repoName} via Bugspot`,
                 html: `
                     <h3>Your bug report has been closed.</h3>
                     <p><strong>Repository:</strong> ${repoName}</p>

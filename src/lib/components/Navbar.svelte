@@ -87,7 +87,7 @@
 					{#each navigation as item}
 						<a
 							href={item.href}
-							class="text-muted-foreground hover:text-foreground px-2 py-2 text-sm font-medium transition-colors"
+							class="text-muted-foreground hover:text-foreground px-2 py-2 text-sm transition-colors"
 							class:text-foreground={page.url.pathname === item.href}
 						>
 							{item.name}

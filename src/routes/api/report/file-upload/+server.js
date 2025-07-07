@@ -48,6 +48,6 @@ export async function POST({ request }) {
 
     } catch (error) {
         console.error('Upload error:', error);
-        return json({ error: 'Upload failed' }, { status: 500 });
+        return json({ error: 'Upload failed: ' + error.message }, { status: 500 });
     }
 }
