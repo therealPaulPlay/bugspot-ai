@@ -3,6 +3,15 @@ import * as env from '$env/static/private';
 export async function GET({ url }) {
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state');
+    const installationId = url.searchParams.get('installation_id');
+
+    if (installationId && !state) {
+        return new Response(null, {
+            status: 302,
+            headers: { 'Location': url.host + "/dashboard" }
+        });
+    }
+
 
     if (!state) {
         return new Response(null, {
@@ -30,19 +39,9 @@ export async function GET({ url }) {
             const tokenData = await tokenResponse.json();
             if (tokenData.error) throw new Error('Token exchange failed!');
 
-            const returnUrl = stateData.returnUrl || '/dashboard';
-            const redirectUrl = new URL(returnUrl);
+            const redirectUrl = new URL(url.origin + "/dashboard");
             redirectUrl.searchParams.set('github_token', tokenData.access_token);
-
             return new Response(null, { status: 302, headers: { 'Location': redirectUrl.toString() } });
-
-        } else if (stateData.type === 'app_installation') {
-            // App installation flow - redirect back to dashboard
-            const returnUrl = stateData.returnUrl || '/dashboard';
-            return new Response(null, {
-                status: 302,
-                headers: { 'Location': returnUrl }
-            });
 
         } else {
             // Login flow
@@ -53,8 +52,7 @@ export async function GET({ url }) {
             });
         }
     } catch (error) {
-        console.warn('GitHub callbcak error:', error);
-
+        console.warn('GitHub callback error:', error);
         return new Response(null, {
             status: 302,
             headers: { 'Location': `/login?error=${encodeURIComponent(error.message)}` }

@@ -21,18 +21,14 @@
 		const urlToken = page.url.searchParams.get("github_token");
 		if (urlToken) {
 			token = urlToken;
-			const url = new URL(window.location);
-			url.searchParams.delete("github_token");
-			window.history.replaceState({}, "", url);
 			loadRepos();
 		}
 	});
 
 	async function loadRepos() {
-		if (!token) return;
 		loading = true;
 		try {
-			const response = await betterFetch(`/api/github/repos?token=${token}&per_page=100`);
+			const response = await betterFetch(`/api/github/repos?token=${token}`);
 			const data = await response.json();
 			repos = data.repos || [];
 		} catch {
@@ -62,27 +58,16 @@
 	}
 
 	function connect() {
-		const state = crypto.randomUUID();
 		const stateData = JSON.stringify({
-			state,
 			type: "repo_access",
-			returnUrl: window.location.href,
 		});
 		const url = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_APP_CLIENT_ID}&state=${encodeURIComponent(stateData)}&redirect_uri=${encodeURIComponent(window.location.origin + "/api/account/github-callback")}`;
 		window.location.href = url;
 	}
 
 	function installAppForRepo() {
-		const state = crypto.randomUUID();
-		const stateData = JSON.stringify({
-			state,
-			type: "app_installation",
-			returnUrl: window.location.href,
-		});
-
 		const [owner] = selected.split("/");
-		const installUrl = `https://github.com/apps/${env.PUBLIC_GITHUB_APP_NAME?.toLowerCase()?.replaceAll(" ", "-")}/installations/new?target_id=${owner}&state=${encodeURIComponent(stateData)}`;
-
+		const installUrl = `https://github.com/apps/${env.PUBLIC_GITHUB_APP_NAME?.toLowerCase()?.replaceAll(" ", "-")}/installations/new?target_id=${owner}`;
 		const newWindow = window.open(installUrl, "_blank");
 	}
 
@@ -152,11 +137,9 @@
 				{#if selected}
 					{@const repo = repos.find((r) => r.fullName === selected)}
 					{#if repo && !repo.appInstalled}
-						<Alert class="border-orange-200 bg-orange-50">
-							<AlertTriangle class="h-4 w-4 text-orange-600" />
-							<AlertDescription class="text-orange-800">
-								GitHub App needs to be installed for this repository.
-							</AlertDescription>
+						<Alert class="bg-muted">
+							<AlertTriangle class="h-4 w-4" />
+							<AlertDescription>GitHub App needs to be installed for this repository.</AlertDescription>
 						</Alert>
 					{/if}
 				{/if}

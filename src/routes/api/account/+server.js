@@ -55,14 +55,14 @@ export async function GET({ request, url }) {
 
     } catch (error) {
         console.error('Account info error:', error);
-        return json({ error: 'Failed to get account info' }, { status: 500 });
+        return json({ error: 'Failed to get account info.' }, { status: 500 });
     }
 }
 
 // GitHub App OAuth login/signup
 export async function POST({ request, locals }) {
-    const { code, state } = locals.body;
-    if (!code || !state) return json({ error: 'Missing code or state parameter' }, { status: 400 });
+    const { code } = locals.body;
+    if (!code) return json({ error: 'Missing code parameter.' }, { status: 400 });
 
     try {
         // Exchange code for access token
@@ -167,7 +167,7 @@ export async function POST({ request, locals }) {
 
     } catch (error) {
         console.error('GitHub auth error:', error);
-        return json({ error: 'Internal server error' }, { status: 500 });
+        return json({ error: 'Internal server error.' }, { status: 500 });
     }
 }
 

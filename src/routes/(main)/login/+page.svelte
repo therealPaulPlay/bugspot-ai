@@ -15,7 +15,6 @@
 	onMount(async () => {
 		// Check for OAuth callback
 		const code = page.url.searchParams.get("code");
-		const state = page.url.searchParams.get("state");
 		const errorParam = page.url.searchParams.get("error");
 
 		if (errorParam) {
@@ -23,25 +22,19 @@
 			return toast.error("GitHub callback failed: " + error);
 		}
 
-		if (code && state) await handleGitHubCallback(code, state);
+		if (code) await handleGitHubCallback(code);
 	});
 
 	async function handleGitHubLogin() {
 		loading = true;
 
 		try {
-			const state = crypto.randomUUID();
-			sessionStorage.setItem("oauth_state", state);
-
-			// Wrap the state in JSON like your repos route does
 			const stateData = JSON.stringify({
-				state,
-				type: "login", // Add type to distinguish from other callbacks
+				type: "login",
 			});
 
-			const redirectUri = `${window.location.origin}/api/account/github-callback`;
 			const scope = "user:email";
-			const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_APP_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${encodeURIComponent(stateData)}`;
+			const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_APP_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + "/api/account/github-callback")}&scope=${scope}&state=${encodeURIComponent(stateData)}`;
 
 			window.location.href = githubUrl;
 		} catch (err) {
@@ -50,31 +43,21 @@
 		}
 	}
 
-	async function handleGitHubCallback(code, state) {
+	async function handleGitHubCallback(code) {
 		loading = true;
 		try {
-			// Parse the JSON state to get the original UUID
-			const stateData = JSON.parse(decodeURIComponent(state));
-			const storedState = sessionStorage.getItem("oauth_state");
-
-			if (stateData.state !== storedState) throw new Error("Invalid state parameter");
-
 			// Exchange code for token
 			const response = await betterFetch("/api/account", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ code, state }),
+				body: JSON.stringify({ code }),
 			});
 
 			const data = await response.json();
 			authStore.login(data); // Login and store user data in localstorage
 
 			toast.success("Successfully signed in!");
-
-			// Clean up and redirect
-			sessionStorage.removeItem("oauth_state");
-			const redirectTo = page.url.searchParams.get("redirect") || "/dashboard";
-			goto(redirectTo);
+			goto("/dashboard");
 		} catch (err) {
 			console.error("GitHub callback error:", err);
 			toast.error(err.message);

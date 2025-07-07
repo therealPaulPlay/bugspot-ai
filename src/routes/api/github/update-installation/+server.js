@@ -21,7 +21,7 @@ export async function POST({ request, locals }) {
     if (!response.ok) return json({ error: 'Failed to fetch installations' }, { status: 400 });
 
     const installations = await response.json();
-    const userInstallation = installations.installations?.find(inst => 
+    const userInstallation = installations.installations?.find(inst =>
       inst.app_id === parseInt(env.GITHUB_APP_ID)
     );
 

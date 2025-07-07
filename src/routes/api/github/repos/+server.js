@@ -5,14 +5,11 @@ import * as env from '$env/static/private';
 export async function GET({ request, url }) {
     try {
         const githubToken = url.searchParams.get('token');
-        const page = parseInt(url.searchParams.get('page')) || 1;
-        const perPage = parseInt(url.searchParams.get('per_page')) || 100;
-
         if (!githubToken) return json({ error: 'GitHub token required', needsAuth: true }, { status: 401 });
 
-        // Get user's repositories and installations in parallel
+        // Get user's repositories and installations in parallel (hard limit of the most recent 100)
         const [reposResponse, installationsResponse] = await Promise.all([
-            fetch(`https://api.github.com/user/repos?sort=updated&per_page=${perPage}&page=${page}`, {
+            fetch(`https://api.github.com/user/repos?sort=updated&per_page=100`, {
                 headers: {
                     'Authorization': `Bearer ${githubToken}`,
                     'Accept': 'application/vnd.github.v3+json'
@@ -62,10 +59,6 @@ export async function GET({ request, url }) {
             }
         }
 
-        const linkHeader = reposResponse.headers.get('Link');
-        const hasNextPage = linkHeader ? linkHeader.includes('rel="next"') : false;
-        const hasPrevPage = page > 1;
-
         const formattedRepos = repos
             .map(repo => ({
                 id: repo.id,
@@ -81,8 +74,7 @@ export async function GET({ request, url }) {
             .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
         return json({
-            repos: formattedRepos,
-            pagination: { currentPage: page, hasNextPage, hasPrevPage, perPage }
+            repos: formattedRepos
         });
 
     } catch (error) {
