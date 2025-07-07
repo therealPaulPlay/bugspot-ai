@@ -88,20 +88,25 @@ export async function POST({ request, locals }) {
             await processReportsForCleanup(payload.repository.full_name, payload.issue?.number || -1);
 
         } else if (event === 'repository' && payload.action === 'renamed') {
+            console.log('Repository renamed event received:', JSON.stringify(payload, null, 2));
+
             const oldName = payload.changes?.name?.from;
             const newName = payload.repository.name;
             const owner = payload.repository.owner.login;
+
+            console.log('Extracted values:', { oldName, newName, owner });
 
             if (oldName && newName) {
                 const oldFullName = `${owner}/${oldName}`;
                 const newFullName = `${owner}/${newName}`;
 
-                // Update all forms that reference the old repo name
                 const updateResult = await db.update(forms)
                     .set({ githubRepo: newFullName })
                     .where(eq(forms.githubRepo, oldFullName));
 
                 console.log(`User renamed repository from ${oldFullName} to ${newFullName}, updated ${updateResult.rowsAffected || 0} forms.`);
+            } else {
+                console.log('Missing data - oldName:', oldName, 'newName:', newName, 'owner:', owner);
             }
 
         } else if (event === 'repository' && payload.action === 'deleted') {
