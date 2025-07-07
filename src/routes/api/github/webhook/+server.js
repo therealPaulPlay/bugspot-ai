@@ -84,6 +84,8 @@ export async function POST({ request, locals }) {
         const payload = locals.body;
         const event = request.headers.get('x-github-event');
 
+        console.log(event);
+
         if (event === 'issues' && (payload.action === 'closed' || payload.action === 'deleted')) {
             await processReportsForCleanup(payload.repository.full_name, payload.issue?.number || -1);
 
@@ -105,8 +107,6 @@ export async function POST({ request, locals }) {
                     .where(eq(forms.githubRepo, oldFullName));
 
                 console.log(`User renamed repository from ${oldFullName} to ${newFullName}, updated ${updateResult.rowsAffected || 0} forms.`);
-            } else {
-                console.log('Missing data - oldName:', oldName, 'newName:', newName, 'owner:', owner);
             }
 
         } else if (event === 'repository' && payload.action === 'deleted') {
