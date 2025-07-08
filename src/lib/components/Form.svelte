@@ -47,16 +47,11 @@
 
 	function checkDomainAccess() {
 		const allowedDomains = formConfig.domains?.map((d) => d.domain) || [];
-		const isInIframe = window !== window.top;
-		const topHostname = isInIframe ? window.top?.location?.hostname : null;
 		const referrerHostname = document.referrer ? new URL(document.referrer).hostname : null;
 
-		if (!topHostname && !referrerHostname) return false;
-
-		const checkDomain = topHostname || referrerHostname;
-		return checkDomain === page.url.hostname || allowedDomains.includes(checkDomain);
+		// Allow same domain OR whitelisted referrer
+		return page.url.hostname === referrerHostname || (referrerHostname && allowedDomains.includes(referrerHostname));
 	}
-
 	onMount(() => {
 		isDomainAllowed = checkDomainAccess();
 
@@ -497,7 +492,7 @@
 					{#each duplicates as duplicate}
 						<Carousel.Item>
 							<div class="rounded-lg p-4">
-								<div class="of-top of-bottom h-42 overflow-y-auto text-sm no-scrollbar">
+								<div class="of-top of-bottom no-scrollbar h-42 overflow-y-auto text-sm">
 									<h3 class="text-foreground/75 mb-3 text-lg font-semibold">{duplicate.title || "Default title"}</h3>
 									{@html formatMarkdownText(duplicate.body) || "<p>Default body text.</p>"}
 								</div>
@@ -526,7 +521,7 @@
 				<XCircle class="min-h-6 min-w-6" />
 				<h2 class="text-2xl font-semibold">Report not submitted.</h2>
 			</div>
-			<div class="bg-muted/50 max-h-48 overflow-y-auto rounded-xl no-scrollbar">
+			<div class="bg-muted/50 no-scrollbar max-h-48 overflow-y-auto rounded-xl">
 				<div class="of-top of-bottom of-length-2 of-top of-bottom max-h-30 overflow-y-auto p-4">
 					<p class="text-sm">{aiResponse?.message || "No AI response (Error)."}</p>
 				</div>
@@ -552,7 +547,7 @@
 		<XCircle class="mb-4 h-12 w-12" />
 		<h2 class="mb-2 text-2xl font-semibold">Domain not whitelisted.</h2>
 		<p class="text-muted-foreground max-w-md">
-			The form requires a valid & whitelisted referrer or top frame domain. This can be configured via the dashboard. <br
+			The form requires a valid & whitelisted referring domain. This can be configured via the dashboard. <br
 			/><br /> Note that that links using target="_blank" do not provide a referrer by default. Consider using a direct link
 			or embedding the form in an iframe instead.
 		</p>
