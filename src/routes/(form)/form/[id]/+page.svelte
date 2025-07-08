@@ -81,14 +81,14 @@
 	style={gradientStyle}
 ></div>
 
-<!-- Form box -->
-<div class="absolute inset-0 flex items-center justify-center overflow-hidden sm:p-8">
-	<!-- Form container -->
+<!-- Form container -->
+<div class="absolute inset-0 flex items-center justify-center sm:p-8">
+	<!-- Form box -->
 	<div
-		class="bg-background relative h-full max-h-full w-2xl max-w-full overflow-hidden shadow-xl sm:h-100 sm:rounded-3xl"
+		class="bg-background relative flex h-full max-h-full w-2xl max-w-full items-center overflow-hidden p-2 shadow-xl sm:h-100 sm:rounded-3xl"
 	>
-		<div class="h-full w-full p-6 relative">
-			<div class="of-top of-bottom flex h-full w-full flex-col items-center justify-center-safe overflow-y-auto">
+		<div class="of-top of-bottom h-full w-full overflow-y-auto">
+			<div class="flex min-h-full w-full flex-col items-center justify-center-safe p-4">
 				<Form {formConfig} {primaryColor} />
 			</div>
 		</div>

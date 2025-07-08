@@ -474,14 +474,14 @@
 				<Textarea
 					bind:value={questionAnswerInput}
 					placeholder="Here is additional information regarding..."
-					class="h-16 w-full resize-none sm:h-24"
+					class="h-28 w-full resize-none"
 					maxlength={500}
 				/>
 				<p class="text-muted-foreground mt-1 ml-2 text-xs">
 					Provide an answer to help with this report. Min. 20 characters.
 				</p>
 			</div>
-			<div class="mt-auto flex w-full justify-end gap-2">
+			<div class="flex w-full justify-end gap-2">
 				<Button onclick={() => (currentSlideIndex = slides.length - 1)} variant="outline">Go back</Button>
 				<Button onclick={processSubmission} disabled={questionAnswerInput.length < 20}>Submit</Button>
 			</div>
@@ -490,31 +490,29 @@
 
 	{#if slide == "duplicates"}
 		<div in:fade class="flex h-full w-100 max-w-full flex-col">
-			<h2 class="mb-4 text-2xl font-semibold">We found similar reports.</h2>
+			<h2 class="mx-12 mb-4 text-2xl font-semibold">We found similar reports.</h2>
 
-			<div class="bg-muted/50 relative mb-4 min-h-50 grow rounded-xl">
-				<Carousel.Root class="h-full">
-					<Carousel.Content class="h-full">
-						{#each duplicates as duplicate}
-							<Carousel.Item class="h-full">
-								<div class="flex h-full flex-col rounded-lg p-4">
-									<div class="of-top of-bottom flex-1 overflow-y-auto text-sm">
-										<h3 class="text-foreground/75 mb-3 text-lg font-semibold">{duplicate.title || "Default title"}</h3>
-										{@html formatMarkdownText(duplicate.body) || "<p>Default body text.</p>"}
-									</div>
-									<Button onclick={() => handleDuplicateSelection(duplicate.id)} class="mt-4 w-full" variant="outline">
-										This describes my bug
-									</Button>
+			<Carousel.Root class="bg-muted/50 relative mx-12 mb-4 rounded-xl">
+				<Carousel.Content>
+					{#each duplicates as duplicate}
+						<Carousel.Item>
+							<div class="rounded-lg p-4">
+								<div class="of-top of-bottom h-42 overflow-y-auto text-sm no-scrollbar">
+									<h3 class="text-foreground/75 mb-3 text-lg font-semibold">{duplicate.title || "Default title"}</h3>
+									{@html formatMarkdownText(duplicate.body) || "<p>Default body text.</p>"}
 								</div>
-							</Carousel.Item>
-						{/each}
-					</Carousel.Content>
-					<Carousel.Previous style="margin-left: 3.75rem;" />
-					<Carousel.Next style="margin-right: 3.75rem;" />
-				</Carousel.Root>
-			</div>
+								<Button onclick={() => handleDuplicateSelection(duplicate.id)} class="mt-4 w-full" variant="outline">
+									This is my bug
+								</Button>
+							</div>
+						</Carousel.Item>
+					{/each}
+				</Carousel.Content>
+				<Carousel.Previous />
+				<Carousel.Next />
+			</Carousel.Root>
 
-			<div class="flex justify-end">
+			<div class="mx-12 flex justify-end">
 				<Button onclick={() => handleDuplicateSelection()}>
 					Skip <ArrowRight />
 				</Button>
@@ -525,10 +523,10 @@
 	{#if slide == "closed"}
 		<div in:fade class="w-100 max-w-full">
 			<div class="mb-4 flex items-center gap-2">
-				<XCircle class="h-6 w-6" />
+				<XCircle class="min-h-6 min-w-6" />
 				<h2 class="text-2xl font-semibold">Report not submitted.</h2>
 			</div>
-			<div class="bg-muted/50 max-h-48 overflow-y-auto rounded-xl">
+			<div class="bg-muted/50 max-h-48 overflow-y-auto rounded-xl no-scrollbar">
 				<div class="of-top of-bottom of-length-2 of-top of-bottom max-h-30 overflow-y-auto p-4">
 					<p class="text-sm">{aiResponse?.message || "No AI response (Error)."}</p>
 				</div>
