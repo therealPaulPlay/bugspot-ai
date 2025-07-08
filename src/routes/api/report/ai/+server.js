@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, and } from 'drizzle-orm';
 import { db } from '$lib/server/db/index.js';
 import { forms, users, submittedReports } from '$lib/server/db/schema.js';
 import { createGitHubIssue, addReactionToIssue, addCommentToIssue } from '$lib/utils/createGitHubIssue.js';
@@ -33,13 +33,20 @@ async function makeAIRequest(messages) {
     return data.choices[0].message.content;
 }
 
+async function checkReportRateLimit(ip) {
+    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
+    const recentReports = await db.select().from(submittedReports)
+        .where(and(eq(submittedReports.reporterIp, ip), sql`${submittedReports.createdAt} > ${sixHoursAgo}`));
+    return recentReports.length >= 5;
+}
+
 function getS3KeyFromUrl(url) {
     if (!url) return null;
     const baseURL = getBaseURL();
     return url.startsWith(baseURL) ? url.replace(baseURL + '/', '') : null;
 }
 
-async function saveSubmittedReport(formId, issueNumber, email, screenshotUrl, videoUrl) {
+async function saveSubmittedReport(formId, issueNumber, email, screenshotUrl, videoUrl, reporterIp) {
     const reportId = crypto.randomUUID();
     await db.insert(submittedReports).values({
         id: reportId,
@@ -47,7 +54,8 @@ async function saveSubmittedReport(formId, issueNumber, email, screenshotUrl, vi
         issueNumber,
         email,
         screenshotKey: getS3KeyFromUrl(screenshotUrl),
-        videoKey: getS3KeyFromUrl(videoUrl)
+        videoKey: getS3KeyFromUrl(videoUrl),
+        reporterIp
     });
 }
 
@@ -224,10 +232,12 @@ export async function POST({ request, locals, getClientAddress }) {
     try {
         const captchaToken = request.headers.get('cf-turnstile-response');
         await validateCaptcha(captchaToken, getClientAddress());
+        if (await checkReportRateLimit(getClientAddress())) return json({ error: 'Too many report submissions.' }, { status: 429 });
 
         const { formId, title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, questionAnswerHistory, demo } = locals.body;
-
         if (!formId || !title || !description) return json({ error: 'Missing required fields id, title and description.' }, { status: 400 });
+        if (screenshotUrl && !screenshotUrl.startsWith(getBaseURL())) return json({ error: 'Invalid screenshot URL.' }, { status: 400 });
+        if (videoUrl && !videoUrl.startsWith(getBaseURL())) return json({ error: 'Invalid video URL.' }, { status: 400 });
 
         // Get form with user data
         const formData = await db
@@ -268,7 +278,7 @@ export async function POST({ request, locals, getClientAddress }) {
             } else {
                 if (!demo) await incrementReportCount(user.id);
                 const issueResult = await createGitHubIssue(formId, aiResult.title, aiResult.content, ['bug', aiResult.priority]);
-                await saveSubmittedReport(formId, issueResult.issueNumber, email, screenshotUrl, videoUrl);
+                await saveSubmittedReport(formId, issueResult.issueNumber, email, screenshotUrl, videoUrl, getClientAddress());
                 return json({ action: 'submitted', message: aiResult.message, issueUrl: issueResult.issueUrl });
             }
         }
@@ -281,7 +291,7 @@ export async function POST({ request, locals, getClientAddress }) {
     }
 }
 
-export async function PUT({ request, locals }) {
+export async function PUT({ request, locals, getClientAddress }) {
     try {
         const { reportId, duplicateIssueId, demo } = locals.body;
         if (!reportId || !pendingReports.has(reportId)) return json({ error: 'Invalid or expired report.' }, { status: 400 });
@@ -308,14 +318,14 @@ export async function PUT({ request, locals }) {
             if (!demo) await incrementReportCount(user.id);
             await addReactionToIssue(reportData.formId, duplicateIssueId);
             if (newInfoCheck?.hasNewInfo) await addCommentToIssue(reportData.formId, duplicateIssueId, newInfoCheck.comment);
-            await saveSubmittedReport(reportData.formId, duplicateIssueId, reportData.email, reportData.screenshotUrl, reportData.videoUrl);
+            await saveSubmittedReport(reportData.formId, duplicateIssueId, reportData.email, reportData.screenshotUrl, reportData.videoUrl, getClientAddress());
 
             const [owner, repo] = form.githubRepo.split('/');
             return json({ action: 'duplicate_handled', issueUrl: `https://github.com/${owner}/${repo}/issues/${duplicateIssueId}` });
         } else {
             if (!demo) await incrementReportCount(user.id);
             const issueResult = await createGitHubIssue(reportData.formId, reportData.title, reportData.content, ['bug', reportData.priority]);
-            await saveSubmittedReport(reportData.formId, issueResult.issueNumber, reportData.email, reportData.screenshotUrl, reportData.videoUrl);
+            await saveSubmittedReport(reportData.formId, issueResult.issueNumber, reportData.email, reportData.screenshotUrl, reportData.videoUrl, getClientAddress());
             return json({ action: 'submitted', issueUrl: issueResult.issueUrl });
         }
     } catch (error) {

@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { spacesClient, getPublicObjectURL } from '$lib/server/s3/index.js';
+import { spacesClient, getBaseURL } from '$lib/server/s3/index.js';
 import * as env from '$env/static/private';
 import { randomUUID } from 'crypto';
 import { submittedReports } from '$lib/server/db/schema.js';
@@ -16,12 +16,10 @@ export async function POST({ request }) {
     try {
         const formData = await request.formData();
         const file = formData.get('file');
-
         if (!file || !file.size) return json({ error: 'No file provided' }, { status: 400 });
 
         const isImage = file.type.startsWith('image/');
         const isVideo = file.type.startsWith('video/');
-
         if (!isImage && !isVideo) return json({ error: 'Only images and videos are allowed' }, { status: 400 });
 
         const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
@@ -45,7 +43,7 @@ export async function POST({ request }) {
         });
 
         await spacesClient.send(command);
-        const url = getPublicObjectURL(key);
+        const url = getBaseURL() + "/" + key;
 
         // Cleanup timer (if the file is unused after this timeout, delete it!)
         setTimeout(async () => {

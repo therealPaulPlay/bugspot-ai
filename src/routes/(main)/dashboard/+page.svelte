@@ -4,7 +4,7 @@
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "$lib/components/ui/dialog";
 	import { Progress } from "$lib/components/ui/progress/index.js";
-	import { Plus, Settings, ExternalLink, Copy, CheckCircle, Trash2, Info } from "lucide-svelte";
+	import { Plus, Settings, ExternalLink, Copy, Trash2, Info } from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
@@ -308,7 +308,6 @@
 
 			<Button onclick={copyIframeCode} class="w-full">
 				{#if copied}
-					<CheckCircle class="h-4 w-4" />
 					Copied!
 				{:else}
 					<Copy class="h-4 w-4" />

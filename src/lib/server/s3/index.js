@@ -16,8 +16,3 @@ export const spacesClient = new S3Client({
 export function getBaseURL() {
     return `https://${env.SPACES_BUCKET_NAME}.${baseDomain}`;
 }
-
-// Get file URL – direct URL for publicly readable objects
-export function getPublicObjectURL(key) {
-    return `https://${env.SPACES_BUCKET_NAME}.${baseDomain}/${key}`;
-}
