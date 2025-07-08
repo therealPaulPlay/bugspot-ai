@@ -92,11 +92,32 @@
 	<div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
 		<div class="text-center">
 			<div class="mb-4 flex justify-center">
-				<Button variant="ghost" class="bg-primary/10 text-foreground group rounded-full">
-					<Video class="text-primary h-4 w-4" />
-					<span class="-mr-1 text-sm font-medium">Watch 1-minute introduction</span>
-					<ArrowRight class="text-primary h-4 w-4 max-w-0 transition-all group-hover:max-w-4" />
-				</Button>
+				<!-- Introduction video popup -->
+				<Dialog.Root>
+					<div class="text-center">
+						<Dialog.Trigger
+							class={buttonVariants({ variant: "ghost" }) + " bg-primary/10 text-foreground group rounded-full!"}
+						>
+							<Video class="text-primary h-4 w-4" />
+							<span class="-mr-1 text-sm font-medium">Watch 2-minute introduction</span>
+							<ArrowRight class="text-primary h-4 w-4 max-w-0 transition-all group-hover:max-w-4" />
+						</Dialog.Trigger>
+					</div>
+					<Dialog.Content class="w-full max-w-3xl!">
+						<Dialog.Header class="h-fit">
+							<Dialog.Title>Introduction video</Dialog.Title>
+						</Dialog.Header>
+						<iframe
+							class="h-100 w-full"
+							src="https://www.youtube.com/embed/hm3npuRX3_s?si=PiTOWFyFO3bAUkJ2"
+							title="YouTube video player"
+							frameborder="0"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+							referrerpolicy="strict-origin-when-cross-origin"
+							allowfullscreen
+						></iframe>
+					</Dialog.Content>
+				</Dialog.Root>
 			</div>
 
 			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">

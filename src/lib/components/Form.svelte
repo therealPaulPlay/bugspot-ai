@@ -232,12 +232,12 @@
 	{#if slide == "start"}
 		<h1
 			class="absolute top-2/5 right-10 left-10 max-w-full -translate-y-1/2 transform truncate py-1 text-center text-5xl font-semibold text-wrap"
-			out:fly={{ x: -300, duration: 300 }}
+			out:fly={{ y: -150, duration: 300 }}
 		>
 			Report a bug.
 		</h1>
 		<div class="absolute right-6 bottom-6 left-6 flex flex-col items-center gap-6">
-			<div out:fly={{ x: 300, duration: 300 }}>
+			<div out:fly={{ y: 100, duration: 300 }}>
 				<Button onclick={nextSlide} size="lg">
 					Start <ArrowRight />
 				</Button>
@@ -324,8 +324,8 @@
 	{/if}
 
 	{#if slide == "description"}
-		<div in:fade>
-			<h2 class="mb-4 text-2xl font-semibold">Write a brief description.</h2>
+		<div in:fade class="w-70 max-w-full">
+			<h2 class="mb-4 text-2xl font-semibold">Write a description.</h2>
 			<Textarea
 				bind:value={descriptionInput}
 				maxlength={300}

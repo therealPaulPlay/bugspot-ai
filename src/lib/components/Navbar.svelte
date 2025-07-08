@@ -44,7 +44,7 @@
 
 			authStore.logout();
 			showDeleteDialog = false;
-			toast.success("Account deleted successfully");
+			toast.success("Account deleted successfully.");
 			goto("/");
 		} catch (error) {
 			console.error("Delete account error:", error);
