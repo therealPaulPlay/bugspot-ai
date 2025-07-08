@@ -41,6 +41,9 @@ jobs:
               docker rm bugspot-app || true
               docker run -d -p 3010:3010 --network host --restart unless-stopped --name bugspot-app bugspot-app
             fi
+
+            # Cleanup dangling images from build stage
+            docker image prune -f 
           EOF
 
       - name: Cleanup SSH
