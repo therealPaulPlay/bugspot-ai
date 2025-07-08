@@ -1,5 +1,5 @@
 <script>
-	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, Loader2, XCircle, Send } from "lucide-svelte";
+	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, Loader2, XCircle, Send, X } from "lucide-svelte";
 	import Button from "./ui/button/button.svelte";
 	import { fade, fly, scale } from "svelte/transition";
 	import { page } from "$app/state";
@@ -82,8 +82,11 @@
 	let expectedResultInput = $state("");
 	let observedResultInput = $state("");
 	let stepsInput = $state([""]);
-	let screenshotFile = $state(null);
-	let videoFile = $state(null);
+	let fileUploading = $state(false);
+	let screenshotUrl = $state(null);
+	let screenshotFileName = $state("");
+	let videoUrl = $state(null);
+	let videoFileName = $state("");
 	let emailInput = $state("");
 	let questionAnswerInput = $state("");
 	let questionAnswerHistory = $state("");
@@ -99,23 +102,38 @@
 	// Validation functions
 	const isStepsValid = () => stepsInput.filter((s) => s.trim().length >= 10).length >= 1 || !formConfig.requireSteps;
 	const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput) || !formConfig.requireEmail;
-	const isScreenshotValid = () => screenshotFile || !formConfig.requireScreenshot;
-	const isVideoValid = () => videoFile || !formConfig.requireVideo;
 
-	function validateFile(file, isImage) {
+	async function handleFileUpload(file, isImage) {
 		const maxSize = isImage ? 3 * 1024 * 1024 : 25 * 1024 * 1024;
-		if (file.size > maxSize) {
-			toast.error(`File too large. ${isImage ? "Images" : "Videos"} must be under ${isImage ? "3MB" : "25MB"}.`);
-			return false;
+		if (file.size > maxSize) return toast.error(`File must be under ${isImage ? "3MB" : "25MB"}.`);
+
+		// Set uploading state and filename
+		fileUploading = true;
+		if (isImage) screenshotFileName = file.name;
+		else videoFileName = file.name;
+
+		try {
+			const formData = new FormData();
+			formData.append("file", file);
+			const response = await betterFetch("/api/report/file-upload", { method: "POST", body: formData });
+			const url = (await response.json()).url;
+			isImage ? (screenshotUrl = url) : (videoUrl = url);
+		} catch (error) {
+			toast.error("Upload failed: " + error.message);
+			isImage ? (screenshotFileName = "") : (videoFileName = "");
+		} finally {
+			fileUploading = false;
 		}
-		return true;
 	}
 
-	async function uploadFile(file) {
-		const formData = new FormData();
-		formData.append("file", file);
-		const response = await betterFetch("/api/report/file-upload", { method: "POST", body: formData });
-		return (await response.json()).url;
+	function removeFile(isImage) {
+		if (isImage) {
+			screenshotUrl = null;
+			screenshotFileName = "";
+		} else {
+			videoUrl = null;
+			videoFileName = "";
+		}
 	}
 
 	// Form submission ----------------------------------------------------------------------------------------------
@@ -126,17 +144,6 @@
 		currentSlideIndex = slides.length; // Go to processing slide
 
 		try {
-			let screenshotUrl = null;
-			let videoUrl = null;
-
-			// Only upload files on first submission
-			if (!questionAnswerInput.trim()) {
-				[screenshotUrl, videoUrl] = await Promise.all([
-					screenshotFile ? uploadFile(screenshotFile) : null,
-					videoFile ? uploadFile(videoFile) : null,
-				]);
-			}
-
 			if (questionAnswerInput.trim()) {
 				questionAnswerHistory += `YOU ASKED: ${aiResponse.message}\nUSER ANSWERED: ${questionAnswerInput.trim()}\n`;
 				questionAnswerInput = ""; // Reset the question input!
@@ -266,29 +273,33 @@
 	{#snippet optionalBadge(show = false)}
 		{#if show}
 			<Badge class="mb-1 text-sm" variant="secondary">
-				<Info size={15} strokeWidth={2.5} style="width: 15px; height: 15px;" />Optional
+				<Info size={16} strokeWidth={2.5} style="width: 16px; height: 16px;" />Optional
 			</Badge>
 		{/if}
 	{/snippet}
 
 	<!-- Upload zone snippet -->
-	{#snippet uploadZone(type, file, setFile)}
+	{#snippet uploadZone(type, fileName, removeFile)}
 		<div
-			class="border-border rounded-lg border-2 border-dashed p-4 px-8 text-center"
+			class="border-border rounded-lg border-2 border-dashed p-4 text-center"
 			role="region"
 			ondrop={(e) => {
 				e.preventDefault();
 				const f = e.dataTransfer.files?.[0];
-				if (f && f.type.startsWith(type + "/") && validateFile(f, type === "image")) setFile(f);
+				if (f && f.type.startsWith(type + "/")) handleFileUpload(f, type === "image");
 			}}
 			ondragover={(e) => e.preventDefault()}
 		>
-			{#if file}
-				<div class="flex flex-col items-center justify-center gap-3">
-					<div class="bg-muted inline-flex max-w-40 items-center gap-2 rounded-md px-3 py-2 text-sm">
-						<p class="truncate">{file.name}</p>
+			{#if fileName}
+				<div class="flex items-center justify-center">
+					<div class="bg-muted inline-flex max-w-50 items-center gap-2 rounded-md px-3 py-2 text-sm">
+						{#if fileUploading}
+							<Loader2 size={16} strokeWidth={2.5} style="min-width: 16px; min-height: 16px;" class="animate-spin" />
+						{:else}
+							<Button variant="ghost" size="sm" class="h-fit! p-0!" onclick={removeFile}><X /></Button>
+						{/if}
+						<p class="truncate">{fileName}</p>
 					</div>
-					<Button variant="outline" onclick={() => setFile(null)}>Remove</Button>
 				</div>
 			{:else}
 				<div class="space-y-4">
@@ -305,7 +316,7 @@
 						accept="{type}/*"
 						onchange={(e) => {
 							const f = e.target.files?.[0];
-							if (f && f.type.startsWith(type + "/") && validateFile(f, type === "image")) setFile(f);
+							if (f && f.type.startsWith(type + "/")) handleFileUpload(f, type === "image");
 						}}
 						class="hidden"
 					/>
@@ -414,8 +425,8 @@
 		<div in:fade>
 			{@render optionalBadge(!formConfig.requireScreenshot)}
 			<h2 class="mb-4 text-2xl font-semibold">Add a screenshot.</h2>
-			{@render uploadZone("image", screenshotFile, (f) => (screenshotFile = f))}
-			{@render nextButton(isScreenshotValid())}
+			{@render uploadZone("image", screenshotFileName, () => removeFile(true))}
+			{@render nextButton((screenshotUrl || !formConfig.requireScreenshot) && !fileUploading)}
 		</div>
 	{/if}
 
@@ -423,8 +434,8 @@
 		<div in:fade>
 			{@render optionalBadge(!formConfig.requireVideo)}
 			<h2 class="mb-4 text-2xl font-semibold">Add a video.</h2>
-			{@render uploadZone("video", videoFile, (f) => (videoFile = f))}
-			{@render nextButton(isVideoValid())}
+			{@render uploadZone("video", videoFileName, () => removeFile(false))}
+			{@render nextButton((videoUrl || !formConfig.requireVideo) && !fileUploading)}
 		</div>
 	{/if}
 

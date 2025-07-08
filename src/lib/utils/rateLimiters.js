@@ -9,5 +9,5 @@ export const aiLimiter = new RateLimiter({
 });
 
 export const fileUploadLimiter = new RateLimiter({
-    IP: [5, '2m'], // Slower rate for file uploads
+    IP: [5, 'm'], // Slower rate for file uploads
 });

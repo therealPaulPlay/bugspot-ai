@@ -165,10 +165,10 @@
 		</div>
 	{:else if forms.length === 0}
 		<!-- Empty state -->
-		<div class="py-12 text-center">
+		<div class="bg-muted/50 rounded-3xl p-8 py-12 text-center">
 			<Plus class="text-muted-foreground mx-auto mb-4 h-16 w-16" />
 			<h3 class="mb-2 text-xl font-semibold">No forms yet.</h3>
-			<p class="text-muted-foreground mb-6">Create a form to start collecting exceptional bug reports.</p>
+			<p class="text-muted-foreground mb-6">Start collecting exceptional bug reports.</p>
 
 			<Button size="lg" onclick={openCreateDialog}>
 				<Plus class="h-4 w-4" />

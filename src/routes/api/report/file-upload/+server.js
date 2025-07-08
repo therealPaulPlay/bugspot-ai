@@ -1,8 +1,11 @@
 import { json } from '@sveltejs/kit';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { spacesClient, getPublicObjectURL } from '$lib/server/s3/index.js';
 import * as env from '$env/static/private';
 import { randomUUID } from 'crypto';
+import { submittedReports } from '$lib/server/db/schema.js';
+import { db } from '$lib/server/db/index.js';
+import { eq, or } from 'drizzle-orm';
 
 const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
 const MAX_IMAGE_STRING = "3MB";
@@ -43,6 +46,19 @@ export async function POST({ request }) {
 
         await spacesClient.send(command);
         const url = getPublicObjectURL(key);
+
+        // Cleanup timer (if the file is unused after this timeout, delete it!)
+        setTimeout(async () => {
+            try {
+                const reports = await db.select().from(submittedReports)
+                    .where(or(eq(submittedReports.screenshotKey, key), eq(submittedReports.videoKey, key)))
+                    .limit(1);
+                if (!reports.length) await spacesClient.send(new DeleteObjectCommand({ Bucket: env.SPACES_BUCKET_NAME, Key: key }));
+                console.log(`Unused file with key ${key} was deleted.`);
+            } catch (error) {
+                console.error('File upload cleanup error:', error);
+            }
+        }, 10 * 60 * 1000); // 10 minutes
 
         return json({ url });
 
