@@ -234,18 +234,18 @@
 	{#if slide == "start"}
 		<h1
 			class="absolute top-2/5 right-10 left-10 max-w-full -translate-y-1/2 transform truncate py-1 text-center text-5xl font-semibold text-wrap"
-			out:fly={{ y: -150, duration: 300 }}
+			out:fly={{ y: -140 }}
 		>
 			Report a bug.
 		</h1>
 		<div class="absolute right-6 bottom-6 left-6 flex flex-col items-center gap-6">
-			<div out:fly={{ y: 100, duration: 300 }}>
+			<div out:fly={{ y: 100 }}>
 				<Button onclick={nextSlide} size="lg">
 					Start <ArrowRight />
 				</Button>
 			</div>
 
-			<p class="text-muted-foreground text-center text-xs" out:fly={{ y: 50, duration: 300 }}>
+			<p class="text-muted-foreground text-center text-xs" out:fly={{ y: 50 }}>
 				This form is powered by <a href={page.url.origin} target="_blank" class="text-primary hover:underline"
 					>Bugspot</a
 				>. By clicking on "Start", you accept the
@@ -547,9 +547,9 @@
 		<XCircle class="mb-4 h-12 w-12" />
 		<h2 class="mb-2 text-2xl font-semibold">Domain not whitelisted.</h2>
 		<p class="text-muted-foreground max-w-md">
-			The form requires a valid & whitelisted referring domain. This can be configured via the dashboard. <br
-			/><br /> Note that that links using target="_blank" do not provide a referrer by default. Consider using a direct link
-			or embedding the form in an iframe instead.
+			The form requires a valid & whitelisted referring domain. This can be configured via the dashboard. <br /><br /> Note
+			that that links using target="_blank" do not provide a referrer by default. Consider using a direct link or embedding
+			the form in an iframe instead.
 		</p>
 	</div>
 {/if}
