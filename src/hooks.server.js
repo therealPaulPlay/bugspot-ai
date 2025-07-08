@@ -20,15 +20,15 @@ export async function handle({ event, resolve }) {
     if (event.url.pathname.startsWith('/api')) {
         switch (true) {
             case event.url.pathname.startsWith('/api/report/ai'):
-                if (await aiLimiter.isLimited(event)) return json({ error: 'Too many ai processing requests' }, { status: 429 });
+                if (await aiLimiter.isLimited(event)) return json({ error: 'Too many ai processing requests!' }, { status: 429 });
                 break;
 
             case event.url.pathname.startsWith('/api/report/file-upload'):
-                if (await fileUploadLimiter.isLimited(event)) return json({ error: 'Too many file upload requests' }, { status: 429 });
+                if (await fileUploadLimiter.isLimited(event)) return json({ error: 'Too many file upload requests!' }, { status: 429 });
                 break;
 
             default:
-                if (await standardLimiter.isLimited(event)) return json({ error: 'Too many requests' }, { status: 429 });
+                if (await standardLimiter.isLimited(event)) return json({ error: 'Too many requests!' }, { status: 429 });
         }
     }
 

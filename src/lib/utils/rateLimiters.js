@@ -5,7 +5,7 @@ export const standardLimiter = new RateLimiter({
 });
 
 export const aiLimiter = new RateLimiter({
-    IP: [3, '30s'], // Slower rate for LLM requests (AI)
+    IP: [5, '30s'], // Slower rate for LLM requests (AI)
 });
 
 export const fileUploadLimiter = new RateLimiter({
