@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import { users } from '$lib/server/db/schema';
-import { fileUploadLimiter, llmLimiter, standardLimiter } from '$lib/utils/rateLimiters';
+import { fileUploadLimiter, aiLimiter, standardLimiter } from '$lib/utils/rateLimiters';
 import { json } from '@sveltejs/kit';
 import cron from 'node-cron';
 
@@ -20,7 +20,7 @@ export async function handle({ event, resolve }) {
     if (event.url.pathname.startsWith('/api')) {
         switch (true) {
             case event.url.pathname.startsWith('/api/report/ai'):
-                if (await llmLimiter.isLimited(event)) return json({ error: 'Too many llm requests' }, { status: 429 });
+                if (await aiLimiter.isLimited(event)) return json({ error: 'Too many ai processing requests' }, { status: 429 });
                 break;
 
             case event.url.pathname.startsWith('/api/report/file-upload'):
