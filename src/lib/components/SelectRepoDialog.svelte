@@ -3,61 +3,63 @@
 	import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "$lib/components/ui/dialog";
 	import * as Select from "$lib/components/ui/select/index.js";
 	import { Alert, AlertDescription } from "$lib/components/ui/alert";
-	import { Github, ExternalLink, AlertTriangle, CheckCircle } from "lucide-svelte";
+	import { Github, ExternalLink, Plus } from "lucide-svelte";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
-	import { page } from "$app/state";
 	import * as env from "$env/static/public";
 	import { onMount } from "svelte";
+	import { user } from "$lib/stores/account";
 
 	let { open = $bindable(false), onRepoSelected, onClosed } = $props();
 
 	let repos = $state([]);
 	let loading = $state(false);
-	let token = $state("");
 	let selected = $state("");
+	let checkClosedInterval;
 
-	onMount(() => {
-		const urlToken = page.url.searchParams.get("github_token");
-		if (urlToken) {
-			token = urlToken;
-			loadRepos();
-		}
+	$effect(() => {
+		if (open) loadRepos();
+		else clearInterval(checkClosedInterval);
 	});
 
 	async function loadRepos() {
 		loading = true;
 		try {
-			const response = await betterFetch(`/api/github/repos?token=${token}`);
+			const response = await betterFetch(`/api/github/repos?user-id=${$user.id}`, {
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${localStorage.getItem("bearer")}`,
+				},
+			});
 			const data = await response.json();
 			repos = data.repos || [];
-		} catch {
-			toast.error("Failed to load repositories.");
+		} catch (error) {
+			console.error("Failed to load repositories:", error);
+			toast.error("Failed to load repositories: " + error);
 		} finally {
 			loading = false;
 		}
 	}
 
-	function connect() {
-		const stateData = JSON.stringify({
-			type: "repo_access",
-		});
-		const url = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_APP_CLIENT_ID}&state=${encodeURIComponent(stateData)}&redirect_uri=${encodeURIComponent(window.location.origin + "/api/account/github-callback")}`;
-		window.location.href = url;
-	}
-
-	function installAppForRepo() {
-		const [owner] = selected.split("/");
-		const installUrl = `https://github.com/apps/${env.PUBLIC_GITHUB_APP_NAME?.toLowerCase()?.replaceAll(" ", "-")}/installations/new?target_id=${owner}`;
+	function installOrManageApp() {
+		const installUrl = `https://github.com/apps/${env.PUBLIC_GITHUB_APP_NAME?.toLowerCase()?.replaceAll(" ", "-")}/installations/new`;
 		const newWindow = window.open(installUrl, "_blank");
+
+		// Check when window closes to reload repos
+		clearInterval(checkClosedInterval);
+		const checkClosedInterval = setInterval(() => {
+			if (newWindow.closed) {
+				clearInterval(checkClosedInterval);
+				setTimeout(() => loadRepos(), 500);
+			}
+		}, 1000);
 	}
 
 	async function continueWithRepo() {
 		const repo = repos.find((r) => r.fullName === selected);
+		if (!repo) return;
 
-		if (!repo.appInstalled) return installAppForRepo();
-
-		if (onRepoSelected) onRepoSelected(repo);
+		onRepoSelected?.(repo);
 		open = false;
 		selected = "";
 	}
@@ -71,31 +73,27 @@
 >
 	<DialogContent class="max-w-md">
 		<DialogHeader>
-			<DialogTitle>Connect GitHub repository</DialogTitle>
-			<DialogDescription>Choose which repository to connect for creating issues from bug reports.</DialogDescription>
+			<DialogTitle>Select GitHub repository</DialogTitle>
+			<DialogDescription>Choose which repository to use for the new form.</DialogDescription>
 		</DialogHeader>
 
-		{#if !token}
-			<Alert>
-				<Github class="h-4 w-4" />
-				<AlertDescription>
-					<Button variant="link" class="h-auto !p-0" onclick={connect}>
-						<ExternalLink class="h-3 w-3" />
-						Authorize with GitHub
-					</Button>
-				</AlertDescription>
-			</Alert>
-		{:else if loading}
-			<div class="flex items-center justify-center py-8">
+		{#if loading}
+			<div class="flex items-center justify-center gap-4 py-8">
 				<div class="border-primary h-6 w-6 animate-spin rounded-full border-b-2"></div>
 				<span class="ml-2">Loading repositories...</span>
 			</div>
 		{:else if repos.length > 0}
 			<div class="space-y-4">
 				<Select.Root type="single" bind:value={selected}>
-					<Select.Trigger>
-						<span class="max-w-50 truncate">{selected || "Select a repository"}</span>
-					</Select.Trigger>
+					<div class="flex flex-wrap items-center gap-2">
+						<Select.Trigger>
+							<span class="max-w-50 truncate">{selected || "Select a repository"}</span>
+						</Select.Trigger>
+						<Button variant="outline" onclick={installOrManageApp}>
+							<Github class="h-4 w-4" />
+							Manage access
+						</Button>
+					</div>
 					<Select.Content class="max-h-[300px]">
 						{#each repos as repo}
 							<Select.Item value={repo.fullName} label={repo.fullName}>
@@ -106,36 +104,25 @@
 											<div class="text-muted-foreground text-xs">{repo.description}</div>
 										{/if}
 									</div>
-									{#if repo.appInstalled}
-										<CheckCircle class="ml-2 h-4 w-4" />
-									{/if}
 								</div>
 							</Select.Item>
 						{/each}
 					</Select.Content>
 				</Select.Root>
-
-				{#if selected}
-					{@const repo = repos.find((r) => r.fullName === selected)}
-					{#if repo && !repo.appInstalled}
-						<Alert class="bg-muted">
-							<AlertTriangle class="h-4 w-4" />
-							<AlertDescription>GitHub App needs to be installed for this repository.</AlertDescription>
-						</Alert>
-					{/if}
-				{/if}
-
-				<div class="flex justify-end space-x-2">
-					<Button onclick={continueWithRepo} disabled={!selected}>
-						{@const repo = repos.find((r) => r.fullName === selected)}
-						{repo && !repo.appInstalled ? "Install App" : "Continue"}
-					</Button>
+				<div class="flex justify-end">
+					<Button onclick={continueWithRepo} disabled={!selected}>Continue</Button>
 				</div>
 			</div>
 		{:else}
 			<Alert>
-				<Github class="h-4 w-4" />
-				<AlertDescription>No repositories found. Make sure you have repositories on GitHub.</AlertDescription>
+				<AlertDescription>
+					<Github class="h-4 w-4" />Please install the GitHub app on the repositories that you want to use with Bugspot.
+					You can also install it globally.
+					<Button onclick={installOrManageApp} class="mt-2">
+						<ExternalLink class="h-4 w-4" />
+						Install GitHub app
+					</Button>
+				</AlertDescription>
 			</Alert>
 		{/if}
 	</DialogContent>

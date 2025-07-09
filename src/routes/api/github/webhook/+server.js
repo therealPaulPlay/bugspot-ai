@@ -146,7 +146,7 @@ export async function POST({ request, locals }) {
                     .set({ githubInstallationId: null })
                     .where(eq(users.id, userData[0].id));
 
-                console.log(`User uninstalled the GitHub App, cleared installation ID for user ${userData[0].id}.`);
+                console.log(`User uninstalled the GitHub app, cleared installation ID for user ${userData[0].id}.`);
             }
 
             return json({ success: true });

@@ -245,7 +245,7 @@
 				</Button>
 			</div>
 
-			<p class="text-muted-foreground text-center text-xs" out:fly={{ y: 50 }}>
+			<p class="text-muted-foreground text-center text-xs" out:fly={{ y: 50, duration: 250 }}>
 				This form is powered by <a href={page.url.origin} target="_blank" class="text-primary hover:underline"
 					>Bugspot</a
 				>. By clicking on "Start", you accept the

@@ -11,7 +11,7 @@ export const users = mysqlTable('users', {
 	stripeCustomerId: varchar('stripe_customer_id', { length: 100 }),
 	subscriptionTier: int('subscription_tier').default(0), // 0: free, 1: pro, 2: enterprise
 	reportAmount: int('report_amount').default(0), // Monthly used form submissions
-	githubInstallationId: varchar('github_installation_id', { length: 100 }), // GitHub App installation ID
+	githubInstallationId: varchar('github_installation_id', { length: 100 }), // GitHub app installation ID
 	createdAt: timestamp('created_at').defaultNow()
 }, (table) => ({
 	githubId: index('idx_users_github_id').on(table.githubId),

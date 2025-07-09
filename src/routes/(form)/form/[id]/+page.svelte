@@ -17,8 +17,8 @@
 			dark: { from: [124, 45, 18], to: [67, 20, 7] }, // orange-800 to orange-950
 		},
 		black: {
-			light: { from: [243, 244, 246], to: [17, 24, 39] }, // gray-100 to gray-900
-			dark: { from: [55, 65, 81], to: [3, 7, 18] }, // gray-700 to gray-950
+			light: { from: [247, 247, 247], to: [117, 117, 117] }, // custom
+			dark: { from: [81, 81, 81], to: [4, 4, 4] }, // custom
 		},
 		red: {
 			light: { from: [254, 226, 226], to: [185, 28, 28] }, // red-100 to red-700

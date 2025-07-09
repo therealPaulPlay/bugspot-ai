@@ -115,7 +115,7 @@ export async function POST({ request, locals }) {
         });
 
         const emails = await emailResponse.json();
-        const primaryEmail = emails.find(email => email.primary)?.email || githubUser.email;
+        const primaryEmail = emails?.find(email => email.primary)?.email || githubUser.email;
         if (!primaryEmail) return json({ error: 'No email address found. Please make sure your GitHub email is public or primary.' }, { status: 400 });
 
         // Check if user exists
