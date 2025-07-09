@@ -79,7 +79,7 @@
 			await loadDashboard();
 		} catch (error) {
 			console.error("Delete form error:", error);
-			toast.error("Failed to delete form");
+			toast.error("Failed to delete form: " + error);
 		}
 	}
 
