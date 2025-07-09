@@ -94,7 +94,7 @@
 							Manage access
 						</Button>
 					</div>
-					<Select.Content class="max-h-[300px]">
+					<Select.Content class="max-h-[300px] max-w-screen w-100">
 						{#each repos as repo}
 							<Select.Item value={repo.fullName} label={repo.fullName}>
 								<div class="flex w-full items-center justify-between">

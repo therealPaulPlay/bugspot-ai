@@ -69,7 +69,7 @@
 		{
 			title: "ScreenshotNotFoundException",
 			description: "Visual evidence missing. Developers using telepathy.",
-			position: "top: 30%; right: 15%;",
+			position: "top: 33%; right: 15%;",
 		},
 	];
 </script>
@@ -84,7 +84,7 @@
 
 <svelte:window bind:scrollY />
 
-<!-- Hero Section -->
+<!-- Hero section -->
 <section class="relative overflow-hidden">
 	<!-- Background gradient -->
 	<div class="from-background/10 via-primary/5 to-primary/20 absolute inset-0 bg-gradient-to-b"></div>
@@ -251,11 +251,11 @@
 	</div>
 </section>
 
-<!-- Features Section -->
+<!-- Features section -->
 <section class="inset-shadow-xl py-24">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-12 text-center">
-			<h2 class="mb-4 text-3xl font-bold">
+			<h2 class="mb-4 text-3xl font-bold leading-12">
 				Say goodbye to <span class="mr-1 text-nowrap"
 					><Badge variant="secondary" class="text-3xl font-bold">need info</Badge>,</span
 				>
@@ -301,7 +301,7 @@
 	</div>
 </section>
 
-<!-- Advanced Features Section -->
+<!-- Advanced features -->
 <section class="pt-8 pb-24">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="space-y-20">
@@ -314,9 +314,9 @@
 						specific information you need to debug effectively.
 					</p>
 				</div>
-				<div class="bg-muted/50 rounded-2xl p-6">
+				<div class="bg-muted/50 overflow-hidden rounded-2xl p-6">
 					<!-- Question mockup -->
-					<div class="bg-background rounded-xl p-4 shadow-sm">
+					<div class="bg-background -mb-13 rounded-xl p-4 pb-10 shadow-sm">
 						<div class="mb-3 flex gap-2">
 							<HelpCircle class="text-primary mt-0.5 h-4 w-4 flex-shrink-0" />
 							<div class="text-sm">
@@ -338,7 +338,7 @@
 				</div>
 			</div>
 
-			<!-- Customization Feature -->
+			<!-- Customization feature -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
 					<h3 class="mb-4 text-2xl font-bold">Complete customization.</h3>
@@ -368,9 +368,9 @@
 							<div class="flex items-center justify-between">
 								<span class="text-sm">Color scheme</span>
 								<div class="flex gap-1">
-									<div class="h-4 w-4 rounded-full bg-blue-500"></div>
-									<div class="h-4 w-4 rounded-full bg-green-500"></div>
-									<div class="h-4 w-4 rounded-full bg-orange-500"></div>
+									<div class="bg-primary h-4 w-4 rounded-full"></div>
+									<div class="bg-primary/50 h-4 w-4 rounded-full"></div>
+									<div class="bg-primary/25 h-4 w-4 rounded-full"></div>
 								</div>
 							</div>
 						</div>
@@ -378,7 +378,7 @@
 				</div>
 			</div>
 
-			<!-- Automatic Closing -->
+			<!-- Automatic closing -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
 					<h3 class="mb-4 text-2xl font-bold">Automatic filtering.</h3>
@@ -387,14 +387,16 @@
 						bugs reach your issue tracker, saving hours of manual triage.
 					</p>
 				</div>
-				<div class="bg-muted/50 rounded-2xl p-6">
+				<div class="bg-muted/50 flex items-center gap-3 overflow-hidden rounded-2xl p-6">
 					<!-- Auto-close mockup -->
-					<div class="bg-background rounded-xl p-4 shadow-sm">
+					<div class="bg-background flex items-center justify-center rounded-full p-2 shadow-sm">
+						<XCircle strokeWidth={1.5} class="text-primary h-6 w-6" />
+					</div>
+					<div class="bg-background -mr-30 rounded-xl p-4 shadow-sm">
 						<div class="flex gap-2">
-							<XCircle class="text-primary mt-0.5 h-4 w-4" />
 							<p class="mb-2 text-sm font-medium">Report not submitted.</p>
 						</div>
-						<div class="bg-muted/50 w-full rounded-lg p-3 text-xs">
+						<div class="bg-muted/50 w-full rounded-lg mask-r-from-30% p-3 text-xs">
 							<p>
 								This appears to be an issue related to your internet connection. Specifically, your VPN is likely
 								causing the WebSocket instability. Please try testing without it and file another report if needed.
@@ -404,7 +406,7 @@
 				</div>
 			</div>
 
-			<!-- Duplicate Management -->
+			<!-- Duplicate management -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
 					<h3 class="mb-4 text-2xl font-bold">Smart duplicate handling.</h3>
@@ -420,16 +422,15 @@
 							<CopyCheck class="text-primary mt-0.5 h-4 w-4" />
 							<p class="mb-2 text-sm font-medium">We found similar reports.</p>
 						</div>
-						<div class="bg-muted/50 mb-3 rounded-lg p-3">
+						<div class="bg-muted/50 rounded-lg p-3">
 							<p class="mb-1 text-xs font-medium">Login button freezes on mobile</p>
 							<p class="text-muted-foreground text-xs">Button becomes unresponsive after validation error...</p>
-							<div class="mt-2">
-								<Button size="sm" variant="outline" class="pointer-events-none h-6 text-xs"
-									>This describes my bug</Button
+							<div class="mt-4 flex gap-2 flex-wrap">
+								<Button variant="outline" class="pointer-events-none h-8 text-xs">This is my bug</Button>
+								<Button variant="outline" class="text-muted-foreground pointer-events-none h-8 text-xs">No, skip</Button
 								>
 							</div>
 						</div>
-						<Button size="sm" variant="outline" class="pointer-events-none text-xs">Submit as new issue</Button>
 					</div>
 				</div>
 			</div>
@@ -442,16 +443,13 @@
 						Keep your team informed with Discord notifications for new bug reports. More integrations coming soon.
 					</p>
 				</div>
-				<div class="bg-muted/50 rounded-2xl p-6">
+				<div class="bg-muted/50 overflow-hidden rounded-2xl p-6">
 					<!-- Integration mockup -->
-					<div class="bg-background rounded-xl p-4 shadow-sm">
-						<div class="mb-3 flex items-center gap-2">
-							<MessageSquare class="text-primary h-4 w-4" />
-							<span class="text-sm font-medium">Discord</span>
-						</div>
+					<div class="bg-background -mt-15 space-y-4 rounded-xl p-4 shadow-sm">
+						<div class="bg-muted/50 h-12 rounded-lg mask-t-from-0% p-3"></div>
 						<div class="bg-muted/50 rounded-lg p-3">
 							<div class="flex gap-2">
-								<div class="bg-primary mt-2 h-2 w-2 flex-shrink-0 rounded-full"></div>
+								<div class="bg-primary mt-2 h-2 w-2 rounded-full"></div>
 								<div class="text-xs">
 									<p class="font-medium">New bug report #47</p>
 									<p class="text-muted-foreground">Login button unresponsive on mobile</p>
@@ -459,10 +457,36 @@
 								</div>
 							</div>
 						</div>
-						<div class="text-muted-foreground mt-3 flex items-center gap-2 text-xs">
-							<span>Channel: #bug-reports</span>
+						<div class="text-muted-foreground mt-3 flex items-center justify-end gap-2 text-xs">
+							<span>#bug-reports</span>
 							<span>•</span>
 							<span>2 min ago</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Priority assessment -->
+			<div class="grid items-center gap-12 lg:grid-cols-2">
+				<div>
+					<h3 class="mb-4 text-2xl font-bold">Priority evaluation.</h3>
+					<p class="text-muted-foreground text-lg leading-relaxed">
+						Reports are instantly scored P4 to P1 based on the severity and impact. Focus on what's most important.
+					</p>
+				</div>
+				<div class="bg-muted/50 flex justify-center overflow-hidden rounded-2xl p-6">
+					<div
+						class="bg-background bg-background -mb-12 flex h-fit w-fit items-center justify-center gap-4 overflow-hidden rounded-xl p-4 pb-10 shadow-sm"
+					>
+						<p class="text-muted-foreground text-sm">Priority:</p>
+						<div class="flex h-15 items-center justify-center gap-2">
+							<Badge variant="secondary" class="bg-muted">P1</Badge>
+							<Badge variant="secondary" class="bg-muted">P2</Badge>
+							<div class="relative">
+								<div class="from-primary/50 to-bg absolute z-0 -mt-8.5 h-9 w-8.25 bg-gradient-to-b"></div>
+								<Badge class="text-background">P3</Badge>
+							</div>
+							<Badge variant="secondary" class="bg-muted">P4</Badge>
 						</div>
 					</div>
 				</div>
@@ -471,7 +495,7 @@
 	</div>
 </section>
 
-<!-- Fun Errors Demo Section -->
+<!-- Fun errors demo section -->
 <section class="bg-muted/50 py-24" bind:this={errorSection}>
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-8 text-center">
@@ -483,29 +507,26 @@
 
 		<!-- Overlapping error showcase -->
 		<div
-			class="relative mx-auto mb-12 h-[400px] max-w-5xl overflow-hidden mask-y-from-95% mask-y-to-100% mask-x-from-80% mask-x-to-100%"
+			class="relative mx-auto mb-12 h-[300px] max-w-5xl overflow-hidden mask-y-from-95% mask-y-to-100% mask-x-from-80% mask-x-to-100% sm:h-[375px]"
 		>
 			{#each errors as error, index}
 				{@const sectionTop = errorSection?.offsetTop || 0}
 				{@const relativeScroll = Math.min(750, Math.max(0, scrollY - sectionTop + 1000))}
 				<div
-					class="absolute w-80"
+					class="absolute w-60 sm:w-80"
 					style="{error.position} z-index: {10 + index}; transform: translateY({relativeScroll *
 						(0.01 + (index + 1) * 0.01)}px);"
 				>
-					<Card class="bg-background shadow-lg">
-						<CardHeader class="pb-2">
-							<div class="flex items-center justify-between">
+					<Card class="bg-background shadow-lg max-sm:max-h-35">
+						<CardHeader class="pb-1">
+							<div class="mb-1 flex items-center justify-between">
 								<div class="flex items-center space-x-2">
 									<div class="h-3 w-3 rounded-full bg-red-500"></div>
 									<div class="h-3 w-3 rounded-full bg-yellow-500"></div>
 									<div class="h-3 w-3 rounded-full bg-green-500"></div>
 								</div>
-								<div class="flex h-4 w-4 items-center justify-center rounded border border-gray-400 px-1 text-xs">
-									×
-								</div>
 							</div>
-							<CardTitle class="font-mono text-sm">{error.title}</CardTitle>
+							<CardTitle class="font-mono text-xs sm:text-sm">{error.title}</CardTitle>
 						</CardHeader>
 						<CardContent class="pt-0">
 							<p class="text-muted-foreground mb-2 text-xs">{error.description}</p>
