@@ -75,10 +75,10 @@
 </script>
 
 <svelte:head>
-	<title>Bugspot - Dynamic bug report forms powered by AI</title>
+	<title>Bugspot - Smart bug report forms powered by AI</title>
 	<meta
 		name="description"
-		content="Help users create professional bug reports with AI and sync them directly with Github. Reduce back-and-forth communication, avoid duplicates or spam & help developers debug effectively."
+		content="Help users create professional bug reports with AI and sync them with GitHub Issues. Reduce back-and-forth, avoid duplicates or spam & help developers debug efficiently."
 	/>
 </svelte:head>
 
