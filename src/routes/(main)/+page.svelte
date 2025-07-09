@@ -471,7 +471,7 @@
 				<div>
 					<h3 class="mb-4 text-2xl font-bold">Priority evaluation.</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
-						Reports are instantly scored P4 to P1 based on the severity and impact. Focus on what's most important.
+						Reports are instantly scored P1 to P4 based on the severity and impact. Focus on what's most important.
 					</p>
 				</div>
 				<div class="bg-muted/50 flex justify-center overflow-hidden rounded-2xl p-6">
