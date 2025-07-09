@@ -74,7 +74,7 @@
 				}),
 			});
 
-			toast.success("Form deleted successfully");
+			toast.success("Form deleted successfully!");
 			showDeleteDialog = false;
 			await loadDashboard();
 		} catch (error) {
