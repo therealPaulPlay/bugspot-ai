@@ -11,8 +11,8 @@
 
 			<h2 class="mt-8 mb-4 text-2xl font-semibold">1. Acceptance of terms</h2>
 			<p>
-				By accessing or using the Bugspot platform ("Service") provided by Paul Rhomberg ("we," "us," or "our"), you
-				agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use the Service.
+				By accessing or using the Bugspot platform ("Service") provided by PaulPlay ("we," "us," or "our"), you agree to
+				be bound by these Terms of Use. If you do not agree to these terms, please do not use the Service.
 			</p>
 
 			<h2 class="mt-8 mb-4 text-2xl font-semibold">2. Description of Service</h2>
@@ -96,8 +96,8 @@
 
 			<h2 class="mt-8 mb-4 text-2xl font-semibold">9. Intellectual property</h2>
 			<p>
-				9.1. The Service, including its design, functionality, and underlying technology, is the exclusive property of
-				Paul Rhomberg and is protected by copyright and other intellectual property laws.
+				9.1. The Service, including its design, functionality, and underlying technology, is our exclusive property and
+				is protected by copyright and other intellectual property laws.
 			</p>
 			<p>
 				9.2. You may not copy, modify, distribute, or reverse engineer any part of the Service without our written
@@ -116,7 +116,8 @@
 
 			<h2 class="mt-8 mb-4 text-2xl font-semibold">11. Modifications to terms</h2>
 			<p>
-				11.1. We reserve the right to modify these terms at any time. The updated terms will be displayed here on this website.
+				11.1. We reserve the right to modify these terms at any time. The updated terms will be displayed here on this
+				website.
 			</p>
 			<p>11.2. Continued use of the Service after such modifications constitutes acceptance of the updated terms.</p>
 

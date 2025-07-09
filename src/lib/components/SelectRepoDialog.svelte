@@ -9,17 +9,16 @@
 	import * as env from "$env/static/public";
 	import { onMount } from "svelte";
 	import { user } from "$lib/stores/account";
+	import { fade } from "svelte/transition";
 
 	let { open = $bindable(false), onRepoSelected, onClosed } = $props();
 
 	let repos = $state([]);
 	let loading = $state(false);
 	let selected = $state("");
-	let checkClosedInterval;
 
 	$effect(() => {
 		if (open) loadRepos();
-		else clearInterval(checkClosedInterval);
 	});
 
 	async function loadRepos() {
@@ -45,14 +44,12 @@
 		const installUrl = `https://github.com/apps/${env.PUBLIC_GITHUB_APP_NAME?.toLowerCase()?.replaceAll(" ", "-")}/installations/new`;
 		const newWindow = window.open(installUrl, "_blank");
 
-		// Check when window closes to reload repos
-		clearInterval(checkClosedInterval);
-		const checkClosedInterval = setInterval(() => {
-			if (newWindow.closed) {
-				clearInterval(checkClosedInterval);
-				setTimeout(() => loadRepos(), 500);
-			}
-		}, 1000);
+		// Listen for when user returns to this tab
+		function handleFocus() {
+			window.removeEventListener("focus", handleFocus);
+			loadRepos();
+		}
+		window.addEventListener("focus", handleFocus);
 	}
 
 	async function continueWithRepo() {
@@ -83,7 +80,7 @@
 				<span class="ml-2">Loading repositories...</span>
 			</div>
 		{:else if repos.length > 0}
-			<div class="space-y-4">
+			<div class="space-y-4" in:fade={{ duration: 300 }}>
 				<Select.Root type="single" bind:value={selected}>
 					<div class="flex flex-wrap items-center gap-2">
 						<Select.Trigger>
@@ -94,7 +91,7 @@
 							Manage access
 						</Button>
 					</div>
-					<Select.Content class="max-h-[300px] max-w-screen w-100">
+					<Select.Content class="max-h-[300px] w-100 max-w-screen">
 						{#each repos as repo}
 							<Select.Item value={repo.fullName} label={repo.fullName}>
 								<div class="flex w-full items-center justify-between">
@@ -114,16 +111,18 @@
 				</div>
 			</div>
 		{:else}
-			<Alert>
-				<AlertDescription>
-					<Github class="h-4 w-4" />Please install the GitHub app on the repositories that you want to use with Bugspot.
-					You can also install it globally.
-					<Button onclick={installOrManageApp} class="mt-2">
-						<ExternalLink class="h-4 w-4" />
-						Install GitHub app
-					</Button>
-				</AlertDescription>
-			</Alert>
+			<div in:fade={{ duration: 300 }}>
+				<Alert>
+					<AlertDescription>
+						<Github class="h-4 w-4" />Please install the GitHub app on the repositories that you want to use with
+						Bugspot. You can also install it globally.
+						<Button onclick={installOrManageApp} class="mt-2">
+							<ExternalLink class="h-4 w-4" />
+							Install GitHub app
+						</Button>
+					</AlertDescription>
+				</Alert>
+			</div>
 		{/if}
 	</DialogContent>
 </Dialog>

@@ -36,7 +36,7 @@
 		const maxIndex = slides.length + postSlides.length - 1;
 		if (currentSlideIndex < maxIndex) {
 			if (currentSlideIndex === slides.length - 1) processSubmission();
-			currentSlideIndex++;
+			else currentSlideIndex++;
 		}
 	}
 
@@ -175,13 +175,12 @@
 			}
 			const actionIndex = { question: 1, duplicates: 2, closed: 3, submitted: 4 }[aiResponse.action] || 0;
 			currentSlideIndex = slides.length + actionIndex;
-
-			captchaToken = null; // Reset, as tokens are single-use
 		} catch (error) {
 			console.error("Submission error:", error);
 			toast.error(error.message || "Unknown error.");
-			currentSlideIndex = slides.length - 1;
+			currentSlideIndex = slides.length - 1; // Go back to last non-AI slide
 		} finally {
+			captchaToken = null; // Reset, as tokens are single-use
 			processing = false;
 		}
 	}

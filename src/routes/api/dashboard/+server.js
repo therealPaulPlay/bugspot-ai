@@ -9,9 +9,9 @@ export async function GET({ request, url }) {
     const userId = url.searchParams.get('userId');
     if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
 
-    authenticateTokenWithId(request, userId);
-
     try {
+        authenticateTokenWithId(request, userId);
+
         const userForms = await db.query.forms.findMany({
             where: eq(forms.userId, userId),
             with: { domains: true }
@@ -38,11 +38,11 @@ export async function GET({ request, url }) {
 // Create new form
 export async function POST({ request, locals }) {
     const { userId } = locals.body || {};
-    if (!locals.body?.name?.trim()) return json({ error: 'Form name is required' }, { status: 400 });
-
-    authenticateTokenWithId(request, userId);
+    if (!locals.body?.name?.trim() || !userId) return json({ error: 'Form name and user ID are required' }, { status: 400 });
 
     try {
+        authenticateTokenWithId(request, userId);
+
         // Check form limit
         const formCount = await db.select({ count: count() }).from(forms).where(eq(forms.userId, userId.toString()));
         if (formCount[0].count >= 50) return json({ error: 'Maximum form limit reached (50 forms)' }, { status: 400 });
@@ -89,13 +89,11 @@ export async function PUT({ request, locals }) {
     if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
     if (!formId || !locals.body?.name?.trim()) return json({ error: 'Form ID and name are required' }, { status: 400 });
 
-    authenticateTokenWithId(request, userId);
-
     try {
+        authenticateTokenWithId(request, userId);
+
         const existingForm = await db.query.forms.findFirst({ where: eq(forms.id, formId) });
-        if (!existingForm || existingForm.userId.toString() !== userId.toString()) {
-            return json({ error: 'Form not found or not owned by this user' }, { status: 404 });
-        }
+        if (!existingForm || existingForm.userId.toString() !== userId.toString()) return json({ error: 'Form not found or not owned by this user' }, { status: 404 });
 
         await db.update(forms)
             .set({
@@ -137,9 +135,9 @@ export async function DELETE({ request, locals }) {
     if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
     if (!formId) return json({ error: 'Form ID is required' }, { status: 400 });
 
-    authenticateTokenWithId(request, userId);
-
     try {
+        authenticateTokenWithId(request, userId);
+
         const result = await db.delete(forms)
             .where(and(eq(forms.id, formId), eq(forms.userId, userId.toString())));
 

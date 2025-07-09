@@ -126,11 +126,11 @@
 	{#if !loading}
 		<div class="mb-12 max-w-md">
 			{#if isLimitReached}
-				<div class="rounded-lg border border-orange-200 bg-orange-50 p-4">
-					<div class="flex items-center justify-between">
+				<div class="border-primary bg-muted/50 rounded-lg border p-4">
+					<div class="flex items-center justify-between gap-4">
 						<div>
-							<p class="font-medium text-orange-800">Monthly report limit reached!</p>
-							<p class="text-sm">Upgrade to continue receiving reports.</p>
+							<p>Monthly limit reached!</p>
+							<p class="text-muted-foreground text-sm">Upgrade to continue receiving reports.</p>
 						</div>
 						<Button onclick={() => goto("/pricing")} size="sm">Upgrade plan</Button>
 					</div>
@@ -172,7 +172,7 @@
 
 			<Button size="lg" onclick={openCreateDialog}>
 				<Plus class="h-4 w-4" />
-				Create your first form
+				Create a form
 			</Button>
 		</div>
 	{:else}

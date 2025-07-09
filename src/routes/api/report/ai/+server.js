@@ -251,9 +251,9 @@ export async function POST({ request, locals, getClientAddress }) {
 
         const { form, user } = formData[0];
 
-        // Check report limit
+        // Check monthly report limit
         const limit = get(tiers)?.[user.subscriptionTier]?.reportLimit;
-        if (user.reportAmount >= limit) return json({ error: 'Monthly report limit reached. Please upgrade your plan.' }, { status: 429 });
+        if (user.reportAmount >= limit) return json({ error: "This form's account has surpassed the monthly report limit." }, { status: 429 });
 
         const aiResult = await processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, form.customPrompt, questionAnswerHistory);
 

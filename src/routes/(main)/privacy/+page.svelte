@@ -11,7 +11,7 @@
 
 			<h2 class="mt-8 mb-4 text-2xl font-semibold">1. Introduction</h2>
 			<p>
-				Paul Rhomberg ("we," "us," or "our") is committed to protecting the privacy of our users. This Privacy Policy
+				PaulPlay ("we," "us," or "our") is committed to protecting the privacy of our users. This Privacy Policy
 				explains how we collect, use, and protect information when you use our AI-powered bug reporting platform
 				("Service").
 			</p>

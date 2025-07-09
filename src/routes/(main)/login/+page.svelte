@@ -29,13 +29,8 @@
 		loading = true;
 
 		try {
-			const stateData = JSON.stringify({
-				type: "login",
-			});
-
 			const scope = "user:email";
-			const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_APP_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + "/api/account/github-callback")}&scope=${scope}&state=${encodeURIComponent(stateData)}`;
-
+			const githubUrl = `https://github.com/login/oauth/authorize?client_id=${env.PUBLIC_GITHUB_OAUTH_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + "/api/account/github-callback")}&scope=${scope}`;
 			window.location.href = githubUrl;
 		} catch (err) {
 			toast.error("Failed to initiate GitHub login.");
@@ -55,8 +50,6 @@
 
 			const data = await response.json();
 			authStore.login(data); // Login and store user data in localstorage
-
-			toast.success("Successfully signed in!");
 			goto("/dashboard");
 		} catch (err) {
 			console.error("GitHub callback error:", err);
@@ -101,9 +94,9 @@
 		<!-- Terms -->
 		<p class="text-muted-foreground text-center text-xs">
 			By signing up, you agree to our
-			<a href="/terms" class="hover:text-foreground underline">Terms of Use</a>
+			<a href="/terms" class="hover:underline">Terms of Use</a>
 			and
-			<a href="/privacy" class="hover:text-foreground underline">Privacy Policy</a>
+			<a href="/privacy" class="hover:underline">Privacy Policy</a>
 		</p>
 	</div>
 </div>

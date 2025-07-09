@@ -10,10 +10,11 @@ import { getInstallationToken } from '$lib/utils/gitHubAppAccess.js';
 export async function GET({ request, url }) {
     try {
         const userId = url.searchParams.get('user-id');
+        if (!userId) return json({ error: "User ID is required." }, { status: 400 });
         authenticateTokenWithId(request, userId);
 
         const userData = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-        if (!userData.length) return json({ error: 'User not found' }, { status: 404 });
+        if (!userData.length) return json({ error: 'User not found.' }, { status: 404 });
 
         const user = userData[0];
         if (!user.githubInstallationId) return json({ repos: [] }); // If the App is not installed, return empty
@@ -39,6 +40,6 @@ export async function GET({ request, url }) {
         return json({ repos });
     } catch (error) {
         console.error('GitHub repos error:', error);
-        return json({ error: 'Failed to fetch repositories' }, { status: 500 });
+        return json({ error: 'Failed to fetch repositories: ' + error.message }, { status: 500 });
     }
 }

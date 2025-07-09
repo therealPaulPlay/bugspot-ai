@@ -6,10 +6,6 @@ import jwt from 'jsonwebtoken';
 import * as env from '$env/static/private';
 import { authenticateTokenWithId } from '$lib/server/auth/authenticateTokenWithId';
 
-const GITHUB_APP_CLIENT_ID = env.GITHUB_APP_CLIENT_ID;
-const GITHUB_APP_CLIENT_SECRET = env.GITHUB_APP_CLIENT_SECRET;
-const JWT_SECRET = env.JWT_SECRET;
-
 function createNewJwtToken(user) {
     try {
         const accessToken = jwt.sign(
@@ -17,7 +13,7 @@ function createNewJwtToken(user) {
                 sub: user.email || null,
                 userId: user.id.toString()
             },
-            JWT_SECRET,
+            env.JWT_SECRET,
             {
                 expiresIn: "1d"
             }
@@ -35,9 +31,9 @@ export async function GET({ request, url }) {
     const userId = url.searchParams.get('userId');
     if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
 
-    authenticateTokenWithId(request, userId);
-
     try {
+        authenticateTokenWithId(request, userId);
+
         const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
         if (!user.length) return json({ error: 'User not found' }, { status: 404 });
 
@@ -73,8 +69,8 @@ export async function POST({ request, locals }) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                client_id: GITHUB_APP_CLIENT_ID,
-                client_secret: GITHUB_APP_CLIENT_SECRET,
+                client_id: env.GITHUB_OAUTH_CLIENT_ID,
+                client_secret: env.GITHUB_OAUTH_CLIENT_SECRET,
                 code
             })
         });
@@ -82,15 +78,14 @@ export async function POST({ request, locals }) {
         const tokenData = await tokenResponse.json();
         if (tokenData.error) return json({ error: tokenData.error_description || 'GitHub authentication failed' }, { status: 400 });
 
-        // Get user info and installation data from GitHub (installation ID for recovery situations – normally gets set via webhook)
-        const [userResponse, installationResponse] = await Promise.all([
+        const [userResponse, emailResponse] = await Promise.all([
             fetch('https://api.github.com/user', {
                 headers: {
                     'Authorization': `Bearer ${tokenData.access_token}`,
                     'Accept': 'application/vnd.github.v3+json'
                 }
             }),
-            fetch('https://api.github.com/user/installations', {
+            fetch('https://api.github.com/user/emails', {
                 headers: {
                     'Authorization': `Bearer ${tokenData.access_token}`,
                     'Accept': 'application/vnd.github.v3+json'
@@ -100,19 +95,6 @@ export async function POST({ request, locals }) {
 
         const githubUser = await userResponse.json();
         if (!githubUser.id) return json({ error: 'Failed to get user information from GitHub' }, { status: 400 });
-
-        const installations = await installationResponse.json();
-        const userInstallation = installations.installations?.find(inst =>
-            inst.account.id === githubUser.id && inst.app_id === parseInt(env.GITHUB_APP_ID)
-        );
-
-        // Get user email
-        const emailResponse = await fetch('https://api.github.com/user/emails', {
-            headers: {
-                'Authorization': `Bearer ${tokenData.access_token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
 
         const emails = await emailResponse.json();
         const primaryEmail = emails?.find(email => email.primary)?.email || githubUser.email;
@@ -128,8 +110,7 @@ export async function POST({ request, locals }) {
                 username: githubUser.login,
                 email: primaryEmail,
                 avatar: githubUser.avatar_url,
-                subscriptionTier: 0,
-                githubInstallationId: userInstallation?.id?.toString() || null
+                subscriptionTier: 0
             };
 
             const insertResult = await db.insert(users).values(newUser);
@@ -140,8 +121,7 @@ export async function POST({ request, locals }) {
                 .set({
                     username: githubUser.login,
                     email: primaryEmail,
-                    avatar: githubUser.avatar_url,
-                    githubInstallationId: userInstallation?.id?.toString() || null
+                    avatar: githubUser.avatar_url
                 })
                 .where(eq(users.id, user[0].id));
 
@@ -174,9 +154,9 @@ export async function POST({ request, locals }) {
 // Delete account
 export async function DELETE({ request, locals }) {
     const { userId } = locals.body;
-    authenticateTokenWithId(request, userId);
 
     try {
+        authenticateTokenWithId(request, userId);
         await db.delete(users).where(eq(users.id, userId));
         return json({ success: true });
     } catch (error) {
