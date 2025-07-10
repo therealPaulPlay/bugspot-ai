@@ -79,7 +79,7 @@
 	<title>Bugspot - Smart bug report forms powered by AI</title>
 	<meta
 		name="description"
-		content="Help users create professional bug reports with AI and sync them with GitHub Issues. Reduce back-and-forth, avoid duplicates or spam & help developers debug efficiently."
+		content="Help your users submit clear, actionable bug reports with AI-powered forms. Integrate with GitHub Issues to reduce back-and-forth, avoid duplicates, and debug faster."
 	/>
 </svelte:head>
 
