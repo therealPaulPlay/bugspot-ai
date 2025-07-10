@@ -20,8 +20,8 @@ async function deleteS3File(key) {
     }
 }
 
-async function cleanupReport(reportData, repoName, issueNumber, showIssueLink) {
-    if (reportData.email) {
+async function cleanupReport(reportData, repoName, issueNumber, showIssueLink, sendEmail) {
+    if (reportData.email && sendEmail) {
         try {
             await sendMail({
                 from: env.EMAIL_USER,
@@ -52,7 +52,7 @@ async function cleanupReport(reportData, repoName, issueNumber, showIssueLink) {
     ]);
 }
 
-async function processReportsForCleanup(repoFullName, issueNumber = null) {
+async function processReportsForCleanup(repoFullName, issueNumber = null, isDeleted = false) {
     const reports = await db
         .select()
         .from(submittedReports)
@@ -68,7 +68,7 @@ async function processReportsForCleanup(repoFullName, issueNumber = null) {
     for (const report of reports) {
         const reportData = report.submitted_reports;
         const formData = report.forms;
-        await cleanupReport(reportData, repoFullName, reportData.issueNumber, formData.showIssueLink);
+        await cleanupReport(reportData, repoFullName, reportData.issueNumber, formData.showIssueLink, !isDeleted);
     }
 }
 
@@ -87,14 +87,12 @@ export async function POST({ request, locals }) {
         const event = request.headers.get('x-github-event');
 
         if (event === 'issues' && (payload.action === 'closed' || payload.action === 'deleted')) {
-            await processReportsForCleanup(payload.repository.full_name, payload.issue?.number || -1);
+            await processReportsForCleanup(payload.repository.full_name, payload.issue?.number || -1, payload.action === 'deleted');
 
         } else if (event === 'repository' && payload.action === 'renamed') {
             const oldName = payload.changes?.repository?.name?.from;
             const newName = payload.repository.name;
             const owner = payload.repository.owner.login;
-
-            console.log('Extracted values:', { oldName, newName, owner });
 
             if (oldName && newName) {
                 const oldFullName = `${owner}/${oldName}`;
@@ -108,7 +106,7 @@ export async function POST({ request, locals }) {
             }
 
         } else if (event === 'repository' && payload.action === 'deleted') {
-            await processReportsForCleanup(payload.repository.full_name);
+            await processReportsForCleanup(payload.repository.full_name, null, true);
 
         } else if (event === 'installation' && payload.action === 'created') {
             const installationId = payload.installation?.id;
