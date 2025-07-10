@@ -46,7 +46,7 @@
 			});
 
 			const data = await response.json();
-			forms = data.forms || [];
+			forms = (data.forms || []).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 		} catch (error) {
 			console.error("Failed to load dashboard:", error);
 			toast.error("Failed to load dashboard: " + error.message);
@@ -107,7 +107,7 @@
 	<title>Dashboard</title>
 </svelte:head>
 
-<div class="mx-auto min-h-screen max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<div class="mx-auto min-h-screen max-w-7xl px-4 py-8">
 	{#if !$user}
 		<div class="bg-background/20 absolute inset-0 z-30 flex items-center justify-center backdrop-blur-lg">
 			<div>

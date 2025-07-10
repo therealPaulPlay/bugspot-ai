@@ -81,7 +81,7 @@
 	<title>Pricing</title>
 </svelte:head>
 
-<div class="mx-auto max-w-6xl px-8 py-24">
+<div class="mx-auto max-w-6xl px-4 py-24">
 	<!-- Header -->
 	<div class="mb-16 text-center">
 		<h1 class="mb-4 text-4xl font-bold">Transparent pricing.</h1>
