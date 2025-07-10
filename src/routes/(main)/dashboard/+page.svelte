@@ -214,7 +214,7 @@
 								{form.githubRepo ? `Connected to ${form.githubRepo}` : "No GitHub repo connected"}.
 							</div>
 
-							<div class="text-muted-foreground text-sm mt-auto">
+							<div class="text-muted-foreground mt-auto text-sm">
 								{form.domains?.length || 0} allowed domain(s).
 							</div>
 
@@ -329,9 +329,7 @@
 			<!-- Direct Link -->
 			<div>
 				<h3 class="mb-1 text-sm font-semibold">Direct link</h3>
-				<p class="text-muted-foreground text-sm">
-					Put it in your footer, docs, or anywhere users should be able to report a bug.
-				</p>
+				<p class="text-muted-foreground text-sm">Put it anywhere users should be able to report a bug.</p>
 			</div>
 			<div>
 				<h3 class="mb-1 text-sm font-semibold">Embedded iframe</h3>
@@ -341,12 +339,14 @@
 			</div>
 			<div>
 				<h3 class="mb-1 text-sm font-semibold">Adding context</h3>
-				<p class="text-muted-foreground mb-2 text-sm">Pass custom data (e.g. session info) for better debugging:</p>
+				<p class="text-muted-foreground mb-2 text-sm">
+					Pass custom data via the <span class="text-foreground">?custom-data</span> URL query for better debugging (this data will be included in all reports):
+				</p>
 				<div class="bg-muted rounded p-2 font-mono text-xs">
-					?custom-data=${'{encodeURIComponent("User ID: 123, Plan: Pro")}'}
+					'...?custom-data=' + {"encodeURIComponent({user: 5, logs: []})"}
 				</div>
 				<p class="text-muted-foreground mt-1 text-xs">
-					Use <code>encodeURIComponent()</code> to safely encode your data.
+					Use <code>encodeURIComponent()</code> to encode your data.
 				</p>
 			</div>
 		</div>
