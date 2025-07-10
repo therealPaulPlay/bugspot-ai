@@ -26,6 +26,7 @@
 	let scrollY = $state(0);
 	let errorSection = $state(null);
 	let demoIframeLoaded = $state(false);
+	let videoDialogOpen = $state(false);
 
 	const messyReports = [
 		{
@@ -92,32 +93,15 @@
 	<div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
 		<div class="text-center">
 			<div class="mb-4 flex justify-center">
-				<!-- Introduction video popup -->
-				<Dialog.Root>
-					<div class="text-center">
-						<Dialog.Trigger
-							class={buttonVariants({ variant: "ghost" }) + " bg-primary/10 text-foreground group rounded-full!"}
-						>
-							<Video class="text-primary h-4 w-4" />
-							<span class="-mr-1 text-sm font-medium">Watch 2-minute introduction</span>
-							<ArrowRight class="text-primary h-4 w-4 max-w-0 transition-all group-hover:max-w-4" />
-						</Dialog.Trigger>
-					</div>
-					<Dialog.Content class="w-full max-w-3xl!">
-						<Dialog.Header class="h-fit">
-							<Dialog.Title>Introduction video</Dialog.Title>
-						</Dialog.Header>
-						<iframe
-							class="h-100 w-full"
-							src="https://www.youtube.com/embed/hm3npuRX3_s?si=PiTOWFyFO3bAUkJ2"
-							title="YouTube video player"
-							frameborder="0"
-							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-							referrerpolicy="strict-origin-when-cross-origin"
-							allowfullscreen
-						></iframe>
-					</Dialog.Content>
-				</Dialog.Root>
+				<Button
+					variant="ghost"
+					class="bg-primary/10 text-foreground group rounded-full!"
+					onclick={() => (videoDialogOpen = true)}
+				>
+					<Video class="text-primary h-4 w-4" />
+					<span class="-mr-1 text-sm font-medium">Watch 2-minute introduction</span>
+					<ArrowRight class="text-primary h-4 w-4 max-w-0 transition-all group-hover:max-w-4" />
+				</Button>
 			</div>
 
 			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">
@@ -255,7 +239,7 @@
 <section class="inset-shadow-xl py-24">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-12 text-center">
-			<h2 class="mb-4 text-3xl font-bold leading-12">
+			<h2 class="mb-4 text-3xl leading-12 font-bold">
 				Say goodbye to <span class="mr-1 text-nowrap"
 					><Badge variant="secondary" class="text-3xl font-bold">need info</Badge>,</span
 				>
@@ -279,7 +263,7 @@
 			<Card class="group bg-accent/50 border-none shadow-none transition">
 				<CardHeader>
 					<Link class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">Set up in seconds</CardTitle>
+					<CardTitle class="group-hover:text-primary transition">Easy no-code setup</CardTitle>
 					<CardDescription>
 						Add our smart bug report form to your app with a simple iframe or direct link. No code required - just copy,
 						paste, and you're ready.
@@ -425,7 +409,7 @@
 						<div class="bg-muted/50 rounded-lg p-3">
 							<p class="mb-1 text-xs font-medium">Login button freezes on mobile</p>
 							<p class="text-muted-foreground text-xs">Button becomes unresponsive after validation error...</p>
-							<div class="mt-4 flex gap-2 flex-wrap">
+							<div class="mt-4 flex flex-wrap gap-2">
 								<Button variant="outline" class="pointer-events-none h-8 text-xs">This is my bug</Button>
 								<Button variant="outline" class="text-muted-foreground pointer-events-none h-8 text-xs">No, skip</Button
 								>
@@ -507,17 +491,17 @@
 
 		<!-- Overlapping error showcase -->
 		<div
-			class="relative mx-auto mb-12 h-[300px] max-w-5xl overflow-hidden mask-y-from-95% mask-y-to-100% mask-x-from-80% mask-x-to-100% sm:h-[375px]"
+			class="relative mx-auto mb-12 h-[250px] max-w-5xl overflow-hidden mask-y-from-95% mask-y-to-100% mask-x-from-80% mask-x-to-100% sm:h-[375px]"
 		>
 			{#each errors as error, index}
 				{@const sectionTop = errorSection?.offsetTop || 0}
 				{@const relativeScroll = Math.min(750, Math.max(0, scrollY - sectionTop + 1000))}
 				<div
-					class="absolute w-60 sm:w-80"
+					class="absolute w-80"
 					style="{error.position} z-index: {10 + index}; transform: translateY({relativeScroll *
 						(0.01 + (index + 1) * 0.01)}px);"
 				>
-					<Card class="bg-background shadow-lg max-sm:max-h-35">
+					<Card class="bg-background shadow-lg">
 						<CardHeader class="pb-1">
 							<div class="mb-1 flex items-center justify-between">
 								<div class="flex items-center space-x-2">
@@ -526,7 +510,7 @@
 									<div class="h-3 w-3 rounded-full bg-green-500"></div>
 								</div>
 							</div>
-							<CardTitle class="font-mono text-xs sm:text-sm">{error.title}</CardTitle>
+							<CardTitle class="font-mono text-sm">{error.title}</CardTitle>
 						</CardHeader>
 						<CardContent class="pt-0">
 							<p class="text-muted-foreground mb-2 text-xs">{error.description}</p>
@@ -536,7 +520,7 @@
 			{/each}
 		</div>
 
-		<!-- Simple report button -->
+		<!-- Demo dialog -->
 		<Dialog.Root onOpenChange={() => (demoIframeLoaded = false)}>
 			<div class="text-center">
 				<Dialog.Trigger class={buttonVariants({ size: "lg" })}>Try the demo</Dialog.Trigger>
@@ -578,9 +562,30 @@
 				Start now
 				<ArrowRight class="h-4 w-4" />
 			</Button>
+			<Button variant="secondary" class="bg-muted/50" size="lg" onclick={() => (videoDialogOpen = true)}
+				><Video />Introduction</Button
+			>
 		</div>
 	</div>
 </section>
+
+<!-- Intro video popup -->
+<Dialog.Root bind:open={videoDialogOpen}>
+	<Dialog.Content class="w-full max-w-3xl!">
+		<Dialog.Header class="h-fit">
+			<Dialog.Title>Introduction video</Dialog.Title>
+		</Dialog.Header>
+		<iframe
+			class="h-100 w-full"
+			src="https://www.youtube.com/embed/hm3npuRX3_s?si=PiTOWFyFO3bAUkJ2"
+			title="YouTube video player"
+			frameborder="0"
+			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+			referrerpolicy="strict-origin-when-cross-origin"
+			allowfullscreen
+		></iframe>
+	</Dialog.Content>
+</Dialog.Root>
 
 <style>
 	:global(.glint::before) {

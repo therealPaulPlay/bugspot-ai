@@ -15,6 +15,12 @@ cron.schedule('0 0 1 * *', async () => {
     }
 });
 
+// Hook into handleError to skip logging 404s since there are so many due to bots
+export async function handleError({ error, event, status, message }) {
+    if (status !== 404) console.error(error.message);
+    return { message };
+}
+
 export async function handle({ event, resolve }) {
     // API rate limits
     if (event.url.pathname.startsWith('/api')) {
