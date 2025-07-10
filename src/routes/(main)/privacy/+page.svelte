@@ -29,7 +29,7 @@
 			<p class="mt-4">2.2. Bug report data</p>
 			<p>When you use our Service, we store data such as, but not limited to:</p>
 			<ul class="mb-4 list-disc pl-6">
-				<li>Bug reports, including titles, descriptions, and technical details</li>
+				<li>Bug reports, including titles, descriptions, email addresses and technical details</li>
 				<li>Comments and collaboration data</li>
 				<li>File uploads (images, videos, documents)</li>
 				<li>System information automatically collected from your browser</li>
@@ -100,6 +100,11 @@
 					> for secure user authentication and management
 				</li>
 				<li><strong>Legal requirements:</strong> When required by law or to protect our rights</li>
+				<li>
+					<strong>Customers:</strong> Customers get access to the bug reports created through their forms. They will process
+					these reports according to their privacy policies. Bugspot takes no accountability over how customers use & store
+					their reports.
+				</li>
 			</ul>
 			<p>We do not sell, rent, or trade your personal information to third parties for marketing purposes.</p>
 
