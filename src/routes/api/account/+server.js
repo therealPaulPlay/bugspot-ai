@@ -154,6 +154,7 @@ export async function POST({ request, locals }) {
 // Delete account
 export async function DELETE({ request, locals }) {
     const { userId } = locals.body;
+    if (!userId) return json({ error: 'User ID is required.' }, { status: 400 });
 
     try {
         authenticateTokenWithId(request, userId);

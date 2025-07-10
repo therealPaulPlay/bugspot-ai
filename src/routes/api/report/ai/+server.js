@@ -190,7 +190,11 @@ Respond with JSON format:
         if (!parsed.duplicates?.length) return null;
 
         const duplicateIssues = await Promise.all(
-            parsed.duplicates.slice(0, 3).map(id => getIssueContent(formId, id))
+            parsed.duplicates.slice(0, 3).map(async id => {
+                const issue = await getIssueContent(formId, id);
+                if (issue.body) issue.body = issue.body.replace(/\[.*?@.*?\]\(mailto:.*?\)/g, '(email hidden to preserve privacy)'); // Censor email
+                return issue;
+            })
         );
 
         return duplicateIssues;
