@@ -76,6 +76,10 @@ async function deleteFile(url) {
 }
 
 async function processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, customPrompt, questionAnswerHistory) {
+
+    // Limit custom data to max. 10,000 characters
+    if (customData) customData = customData.slice(0, 10000);
+
     const messages = [{
         role: 'system',
         content: `You are a bug report processor. Based on the information provided, choose ONE action:
@@ -144,18 +148,18 @@ CUSTOM_DATA: ${customData || "Not provided."}`;
 
     messages.push({ role: 'user', content: userContent });
 
-    const response = await makeAIRequest(messages);
-
     try {
+        const response = await makeAIRequest(messages);
+
         const jsonMatch = response.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) throw new Error('No JSON found');
+        if (!jsonMatch) throw new Error('JSON malformatted!');
 
         const parsed = JSON.parse(jsonMatch[0]);
-        if (!parsed || typeof parsed !== 'object' || !parsed.action) throw new Error('Invalid structure');
+        if (!parsed || typeof parsed !== 'object' || !parsed.action) throw new Error('Invalid structure!');
 
         return parsed;
     } catch (error) {
-        throw new Error("AI processing error: " + error);
+        throw new Error("Error processing report: " + error);
     }
 }
 
@@ -180,7 +184,7 @@ Respond with JSON format:
         }]);
 
         const duplicateMatch = aiResponse.match(/\{[\s\S]*\}/);
-        if (!duplicateMatch) return null;
+        if (!duplicateMatch) throw new Error('JSON malformatted!');
 
         const parsed = JSON.parse(duplicateMatch[0]);
         if (!parsed.duplicates?.length) return null;
@@ -197,15 +201,16 @@ Respond with JSON format:
 }
 
 async function checkDuplicateForNewInfo(originalIssue, newTitle, newContent) {
-    const aiResponse = await makeAIRequest([{
-        role: 'user',
-        content: `Compare this original issue with a new report to see if the new report contains crucial additional information. 
+    try {
+        const aiResponse = await makeAIRequest([{
+            role: 'user',
+            content: `Compare this original issue with a new report to see if the new report contains crucial additional information. 
 If the new report contains additional media (video and/or screenshot URLs), include these as clickable links in your comment.
 If you choose to add a comment, keep it concise and start with 'An additional report...'.
 
 ORIGINAL ISSUE:
 Title: ${originalIssue.title}
-Body: ${originalIssue.body}
+Content: ${originalIssue.body}
 
 NEW REPORT:
 Title: ${newTitle}
@@ -216,10 +221,16 @@ Respond with JSON:
   "hasNewInfo": true/false,
   "comment": "Additional information to add as a comment (if hasNewInfo is true)"
 }`
-    }]);
+        }]);
 
-    const match = aiResponse.match(/\{[\s\S]*\}/);
-    return match ? JSON.parse(match[0]) : null;
+        const match = aiResponse.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error('JSON malformatted!');
+        return JSON.parse(match[0]);
+
+    } catch (error) {
+        console.error("Failed to check duplicate for new information:", error.message);
+        return null;
+    }
 }
 
 async function incrementReportCount(userId) {
