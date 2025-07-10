@@ -208,13 +208,13 @@
 							</div>
 						</div>
 					</CardHeader>
-					<CardContent>
-						<div class="space-y-3">
+					<CardContent class="h-full">
+						<div class="flex h-full flex-col space-y-3">
 							<div class="text-muted-foreground text-sm">
 								{form.githubRepo ? `Connected to ${form.githubRepo}` : "No GitHub repo connected"}.
 							</div>
 
-							<div class="text-muted-foreground text-sm">
+							<div class="text-muted-foreground text-sm mt-auto">
 								{form.domains?.length || 0} allowed domain(s).
 							</div>
 
