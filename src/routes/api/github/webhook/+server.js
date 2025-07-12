@@ -48,7 +48,7 @@ async function cleanupReport(reportData, repoName, issueNumber, showIssueLink, s
     await Promise.all([
         deleteS3File(reportData.screenshotKey),
         deleteS3File(reportData.videoKey),
-        db.delete(submittedReports).where(eq(submittedReports.id, reportData.id))
+        db.update(submittedReports).set({ isClosed: true }).where(eq(submittedReports.id, reportData.id))
     ]);
 }
 
@@ -59,6 +59,7 @@ async function processReportsForCleanup(repoFullName, issueNumber = null, isDele
         .innerJoin(forms, eq(submittedReports.formId, forms.id))
         .where(and(
             eq(forms.githubRepo, repoFullName),
+            eq(submittedReports.isClosed, false),
             ...(issueNumber ? [eq(submittedReports.issueNumber, issueNumber)] : [])
         ));
 

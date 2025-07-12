@@ -135,7 +135,7 @@
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-							<span class="text-sm">Duplicate detection</span>
+							<span class="text-sm">Smart duplicate handling</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<Check class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />

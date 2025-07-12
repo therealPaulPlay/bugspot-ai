@@ -54,8 +54,12 @@ export const submittedReports = mysqlTable('submitted_reports', {
 	screenshotKey: varchar('screenshot_key', { length: 500 }), // S3 key for screenshot
 	videoKey: varchar('video_key', { length: 500 }), // S3 key for video
 	reporterIp: varchar('reporter_ip', { length: 45 }),
+	isClosed: boolean('is_closed').default(false),
 	createdAt: timestamp('created_at').defaultNow()
-});
+}, (table) => ({
+	screenshotKeyIdx: index('idx_screenshot_key').on(table.screenshotKey),
+	videoKeyIdx: index('idx_video_key').on(table.videoKey),
+}));
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({

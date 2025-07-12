@@ -37,7 +37,7 @@ async function checkReportRateLimit(ip) {
     const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
     const recentReports = await db.select().from(submittedReports)
         .where(and(eq(submittedReports.reporterIp, ip), sql`${submittedReports.createdAt} > ${sixHoursAgo}`));
-    return recentReports.length >= 5;
+    return recentReports.length >= 5; // Limit to 5 per 6 hour period
 }
 
 function getS3KeyFromUrl(url) {
@@ -46,7 +46,7 @@ function getS3KeyFromUrl(url) {
     return url.startsWith(baseURL) ? url.replace(baseURL + '/', '') : null;
 }
 
-async function saveSubmittedReport(formId, issueNumber, email, screenshotUrl, videoUrl, reporterIp) {
+async function saveSubmittedReport(formId, issueNumber, email, screenshotUrl, videoUrl, reporterIp, isClosed = false) {
     const reportId = crypto.randomUUID();
     await db.insert(submittedReports).values({
         id: reportId,
@@ -55,7 +55,8 @@ async function saveSubmittedReport(formId, issueNumber, email, screenshotUrl, vi
         email,
         screenshotKey: getS3KeyFromUrl(screenshotUrl),
         videoKey: getS3KeyFromUrl(videoUrl),
-        reporterIp
+        reporterIp,
+        isClosed
     });
 }
 
@@ -119,8 +120,7 @@ DO NOT capitalize random words in the title of the report; follow English gramma
 DO NOT use markdown or other special formatting when closing a report or simply asking a question.
 DO NOT use filler words; always keep it concise.
 DO NOT ask the user to provide any of the 'Not provided' fields unless crucial to the report.
-DO correct grammar mistakes or typos and enhance the readability of the description, behavior, and steps.
-DO ensure that all steps start with a capital letter and end with a period.
+DO correct grammar & spelling mistakes, ensure that steps start with a capital letter and end with a period, and enhance the readability of the description, behavior, and steps.
 
 ONLY respond with this JSON format:
 {
@@ -276,6 +276,8 @@ export async function POST({ request, locals, getClientAddress }) {
 
         if (aiResult.action === 'CLOSE_REPORT') {
             if (!demo) await incrementReportCount(user.id);
+            await saveSubmittedReport(formId, -1, email, screenshotUrl, videoUrl, getClientAddress(), true);
+            
             // Delete uploaded files
             await Promise.all([deleteFile(screenshotUrl), deleteFile(videoUrl)]);
             return json({ action: 'closed', message: aiResult.message });
