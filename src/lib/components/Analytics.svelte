@@ -21,9 +21,9 @@
 	function loadGA(hasConsent) {
 		try {
 			window.dataLayer = window.dataLayer || [];
-			function gtag() {
+			window.gtag = function () {
 				dataLayer.push(arguments);
-			}
+			};
 
 			gtag("js", new Date());
 			gtag("config", GA_ID, {

@@ -78,7 +78,7 @@
 			<div class="flex items-center">
 				<!-- Logo -->
 				<a href="/" class="flex items-center space-x-2">
-					<Bug class="text-primary h-8 w-8" />
+					<Bug class="text-primary h-8 w-8 hover:scale-90 transition" />
 					<span class="text-xl font-bold">Bugspot</span>
 				</a>
 
