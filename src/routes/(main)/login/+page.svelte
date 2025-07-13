@@ -72,7 +72,7 @@
 	<div class="bg-muted/50 inset-0 -z-1 h-screen overflow-hidden max-lg:absolute lg:w-1/2">
 		<video
 			bind:this={videoElement}
-			class="h-full w-full object-cover brightness-75 transition duration-500 max-lg:opacity-35 max-lg:blur-md dark:brightness-50"
+			class="h-full w-full object-cover opacity-75 brightness-75 transition duration-500 max-lg:opacity-35 max-lg:blur-md"
 			style:opacity={videoLoaded ? "" : "0"}
 			autoplay
 			muted
