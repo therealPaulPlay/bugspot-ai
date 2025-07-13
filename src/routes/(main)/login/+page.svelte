@@ -11,8 +11,12 @@
 	import { authStore } from "$lib/stores/account";
 
 	let loading = $state(false);
+	let videoLoaded = $state(false);
+	let videoElement = $state();
 
 	onMount(async () => {
+		if (videoElement?.readyState >= 3) videoLoaded = true;
+
 		// Check for OAuth callback
 		const code = page.url.searchParams.get("code");
 		const errorParam = page.url.searchParams.get("error");
@@ -64,39 +68,57 @@
 	<title>Sign in</title>
 </svelte:head>
 
-<div class="flex min-h-screen items-center justify-center px-4">
-	<div class="w-full max-w-sm space-y-8">
-		<!-- Header -->
-		<div class="text-center">
-			<div class="mb-6 flex justify-center">
-				<Bug class="text-primary h-12 w-12" />
+<div class="relative flex min-h-screen items-center border-t">
+	<div class="bg-muted/50 inset-0 -z-1 h-screen overflow-hidden max-lg:absolute lg:w-1/2">
+		<video
+			bind:this={videoElement}
+			class="h-full w-full object-cover brightness-75 transition duration-500 max-lg:opacity-35 max-lg:blur-md dark:brightness-50"
+			style:opacity={videoLoaded ? "" : "0"}
+			autoplay
+			muted
+			loop
+			playsinline
+			onloadeddata={() => (videoLoaded = true)}
+		>
+			<source src="/video/site-login-showcase.mp4" type="video/mp4" />
+		</video>
+	</div>
+	<div class="flex w-full h-screen items-center justify-center px-4 lg:w-1/2">
+		<div class="flex w-sm flex-col items-center space-y-8">
+			<!-- Header -->
+			<div class="text-center">
+				<div class="mb-6 flex justify-center">
+					<Bug class="text-primary h-12 w-12" />
+				</div>
+				<h2 class="text-3xl font-bold">One step away.</h2>
+				<p class="text-muted-foreground mt-2 max-w-80">
+					Sign in or up to receive bug reports that actually help you debug.
+				</p>
 			</div>
-			<h2 class="text-3xl font-bold">Welcome to Bugspot</h2>
-			<p class="text-muted-foreground mt-2">Please sign in or up.</p>
+
+			<!-- Login card -->
+			<Card>
+				<CardContent class="space-y-4 lg:w-sm">
+					<!-- GitHub login button -->
+					<Button class="w-full" size="lg" onclick={handleGitHubLogin} disabled={loading}>
+						{#if loading}
+							<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+							Connecting...
+						{:else}
+							<Github class="h-4 w-4" />
+							Continue with GitHub
+						{/if}
+					</Button>
+				</CardContent>
+			</Card>
+
+			<!-- Terms -->
+			<p class="text-muted-foreground max-w-75 text-center text-xs">
+				By signing up, you agree to our
+				<a href="/terms" class="hover:underline">Terms of Use</a>
+				and
+				<a href="/privacy" class="hover:underline">Privacy Policy</a>.
+			</p>
 		</div>
-
-		<!-- Login card -->
-		<Card>
-			<CardContent class="space-y-4">
-				<!-- GitHub login button -->
-				<Button class="w-full" size="lg" onclick={handleGitHubLogin} disabled={loading}>
-					{#if loading}
-						<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
-						Connecting...
-					{:else}
-						<Github class="h-4 w-4" />
-						Continue with GitHub
-					{/if}
-				</Button>
-			</CardContent>
-		</Card>
-
-		<!-- Terms -->
-		<p class="text-muted-foreground text-center text-xs">
-			By signing up, you agree to our
-			<a href="/terms" class="hover:underline">Terms of Use</a>
-			and
-			<a href="/privacy" class="hover:underline">Privacy Policy</a>
-		</p>
 	</div>
 </div>

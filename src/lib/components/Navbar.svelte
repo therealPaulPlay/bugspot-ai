@@ -67,7 +67,7 @@
 
 <nav class="fixed top-0 right-0 left-0 z-50">
 	<div
-		class="flex w-full justify-center transition-[padding] duration-300 {pageScrollY > 10 ? 'p-4' : 'bg-background'}"
+		class="flex w-full justify-center transition-[padding] duration-300 {pageScrollY > 10 ? 'p-4' : ''}"
 	>
 		<div
 			class="bg-background flex h-18 w-full max-w-7xl justify-between rounded-xl border p-4 duration-300 {pageScrollY >
