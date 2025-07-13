@@ -54,7 +54,7 @@
 
 {#if showBanner}
 	<div class="fixed right-0 bottom-0 max-w-screen z-50 p-4" transition:slide={{ axis: "y" }}>
-		<Card class="h-fit w-100 border py-4 shadow-lg max-w-full">
+		<Card class="h-fit w-100 border py-4 shadow-lg max-w-full bg-background">
 			<CardContent class="space-y-4 px-4">
 				<p class="text-muted-foreground text-sm text-wrap">
 					This website uses cookies according to its

@@ -72,7 +72,7 @@
 	<div class="bg-muted/50 inset-0 -z-1 h-screen overflow-hidden max-lg:absolute lg:w-1/2">
 		<video
 			bind:this={videoElement}
-			class="h-full w-full object-cover opacity-75 brightness-75 transition duration-500 max-lg:opacity-35 max-lg:blur-md"
+			class="h-full w-full object-cover opacity-75 brightness-75 dark:brightness-50 transition duration-500 max-lg:opacity-25 max-lg:blur-md"
 			style:opacity={videoLoaded ? "" : "0"}
 			autoplay
 			muted
@@ -83,7 +83,7 @@
 			<source src="/video/site-login-showcase.mp4" type="video/mp4" />
 		</video>
 	</div>
-	<div class="flex w-full h-screen items-center justify-center px-4 lg:w-1/2">
+	<div class="flex h-screen w-full items-center justify-center px-4 lg:w-1/2">
 		<div class="flex w-sm flex-col items-center space-y-8">
 			<!-- Header -->
 			<div class="text-center">

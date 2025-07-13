@@ -87,14 +87,14 @@
 		<div class="mb-4 flex justify-center">
 			<Bug class="text-primary h-12 w-12" />
 		</div>
-		<h1 class="mb-4 text-4xl font-bold">Simple, transparent pricing.</h1>
+		<h1 class="mb-4 text-4xl font-bold">Clear, flexible pricing.</h1>
 	</div>
 
 	<!-- Fun testimonial quote -->
 	<div class="mb-20 flex flex-col items-center justify-center text-center">
 		<blockquote class="text-muted-foreground mb-2 max-w-xl text-lg italic">
-			"The duplicate prevention is a game changer. We went from 'which report contains...?' to having everything in one
-			place."
+			"The duplicate merging is a game changer. We went from 'which report has the screenshot?' to having everything in
+			one place."
 		</blockquote>
 		<cite class="text-muted-foreground text-sm not-italic"> — A Bugspot user </cite>
 	</div>
@@ -131,7 +131,7 @@
 					</CardDescription>
 				</CardHeader>
 
-				<CardContent class="space-y-6">
+				<CardContent class="flex flex-col items-center gap-6">
 					<!-- Features list -->
 					<ul class="space-y-3">
 						<li class="flex items-start space-x-3">
@@ -144,7 +144,7 @@
 							<div class="bg-primary/10 mt-0.5 rounded-full p-1">
 								<Check class="text-primary h-3 w-3" />
 							</div>
-							<span class="text-sm">Automatic priority management</span>
+							<span class="text-sm">Automatic priority evaluation</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<div class="bg-primary/10 mt-0.5 rounded-full p-1">
@@ -168,14 +168,14 @@
 
 					<!-- CTA Button -->
 					<Button
-						class="group/btn w-full transition-all duration-300"
+						class="group/btn mt-2 w-full transition-all duration-300"
 						size="lg"
 						variant={index === 1 ? "default" : "outline"}
 						disabled={loading === tier.id || $user?.subscriptionTier == tier.id || $user?.subscriptionTier > tier.id}
 						onclick={() => handleSubscription(tier)}
 					>
 						{#if loading === tier.id}
-							<div class="h-4 w-4 animate-spin rounded-full border-b-2 border-foreground"></div>
+							<div class="border-foreground h-4 w-4 animate-spin rounded-full border-b-2"></div>
 							Processing...
 						{:else if $user?.subscriptionTier == tier.id}
 							<CheckCircle class="h-4 w-4" />
@@ -195,7 +195,7 @@
 			</Card>
 		{/each}
 	</div>
-	<p class="text-muted-foreground mx-auto mb-6 max-w-135 text-center text-xs">
+	<p class="text-muted-foreground mx-auto mb-6 text-center text-xs max-sm:max-w-80">
 		*AI-closed reports count towards the limit. Abuse is prevented with captchas and rate limits.
 	</p>
 	<div class="mb-26 flex w-full justify-center">
