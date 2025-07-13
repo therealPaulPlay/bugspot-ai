@@ -92,7 +92,7 @@
 				</div>
 				<h2 class="text-3xl font-bold">One step away.</h2>
 				<p class="text-muted-foreground mt-2 max-w-80">
-					Sign in or up to receive bug reports that actually help you debug.
+					Sign in or up to receive bug reports that are actually helpful to you.
 				</p>
 			</div>
 

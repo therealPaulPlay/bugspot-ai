@@ -181,13 +181,13 @@
 							<CheckCircle class="h-4 w-4" />
 							Current plan
 						{:else if tier.id === 0}
-							<Zap class="h-4 w-4 transition-transform group-hover/btn:rotate-12" />
+							<Zap class="h-4 w-4 transition-transform group-hover/btn:-rotate-12" />
 							Get started
 						{:else if tier.id === 1}
-							<PlaneTakeoff class="h-4 w-4 transition-transform group-hover/btn:rotate-12" />
+							<PlaneTakeoff class="h-4 w-4 transition-transform group-hover/btn:-rotate-12" />
 							Upgrade
 						{:else}
-							<Rocket class="h-4 w-4 transition-transform group-hover/btn:rotate-12" />
+							<Rocket class="h-4 w-4 transition-transform group-hover/btn:-rotate-12" />
 							Upgrade
 						{/if}
 					</Button>
