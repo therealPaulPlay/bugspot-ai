@@ -29,12 +29,12 @@
 			gtag("config", GA_ID, {
 				page_title: document.title,
 				page_path: page.url.pathname,
-				cookie_domain: location.hostname,
+				cookie_domain: window.location.hostname,
 				cookie_flags: "SameSite=None; Secure",
 				ad_storage: hasConsent ? "granted" : "denied",
 				ad_personalization: hasConsent ? "granted" : "denied",
 				ad_user_data: hasConsent ? "granted" : "denied",
-				analytics_storage: hasConsent ? "granted" : "denied",
+				analytics_storage: "granted",
 			});
 		} catch (error) {
 			console.error("Error loading GA:", error);
@@ -53,10 +53,10 @@
 </svelte:head>
 
 {#if showBanner}
-	<div class="fixed right-0 bottom-0 z-50 p-4" transition:slide={{ axis: "y" }}>
-		<Card class="h-fit w-100 max-w-screen border py-4 shadow-lg">
+	<div class="fixed right-0 bottom-0 max-w-screen z-50 p-4" transition:slide={{ axis: "y" }}>
+		<Card class="h-fit w-100 border py-4 shadow-lg max-w-full">
 			<CardContent class="space-y-4 px-4">
-				<p class="text-muted-foreground text-sm">
+				<p class="text-muted-foreground text-sm text-wrap">
 					This website uses cookies according to its
 					<a href="/privacy" class="text-primary hover:underline"> privacy policy </a>.
 				</p>
