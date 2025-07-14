@@ -84,7 +84,7 @@
 			const data = await response.json();
 			toast.success(editingForm ? "Form updated!" : "Form created!");
 			open = false;
-			onSuccess?.(data);
+			onSuccess?.(data, editingForm);
 		} catch (error) {
 			toast.error(error.message || "Failed to save form.");
 		} finally {

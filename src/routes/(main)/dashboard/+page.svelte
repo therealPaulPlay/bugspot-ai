@@ -286,13 +286,15 @@
 <CreateFormDialog
 	bind:open={showCreateDialog}
 	{editingForm}
-	onSuccess={(data) => {
+	onSuccess={(data, edited) => {
 		loadDashboard();
 
-		setTimeout(() => {
-			currentFormId = data.formId;
-			showInfoDialog = true;
-		}, 500);
+		if (!edited) {
+			setTimeout(() => {
+				currentFormId = data.formId;
+				showInfoDialog = true;
+			}, 500);
+		}
 	}}
 />
 
