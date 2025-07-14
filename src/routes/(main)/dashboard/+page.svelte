@@ -15,12 +15,11 @@
 	import Badge from "$lib/components/ui/badge/badge.svelte";
 	import Check from "@lucide/svelte/icons/check";
 	import Prism from "prismjs";
-	import "prism-themes/themes/prism-vsc-dark-plus.css";
+	import "prism-themes/themes/prism-duotone-space.css";
 
 	let forms = $state([]);
 	let loading = $state(true);
 	let showCreateDialog = $state(false);
-	let showIframeDialog = $state(false);
 	let showInfoDialog = $state(false);
 	let showDeleteDialog = $state(false);
 	let editingForm = $state(null);
@@ -338,15 +337,26 @@
 					When using &lta&gt tags, add referrerpolicy="origin" to avoid referrer issues.
 				</p>
 			</div>
+
+			<!-- Iframe Embed -->
 			<div>
 				<h3 class="mb-1 text-sm font-semibold">Embed</h3>
-				<p class="text-muted-foreground text-sm">
-					Embed the form directly into your site. <button
-						class="text-primary hover:underline"
-						onclick={() => (showIframeDialog = true)}>View code.</button
-					>
+				<p class="text-muted-foreground mb-2 text-sm">
+					Embed the form directly into your site. We recommend embedding it into a popup.
 				</p>
+				<div class="bg-muted text-muted-foreground relative rounded-md p-2 text-xs">
+					<Button onclick={copyIframeCode} size="sm" variant="ghost" class="absolute top-0.5 right-0">
+						{#if iframeCodeCopied}
+							<Check class="h-2 w-2" />
+						{:else}
+							<Copy class="h-2 w-2" />
+						{/if}
+					</Button>
+					<code>{@html Prism.highlight(generateIframeCode(currentFormId), Prism.languages.html, "html")}</code>
+				</div>
 			</div>
+
+			<!-- Custom Data -->
 			<div>
 				<h3 class="mb-1 text-sm font-semibold">Adding context</h3>
 				<p class="text-muted-foreground mb-2 text-sm">
@@ -360,36 +370,6 @@
 				</div>
 				<p class="text-muted-foreground mt-2 text-xs opacity-75">Use encodeURIComponent() to encode your data.</p>
 			</div>
-		</div>
-	</DialogContent>
-</Dialog>
-
-<!-- Iframe code dialog -->
-<Dialog bind:open={showIframeDialog}>
-	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>Iframe code</DialogTitle>
-			<DialogDescription>
-				Copy this code and paste it into your website where you want the form to appear. We recommend embedding it into
-				a popup.
-			</DialogDescription>
-		</DialogHeader>
-
-		<div class="space-y-4">
-			<div class="bg-muted rounded-lg p-4">
-				<code class="text-sm text-xs">
-					{@html Prism.highlight(generateIframeCode(currentFormId), Prism.languages.html, "html")}
-				</code>
-			</div>
-
-			<Button onclick={copyIframeCode} variant="outline" class="w-full">
-				{#if iframeCodeCopied}
-					Copied!
-				{:else}
-					<Copy class="h-4 w-4" />
-					Copy iframe code
-				{/if}
-			</Button>
 		</div>
 	</DialogContent>
 </Dialog>
