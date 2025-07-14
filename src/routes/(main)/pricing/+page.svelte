@@ -138,7 +138,7 @@
 							<div class="bg-primary/10 mt-0.5 rounded-full p-1">
 								<Check class="text-primary h-3 w-3" />
 							</div>
-							<span class="text-sm">AI-powered bug report forms</span>
+							<span class="text-sm">Full AI integration</span>
 						</li>
 						<li class="flex items-start space-x-3">
 							<div class="bg-primary/10 mt-0.5 rounded-full p-1">
