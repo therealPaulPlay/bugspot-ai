@@ -135,9 +135,9 @@
 										showDeleteDialog = true;
 										deleteConfirmText = "";
 									}}
-									class="text-destructive focus:text-destructive"
+									class="text-destructive!"
 								>
-									<Trash2 class="h-4 w-4" />
+									<Trash2 class="h-4 w-4 text-destructive!" />
 									Delete account
 								</DropdownMenuItem>
 							</DropdownMenuContent>
