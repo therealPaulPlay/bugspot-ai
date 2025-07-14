@@ -76,7 +76,7 @@
 </script>
 
 <svelte:head>
-	<title>Bugspot - Smart bug report forms powered by AI</title>
+	<title>Bugspot - Bug report forms powered by AI</title>
 	<meta
 		name="description"
 		content="Help your users submit clear, actionable bug reports with AI-powered forms. Integrate with GitHub Issues to reduce back-and-forth, avoid duplicates, and debug faster."
@@ -105,12 +105,11 @@
 			</div>
 
 			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">
-				<span class="text-primary">Super smart</span> bug report forms.
+				<span class="text-primary">AI-powered</span> bug report forms.
 			</h1>
 
 			<p class="text-muted-foreground mx-auto mb-8 max-w-xl text-lg">
-				Our AI-powered forms guide users to create detailed & actionable bug reports. No more non-issues or endless
-				back-and-forth.
+				Intelligent forms ensure every bug report is actionable. No more missing details or endless follow-ups.
 			</p>
 
 			<div class="flex flex-col justify-center gap-4 sm:flex-row">
@@ -322,40 +321,29 @@
 				</div>
 			</div>
 
-			<!-- Customization feature -->
+			<!-- Duplicate management -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Complete customization.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Smart duplicate handling.</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
-						Tailor forms to your exact needs. Set custom prompts for AI behavior, select which pieces of information you
-						need and customize colors to match your brand.
+						Before creating new issues, users may see similar existing reports. If they confirm it's the same bug, their
+						additional information gets added to the original issue.
 					</p>
 				</div>
 				<div class="bg-muted/50 rounded-2xl p-6">
-					<!-- Customization mockup -->
+					<!-- Duplicate mockup -->
 					<div class="bg-background rounded-xl p-4 shadow-sm">
-						<div class="mb-4 flex items-center gap-2">
-							<Palette class="text-primary h-4 w-4" />
-							<span class="text-sm font-medium">Form config</span>
+						<div class="flex gap-2">
+							<CopyCheck class="text-primary mt-0.5 h-4 w-4" />
+							<p class="mb-2 text-sm font-medium">We found similar reports.</p>
 						</div>
-						<div class="space-y-3">
-							<div class="flex items-center justify-between">
-								<span class="text-sm">Require video recording</span>
-								<div class="bg-primary relative h-5 w-9 rounded-full">
-									<div class="absolute top-0.5 right-0.5 h-4 w-4 rounded-full bg-white"></div>
-								</div>
-							</div>
-							<div class="flex items-center justify-between">
-								<span class="text-sm">Custom prompt</span>
-								<Badge variant="secondary" class="text-xs">Active</Badge>
-							</div>
-							<div class="flex items-center justify-between">
-								<span class="text-sm">Color scheme</span>
-								<div class="flex gap-1">
-									<div class="bg-primary h-4 w-4 rounded-full"></div>
-									<div class="bg-primary/50 h-4 w-4 rounded-full"></div>
-									<div class="bg-primary/25 h-4 w-4 rounded-full"></div>
-								</div>
+						<div class="bg-muted/50 rounded-lg p-3">
+							<p class="mb-1 text-xs font-medium">Login button freezes on mobile</p>
+							<p class="text-muted-foreground text-xs">Button becomes unresponsive after validation error...</p>
+							<div class="mt-4 flex flex-wrap gap-2">
+								<Button variant="outline" class="pointer-events-none h-8 text-xs">This is my bug</Button>
+								<Button variant="outline" class="text-muted-foreground pointer-events-none h-8 text-xs">No, skip</Button
+								>
 							</div>
 						</div>
 					</div>
@@ -390,29 +378,40 @@
 				</div>
 			</div>
 
-			<!-- Duplicate management -->
+			<!-- Customization feature -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Smart duplicate handling.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Complete customization.</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
-						Before creating new issues, users may see similar existing reports. If they confirm it's the same bug, their
-						additional information gets added to the original issue.
+						Tailor forms to your exact needs. Select which pieces of information you need and customize colors to match
+						your brand.
 					</p>
 				</div>
 				<div class="bg-muted/50 rounded-2xl p-6">
-					<!-- Duplicate mockup -->
+					<!-- Customization mockup -->
 					<div class="bg-background rounded-xl p-4 shadow-sm">
-						<div class="flex gap-2">
-							<CopyCheck class="text-primary mt-0.5 h-4 w-4" />
-							<p class="mb-2 text-sm font-medium">We found similar reports.</p>
+						<div class="mb-4 flex items-center gap-2">
+							<Palette class="text-primary h-4 w-4" />
+							<span class="text-sm font-medium">Form config</span>
 						</div>
-						<div class="bg-muted/50 rounded-lg p-3">
-							<p class="mb-1 text-xs font-medium">Login button freezes on mobile</p>
-							<p class="text-muted-foreground text-xs">Button becomes unresponsive after validation error...</p>
-							<div class="mt-4 flex flex-wrap gap-2">
-								<Button variant="outline" class="pointer-events-none h-8 text-xs">This is my bug</Button>
-								<Button variant="outline" class="text-muted-foreground pointer-events-none h-8 text-xs">No, skip</Button
-								>
+						<div class="space-y-3">
+							<div class="flex items-center justify-between">
+								<span class="text-sm">Require video recording</span>
+								<div class="bg-primary relative h-5 w-9 rounded-full">
+									<div class="absolute top-0.5 right-0.5 h-4 w-4 rounded-full bg-white"></div>
+								</div>
+							</div>
+							<div class="flex items-center justify-between">
+								<span class="text-sm">Custom prompt</span>
+								<Badge variant="secondary" class="text-xs">Active</Badge>
+							</div>
+							<div class="flex items-center justify-between">
+								<span class="text-sm">Color scheme</span>
+								<div class="flex gap-1">
+									<div class="bg-primary h-4 w-4 rounded-full"></div>
+									<div class="bg-primary/50 h-4 w-4 rounded-full"></div>
+									<div class="bg-primary/25 h-4 w-4 rounded-full"></div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -554,8 +553,8 @@
 		<h2 class="mb-4 text-3xl font-bold">
 			You debug faster. <span class="opacity-80">We clear the clutter.</span>
 		</h2>
-		<p class="mx-auto mb-8 max-w-xl text-lg opacity-90">
-			Join a growing community of developers streamlining their bug report management.
+		<p class="mx-auto mb-8 max-w-lg text-lg opacity-90">
+			Join a growing community of developers building with exceptional bug reports.
 		</p>
 		<div class="flex flex-col justify-center gap-4 sm:flex-row">
 			<Button variant="secondary" size="lg" onclick={() => goto("/login")}>
