@@ -28,8 +28,8 @@ jobs:
             git checkout main
             git pull
 
-            # Build Docker image
-            docker build -t bugspot-app .
+            # Build Docker image without caching
+            docker build --no-cache -t bugspot-app .
 
             # Check if container exists
             if ! docker ps -a --format '{{.Names}}' | grep -q "^bugspot-app$"; then
@@ -43,7 +43,7 @@ jobs:
             fi
 
             # Cleanup dangling images from build stage
-            docker image prune -f 
+            docker image prune -f
           EOF
 
       - name: Cleanup SSH
