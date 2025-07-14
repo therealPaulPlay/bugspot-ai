@@ -87,7 +87,7 @@
 		<div class="mb-4 flex justify-center">
 			<Bug class="text-primary h-12 w-12" />
 		</div>
-		<h1 class="mb-4 text-4xl font-bold">Clear, flexible pricing.</h1>
+		<h1 class="mb-4 text-4xl font-bold">Clear, flexible pricing</h1>
 	</div>
 
 	<!-- Fun testimonial quote -->

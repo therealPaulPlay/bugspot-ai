@@ -105,7 +105,7 @@
 			</div>
 
 			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">
-				<span class="text-primary">AI-powered</span> bug report forms.
+				<span class="text-primary">AI-powered</span> bug report forms
 			</h1>
 
 			<p class="text-muted-foreground mx-auto mb-8 max-w-xl text-lg">
@@ -243,7 +243,7 @@
 					><Badge variant="secondary" class="text-3xl font-bold">need info</Badge>,</span
 				>
 				<Badge variant="secondary" class="text-3xl font-bold">duplicate</Badge> and
-				<span class="text-nowrap"><Badge variant="secondary" class="text-3xl font-bold">can't repro</Badge>.</span>
+				<span class="text-nowrap"><Badge variant="secondary" class="text-3xl font-bold">can't repro</Badge></span>
 			</h2>
 		</div>
 
@@ -291,7 +291,7 @@
 			<!-- Smart Follow-up Questions -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Intelligent follow-up questions.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Intelligent follow-up questions</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
 						When reports lack crucial details, AI automatically asks context-specific follow-up questions. Get the
 						specific information you need to debug effectively.
@@ -324,7 +324,7 @@
 			<!-- Duplicate management -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Smart duplicate handling.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Smart duplicate handling</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
 						Before creating new issues, users may see similar existing reports. If they confirm it's the same bug, their
 						additional information gets added to the original issue.
@@ -353,7 +353,7 @@
 			<!-- Automatic closing -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Automatic filtering.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Automatic filtering</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
 						AI identifies and automatically closes spam, feedback requests, and user environment issues. Only genuine
 						bugs reach your issue tracker, saving hours of manual triage.
@@ -381,7 +381,7 @@
 			<!-- Customization feature -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Complete customization.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Complete customization</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
 						Tailor forms to your exact needs. Select which pieces of information you need and customize colors to match
 						your brand.
@@ -421,7 +421,7 @@
 			<!-- Integrations -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Team integrations.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Team integrations</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
 						Keep your team informed with Discord notifications for new bug reports. More integrations coming soon.
 					</p>
@@ -452,7 +452,7 @@
 			<!-- Priority assessment -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Priority evaluation.</h3>
+					<h3 class="mb-4 text-2xl font-bold">Priority evaluation</h3>
 					<p class="text-muted-foreground text-lg leading-relaxed">
 						Reports are instantly scored P1 to P4 based on the severity and impact. Focus on what's most important.
 					</p>
@@ -482,10 +482,8 @@
 <section class="bg-muted/50 py-24" bind:this={errorSection}>
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-8 text-center">
-			<h2 class="mb-4 text-3xl font-bold">
-				When things go wrong, <span class="text-muted-foreground">let's make it right.</span>
-			</h2>
-			<p class="text-muted-foreground text-lg">See how Bugspot helps your users create beautiful bug reports.</p>
+			<h2 class="mb-4 text-3xl font-bold">See the difference our forms make</h2>
+			<p class="text-muted-foreground text-lg">Watch how Bugspot simplifies creating beautiful bug reports.</p>
 		</div>
 
 		<!-- Overlapping error showcase -->
@@ -551,7 +549,7 @@
 	<div class="bg-primary text-primary-foreground mx-auto max-w-7xl rounded-3xl px-8 py-12 text-center shadow-xl">
 		<Bug class="mx-auto mb-8 h-16 w-16 opacity-80" />
 		<h2 class="mb-4 text-3xl font-bold">
-			You debug faster. <span class="opacity-80">We clear the clutter.</span>
+			You debug faster, <span class="opacity-80">we clear the clutter</span>
 		</h2>
 		<p class="mx-auto mb-8 max-w-lg text-lg opacity-90">
 			Join a growing community of developers building with exceptional bug reports.
