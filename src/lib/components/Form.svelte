@@ -547,8 +547,7 @@
 		<h2 class="mb-2 text-2xl font-semibold">Domain not whitelisted.</h2>
 		<p class="text-muted-foreground max-w-md">
 			The form requires a valid & whitelisted referring domain. This can be configured via the dashboard. <br /><br /> Note
-			that that links using target="_blank" do not provide a referrer by default. Consider using a direct link or embedding
-			the form in an iframe instead.
+			that links with target="_blank" do not provide a referrer by default. Use a direct link with referrerpolicy="origin".
 		</p>
 	</div>
 {/if}

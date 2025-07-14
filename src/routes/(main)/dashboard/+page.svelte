@@ -4,7 +4,7 @@
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "$lib/components/ui/dialog";
 	import { Progress } from "$lib/components/ui/progress/index.js";
-	import { Plus, Settings, ExternalLink, Copy, Trash2, Info } from "lucide-svelte";
+	import { Plus, Settings, ExternalLink, Copy, Trash2, Info, Layers2 } from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
@@ -13,6 +13,9 @@
 	import { page } from "$app/state";
 	import { tiers } from "$lib/stores/tiers";
 	import Badge from "$lib/components/ui/badge/badge.svelte";
+	import Check from "@lucide/svelte/icons/check";
+	import Prism from "prismjs";
+	import "prism-themes/themes/prism-vsc-dark-plus.css";
 
 	let forms = $state([]);
 	let loading = $state(true);
@@ -23,7 +26,10 @@
 	let editingForm = $state(null);
 	let currentFormId = $state(null);
 	let formToDelete = $state(null);
-	let copied = $state(false);
+
+	let iframeCodeCopied = $state(false);
+	let linkCopied = $state(false);
+
 	let reportAmount = $derived($user?.reportAmount || 0);
 	let subscriptionTier = $derived($user?.subscriptionTier || 0);
 
@@ -91,14 +97,29 @@
 		return `<iframe src="${generateFormURL(formId)}" width="800" height="500" frameborder="0"></iframe>`;
 	}
 
+	function generateLinkTagCode(formId) {
+		return `<a href="${generateFormURL(formId)}" referrerpolicy="origin">Report bug</a>`;
+	}
+
 	async function copyIframeCode() {
 		try {
 			const code = generateIframeCode(currentFormId);
 			await navigator.clipboard.writeText(code);
-			copied = true;
-			setTimeout(() => (copied = false), 2000);
+			iframeCodeCopied = true;
+			setTimeout(() => (iframeCodeCopied = false), 1000);
 		} catch (error) {
 			toast.error("Failed to copy iframe code: " + error);
+		}
+	}
+
+	async function copyLinkCode() {
+		try {
+			const code = generateLinkTagCode(currentFormId);
+			await navigator.clipboard.writeText(code);
+			linkCopied = true;
+			setTimeout(() => (linkCopied = false), 1000);
+		} catch (error) {
+			toast.error("Failed to copy link: " + error);
 		}
 	}
 </script>
@@ -166,12 +187,12 @@
 	{:else if forms.length === 0}
 		<!-- Empty state -->
 		<div class="bg-muted/50 rounded-3xl p-8 py-12 text-center">
-			<Plus class="text-muted-foreground mx-auto mb-4 h-16 w-16" />
+			<Layers2 class="text-muted-foreground mx-auto mb-4 h-16 w-16" />
 			<h3 class="mb-2 text-xl font-semibold">No forms yet.</h3>
 			<p class="text-muted-foreground mb-6">Start collecting exceptional bug reports.</p>
 
-			<Button size="lg" onclick={openCreateDialog}>
-				<Plus class="h-4 w-4" />
+			<Button size="lg" class="group/btn" onclick={openCreateDialog}>
+				<Plus class="h-4 w-4 transition group-hover/btn:rotate-90" />
 				Create a form
 			</Button>
 		</div>
@@ -181,11 +202,11 @@
 			{#each forms as form}
 				<Card class="transition-shadow hover:shadow-lg">
 					<CardHeader>
-						<div class="relative flex items-center justify-between overflow-hidden">
+						<div class="relative flex items-center justify-between gap-4 overflow-hidden">
 							<CardTitle class="max-w-2/3 truncate text-lg">{form.name}</CardTitle>
-							<div class="flex space-x-1">
+							<div class="flex space-x-2">
 								<Button
-									variant="ghost"
+									variant="outline"
 									size="sm"
 									onclick={() => {
 										editingForm = form;
@@ -195,7 +216,7 @@
 									<Settings class="h-4 w-4" />
 								</Button>
 								<Button
-									variant="ghost"
+									variant="outline"
 									size="sm"
 									onclick={() => {
 										formToDelete = form;
@@ -228,28 +249,19 @@
 									}}
 								>
 									<ExternalLink class="h-4 w-4" />
-									Link
+									Open
 								</Button>
 								<Button
 									size="sm"
-									class="flex-1"
-									onclick={() => {
-										currentFormId = form.id;
-										showIframeDialog = true;
-									}}
-								>
-									<Copy class="h-4 w-4" />
-									Embed
-								</Button>
-								<Button
 									variant="outline"
-									size="sm"
+									class="flex-1"
 									onclick={() => {
 										currentFormId = form.id;
 										showInfoDialog = true;
 									}}
 								>
-									<Info />
+									<Info class="h-4 w-4" />
+									How to use
 								</Button>
 							</div>
 						</div>
@@ -271,7 +283,18 @@
 </div>
 
 <!-- Create/Edit Form Dialog -->
-<CreateFormDialog bind:open={showCreateDialog} {editingForm} onSuccess={loadDashboard} />
+<CreateFormDialog
+	bind:open={showCreateDialog}
+	{editingForm}
+	onSuccess={(data) => {
+		loadDashboard();
+
+		setTimeout(() => {
+			currentFormId = data.formId;
+			showInfoDialog = true;
+		}, 500);
+	}}
+/>
 
 <!-- Delete confirmation dialog -->
 <Dialog bind:open={showDeleteDialog}>
@@ -288,11 +311,62 @@
 	</DialogContent>
 </Dialog>
 
+<!-- Info dialog -->
+<Dialog bind:open={showInfoDialog}>
+	<DialogContent>
+		<DialogHeader>
+			<DialogTitle>Using your form</DialogTitle>
+		</DialogHeader>
+		<div class="space-y-6">
+			<!-- Direct Link -->
+			<div>
+				<h3 class="mb-1 text-sm font-semibold">Link</h3>
+				<p class="text-muted-foreground mb-2 text-sm">Put it anywhere users should be able to report a bug.</p>
+				<div class="bg-muted text-muted-foreground relative rounded-md p-2 text-xs">
+					<Button onclick={copyLinkCode} size="sm" variant="ghost" class="absolute top-0.5 right-0">
+						{#if linkCopied}
+							<Check class="h-2 w-2" />
+						{:else}
+							<Copy class="h-2 w-2" />
+						{/if}
+					</Button>
+					<code>{@html Prism.highlight(generateLinkTagCode(currentFormId), Prism.languages.html, "html")}</code>
+				</div>
+				<p class="text-muted-foreground mt-2 text-xs opacity-75">
+					When using &lta&gt tags, add referrerpolicy="origin" to avoid referrer issues.
+				</p>
+			</div>
+			<div>
+				<h3 class="mb-1 text-sm font-semibold">Embed</h3>
+				<p class="text-muted-foreground text-sm">
+					Embed the form directly into your site. <button
+						class="text-primary hover:underline"
+						onclick={() => (showIframeDialog = true)}>View code.</button
+					>
+				</p>
+			</div>
+			<div>
+				<h3 class="mb-1 text-sm font-semibold">Adding context</h3>
+				<p class="text-muted-foreground mb-2 text-sm">
+					Pass custom data via the <span class="text-foreground">?custom-data</span> URL query for better debugging. This
+					data will be included in all reports.
+				</p>
+				<div class="bg-muted text-muted-foreground rounded-md p-2 font-mono text-xs">
+					<code>
+						'...?custom-data=' + {"encodeURIComponent({user: 5, logs: []})"}
+					</code>
+				</div>
+				<p class="text-muted-foreground mt-2 text-xs opacity-75">Use encodeURIComponent() to encode your data.</p>
+			</div>
+		</div>
+	</DialogContent>
+</Dialog>
+
 <!-- Iframe code dialog -->
 <Dialog bind:open={showIframeDialog}>
 	<DialogContent>
 		<DialogHeader>
-			<DialogTitle>Embed your form</DialogTitle>
+			<DialogTitle>Iframe code</DialogTitle>
 			<DialogDescription>
 				Copy this code and paste it into your website where you want the form to appear. We recommend embedding it into
 				a popup.
@@ -301,54 +375,19 @@
 
 		<div class="space-y-4">
 			<div class="bg-muted rounded-lg p-4">
-				<code class="font-mono text-sm text-xs break-all">
-					{generateIframeCode(currentFormId)}
+				<code class="text-sm text-xs">
+					{@html Prism.highlight(generateIframeCode(currentFormId), Prism.languages.html, "html")}
 				</code>
 			</div>
 
-			<Button onclick={copyIframeCode} class="w-full">
-				{#if copied}
+			<Button onclick={copyIframeCode} variant="outline" class="w-full">
+				{#if iframeCodeCopied}
 					Copied!
 				{:else}
 					<Copy class="h-4 w-4" />
 					Copy iframe code
 				{/if}
 			</Button>
-		</div>
-	</DialogContent>
-</Dialog>
-
-<!-- Info dialog -->
-<Dialog bind:open={showInfoDialog}>
-	<DialogContent class="max-w-lg">
-		<DialogHeader>
-			<DialogTitle>Using your form</DialogTitle>
-		</DialogHeader>
-
-		<div class="space-y-4">
-			<!-- Direct Link -->
-			<div>
-				<h3 class="mb-1 text-sm font-semibold">Direct link</h3>
-				<p class="text-muted-foreground text-sm">Put it anywhere users should be able to report a bug.</p>
-			</div>
-			<div>
-				<h3 class="mb-1 text-sm font-semibold">Embedded iframe</h3>
-				<p class="text-muted-foreground text-sm">
-					Embed directly, e.g. in a popup component. Users never leave your site and it's intuitive.
-				</p>
-			</div>
-			<div>
-				<h3 class="mb-1 text-sm font-semibold">Adding context</h3>
-				<p class="text-muted-foreground mb-2 text-sm">
-					Pass custom data via the <span class="text-foreground">?custom-data</span> URL query for better debugging (this data will be included in all reports):
-				</p>
-				<div class="bg-muted rounded p-2 font-mono text-xs">
-					'...?custom-data=' + {"encodeURIComponent({user: 5, logs: []})"}
-				</div>
-				<p class="text-muted-foreground mt-1 text-xs">
-					Use <code>encodeURIComponent()</code> to encode your data.
-				</p>
-			</div>
 		</div>
 	</DialogContent>
 </Dialog>

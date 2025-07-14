@@ -15,7 +15,7 @@
 	import SelectRepoDialog from "./SelectRepoDialog.svelte";
 	import { onMount } from "svelte";
 
-	let { open = $bindable(false), editingForm = null, onSuccess = () => {} } = $props();
+	let { open = $bindable(false), editingForm = null, onSuccess } = $props();
 
 	let loading = $state(false);
 	let selectedRepo = $state(null);
@@ -84,7 +84,7 @@
 			const data = await response.json();
 			toast.success(editingForm ? "Form updated!" : "Form created!");
 			open = false;
-			onSuccess(data);
+			onSuccess?.(data);
 		} catch (error) {
 			toast.error(error.message || "Failed to save form.");
 		} finally {

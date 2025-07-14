@@ -32,6 +32,7 @@
 			});
 			const data = await response.json();
 			repos = data.repos || [];
+			selected = repos[0]?.fullName;
 		} catch (error) {
 			console.error("Failed to load repositories:", error);
 			toast.error("Failed to load repositories: " + error);
@@ -86,8 +87,8 @@
 						<Select.Trigger>
 							<span class="max-w-50 truncate">{selected || "Select a repository"}</span>
 						</Select.Trigger>
-						<Button variant="outline" onclick={installOrManageApp}>
-							<Github class="h-4 w-4" />
+						<Button variant="link" onclick={installOrManageApp}>
+							<ExternalLink class="h-4 w-4" />
 							Manage access
 						</Button>
 					</div>
@@ -114,11 +115,11 @@
 			<div in:fade={{ duration: 300 }}>
 				<Alert>
 					<AlertDescription>
-						<Github class="h-4 w-4" />Please install the GitHub app on the repositories that you want to use with
-						Bugspot. You can also install it globally.
+						<Github class="h-4 w-4" />Please install the GitHub app & connect repositories to continue. We only require
+						access to the issues section – not your code.
 						<Button onclick={installOrManageApp} class="mt-2">
 							<ExternalLink class="h-4 w-4" />
-							Install GitHub app
+							Connect repositories
 						</Button>
 					</AlertDescription>
 				</Alert>

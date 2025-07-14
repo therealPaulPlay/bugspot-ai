@@ -48,6 +48,8 @@
 		"node-cron": "^4.2.0",
 		"nodemailer": "^7.0.4",
 		"overfade": "^0.0.5",
+		"prism-themes": "^1.9.0",
+		"prismjs": "^1.30.0",
 		"stripe": "^18.3.0",
 		"sveltekit-rate-limiter": "^0.7.0"
 	}
