@@ -136,7 +136,7 @@
 
 				<!-- Domains -->
 				<div class="space-y-2">
-					<Label for="domains">Whitelisted domains (comma-separated)</Label>
+					<Label for="domains">Whitelisted domains (input '*' to allow all)</Label>
 					<Input id="domains" bind:value={formData.domains} placeholder="your-site.com, www.your-site.com" rows={2} />
 				</div>
 

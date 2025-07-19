@@ -47,11 +47,14 @@
 
 	function checkDomainAccess() {
 		const allowedDomains = formConfig.domains?.map((d) => d.domain) || [];
+		if (allowedDomains.includes("*")) return true; // Check for wildcard domain - allows any origin
+
 		const referrerHostname = document.referrer ? new URL(document.referrer).hostname : null;
 
 		// Allow same domain OR whitelisted referrer
 		return page.url.hostname === referrerHostname || (referrerHostname && allowedDomains.includes(referrerHostname));
 	}
+
 	onMount(() => {
 		isDomainAllowed = checkDomainAccess();
 
