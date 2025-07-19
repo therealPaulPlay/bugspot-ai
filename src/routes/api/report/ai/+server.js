@@ -22,13 +22,16 @@ async function makeAIRequest(messages) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: 'google/gemini-2.5-flash-preview-05-20',
+            model: 'google/gemini-2.5-flash',
             messages,
-            max_tokens: 2000
+            max_tokens: 3000
         })
     });
 
-    if (!response.ok) throw new Error('AI request failed');
+    if (!response.ok) {
+        const errorText = await response.text().catch(() => 'No response body');
+        throw new Error(`AI request failed (${response.status} ${response.statusText}): ${errorText}`);
+    }
     const data = await response.json();
     return data.choices[0].message.content;
 }
@@ -79,7 +82,7 @@ async function deleteFile(url) {
 async function processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, customPrompt, questionAnswerHistory) {
 
     // Limit custom data to max. 10,000 characters
-    if (customData) customData = customData.slice(0, 10000);
+    if (customData) customData = customData.slice(0, 5000);
 
     const messages = [{
         role: 'system',
@@ -277,7 +280,7 @@ export async function POST({ request, locals, getClientAddress }) {
         if (aiResult.action === 'CLOSE_REPORT') {
             if (!demo) await incrementReportCount(user.id);
             await saveSubmittedReport(formId, -1, email, screenshotUrl, videoUrl, getClientAddress(), true);
-            
+
             // Delete uploaded files
             await Promise.all([deleteFile(screenshotUrl), deleteFile(videoUrl)]);
             return json({ action: 'closed', message: aiResult.message });

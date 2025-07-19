@@ -337,8 +337,8 @@
 				placeholder="E.g. On the profile page, after changing my name..."
 				class="h-32 w-full resize-none"
 			></Textarea>
-			<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 50 characters.</p>
-			{@render nextButton(descriptionInput.length >= 50)}
+			<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 30 characters.</p>
+			{@render nextButton(descriptionInput.length >= 30)}
 		</div>
 	{/if}
 
