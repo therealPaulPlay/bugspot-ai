@@ -115,7 +115,7 @@ ${customData ? `<details>\n<summary>Custom data</summary>\n(Custom data)\n</deta
 ${(!customData && !userAgent) ? 'No environment information.' : ''}
 
 ## Contact
-Email: ${email ? '[Email here](mailto:' + email + '?subject=Your%20bug%20report)' : 'Not provided.'}
+Email: ${email ? '[' + email + '](mailto:' + email + '?subject=Your%20bug%20report)' : 'Not provided.'}
 ---- END OF CONTENT FORMAT
 
 DO NOT alter, rephrase, or correct URLs, Custom data, User agent data and email addresses.
