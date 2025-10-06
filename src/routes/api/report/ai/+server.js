@@ -292,7 +292,7 @@ export async function POST({ request, locals, getClientAddress }) {
 
             if (duplicates) {
                 const reportId = crypto.randomUUID();
-                const reportData = { formId, title: aiResult.title, content: aiResult.content, priority: aiResult.priority };
+                const reportData = { formId, title: aiResult.title, content: aiResult.content, priority: aiResult.priority, email, screenshotUrl, videoUrl };
                 pendingReports.set(reportId, reportData);
                 setTimeout(() => pendingReports.delete(reportId), 30 * 60 * 1000);
                 return json({ action: 'duplicates', reportId, duplicates });
