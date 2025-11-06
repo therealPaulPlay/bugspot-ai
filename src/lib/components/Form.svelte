@@ -454,7 +454,7 @@
 	{#if slide == "processing"}
 		<div class="flex flex-col items-center justify-center text-center" in:fade>
 			<Loader2 class="mb-4 h-12 w-12 animate-spin" />
-			<h2 class="mb-2 text-2xl font-semibold">Processing with AI...</h2>
+			<h2 class="mb-2 text-2xl font-semibold">Reviewing your report...</h2>
 			<p class="text-muted-foreground">Please stand by.</p>
 		</div>
 	{/if}

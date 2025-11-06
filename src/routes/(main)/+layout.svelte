@@ -1,5 +1,4 @@
 <script>
-	import "./theme.css";
 	import Footer from "$lib/components/Footer.svelte";
 	import Navbar from "$lib/components/Navbar.svelte";
 	import Analytics from "$lib/components/Analytics.svelte";

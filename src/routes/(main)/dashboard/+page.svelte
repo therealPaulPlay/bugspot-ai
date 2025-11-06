@@ -15,7 +15,7 @@
 	import Badge from "$lib/components/ui/badge/badge.svelte";
 	import Check from "@lucide/svelte/icons/check";
 	import Prism from "prismjs";
-	import "prism-themes/themes/prism-duotone-space.css";
+	import "prism-themes/themes/prism-ghcolors.css";
 
 	let forms = $state([]);
 	let loading = $state(true);
@@ -137,7 +137,7 @@
 	{/if}
 
 	<!-- Header -->
-	<div class="mb-6">
+	<div class="mb-8 space-y-2">
 		<h1 class="text-3xl font-bold">Dashboard</h1>
 		<p class="text-muted-foreground mt-1">Manage your bug report forms.</p>
 	</div>
@@ -169,7 +169,7 @@
 
 	{#if loading}
 		<!-- Loading state -->
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+		<div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
 			{#each Array(3) as _}
 				<Card class="animate-pulse">
 					<CardHeader>
@@ -186,7 +186,7 @@
 	{:else if forms.length === 0}
 		<!-- Empty state -->
 		<div class="bg-muted/50 rounded-3xl p-8 py-12 text-center">
-			<Layers2 class="text-muted-foreground mx-auto mb-4 h-16 w-16" />
+			<Layers2 class="text-muted/50 mx-auto mb-4 h-16 w-16" />
 			<h3 class="mb-2 text-xl font-semibold">No forms yet.</h3>
 			<p class="text-muted-foreground mb-6">Start collecting exceptional bug reports.</p>
 
@@ -197,7 +197,7 @@
 		</div>
 	{:else}
 		<!-- Forms grid -->
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+		<div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
 			{#each forms as form}
 				<Card class="transition-shadow hover:shadow-lg">
 					<CardHeader>
@@ -274,7 +274,7 @@
 				onclick={openCreateDialog}
 			>
 				<CardContent class="flex h-full flex-col items-center justify-center py-12">
-					<Plus class="text-muted-foreground h-12 w-12" />
+					<Plus class="text-muted-foreground/50 h-12 w-12" />
 				</CardContent>
 			</Card>
 		</div>
@@ -331,7 +331,9 @@
 							<Copy class="h-2 w-2" />
 						{/if}
 					</Button>
-					<code>{@html Prism.highlight(generateLinkTagCode(currentFormId), Prism.languages.html, "html")}</code>
+					<code class="grayscale"
+						>{@html Prism.highlight(generateLinkTagCode(currentFormId), Prism.languages.html, "html")}</code
+					>
 				</div>
 				<p class="text-muted-foreground mt-2 text-xs opacity-75">
 					When using &lta&gt tags, add referrerpolicy="origin" to avoid referrer issues.
@@ -352,7 +354,9 @@
 							<Copy class="h-2 w-2" />
 						{/if}
 					</Button>
-					<code>{@html Prism.highlight(generateIframeCode(currentFormId), Prism.languages.html, "html")}</code>
+					<code class="grayscale"
+						>{@html Prism.highlight(generateIframeCode(currentFormId), Prism.languages.html, "html")}</code
+					>
 				</div>
 			</div>
 
@@ -364,7 +368,7 @@
 					data will be included in all reports.
 				</p>
 				<div class="bg-muted text-muted-foreground rounded-md p-2 font-mono text-xs">
-					<code>
+					<code class="grayscale">
 						'...?custom-data=' + {"encodeURIComponent({user: 5, logs: []})"}
 					</code>
 				</div>

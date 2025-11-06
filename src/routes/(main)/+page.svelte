@@ -5,19 +5,15 @@
 	import { Badge } from "$lib/components/ui/badge";
 	import {
 		ArrowRight,
-		Bug,
-		Zap,
-		Shield,
-		CloudCheck,
-		ArrowDown,
 		Video,
-		MessageSquare,
-		Dot,
 		Palette,
 		HelpCircle,
 		XCircle,
 		Link,
 		CopyCheck,
+		NotebookPen,
+		CornerLeftDown,
+		Github,
 	} from "lucide-svelte";
 	import { goto } from "$app/navigation";
 	import { user } from "$lib/stores/account";
@@ -27,18 +23,6 @@
 	let errorSection = $state(null);
 	let demoIframeLoaded = $state(false);
 	let videoDialogOpen = $state(false);
-
-	const messyReports = [
-		{
-			title: "help!!!",
-			author: "user123",
-			content: "it is broken when i click it doesnt work plz fix (I'm on arch btw)",
-			timestamp: "2 min ago",
-		},
-		{},
-		{},
-		{},
-	];
 
 	// Simple errors that will animate in
 	const errors = [
@@ -88,196 +72,85 @@
 <!-- Hero section -->
 <section class="relative overflow-hidden">
 	<!-- Background gradient -->
-	<div class="from-background/10 via-primary/5 to-primary/20 absolute inset-0 bg-gradient-to-b"></div>
+	<div class="from-background to-muted/50 absolute inset-0 bg-gradient-to-b"></div>
 
-	<div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+	<div class="relative mx-auto max-w-7xl px-4 py-26 sm:px-6 sm:py-32 lg:px-8">
 		<div class="text-center">
-			<div class="mb-4 flex justify-center">
-				<Button
-					variant="ghost"
-					class="bg-primary/10 text-foreground group rounded-full!"
-					onclick={() => (videoDialogOpen = true)}
-				>
-					<Video class="text-primary h-4 w-4" />
-					<span class="-mr-1 text-sm font-medium">Watch 2-minute introduction</span>
-					<ArrowRight class="text-primary h-4 w-4 max-w-0 transition-all group-hover:max-w-4" />
-				</Button>
-			</div>
-
-			<h1 class="mb-6 text-4xl font-bold sm:text-6xl">
-				<span class="text-primary">AI-powered</span> bug report forms
+			<h1 class="mb-8 text-4xl font-bold sm:text-6xl">
+				<span class="text-primary">Intelligent</span> bug report forms
 			</h1>
 
 			<p class="text-muted-foreground mx-auto mb-8 max-w-xl text-lg">
-				Intelligent forms ensure every bug report is actionable. No more missing details or endless follow-ups.
+				AI-powered forms figure out <span class="bg-primary/5 rounded-full px-1">can't repro</span> and
+				<span class="bg-primary/5 rounded-full px-1.5">need info</span> for you, allowing you to focus on fixing issues instead.
 			</p>
 
-			<div class="flex flex-col justify-center gap-4 sm:flex-row">
-				<Button
-					size="lg"
-					onclick={() => ($user ? goto("/dashboard") : goto("/login"))}
-					class="glint relative overflow-hidden"
-				>
-					{$user ? "Open your dashboard" : "Get started for free"}
-					<ArrowRight class="h-4 w-4" />
-				</Button>
-				<Button
-					variant="outline"
-					size="lg"
-					onclick={() => {
-						errorSection?.scrollIntoView({ block: "center", behavior: "smooth" });
-					}}>View demo</Button
-				>
-			</div>
+			<Button
+				size="lg"
+				onclick={() => ($user ? goto("/dashboard") : goto("/login"))}
+				class="glint relative overflow-hidden"
+			>
+				{$user ? "Open your dashboard" : "Get started for free"}
+				<ArrowRight class="h-4 w-4" />
+			</Button>
 		</div>
 
-		<!-- Bug report transformation -->
-		<div class="relative mx-auto mt-20 grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
-			<!-- Before -->
-			<div class="relative h-[340px]">
-				{#each messyReports as report, index}
-					<Card
-						class="bg-background dark:border-accent absolute h-45 w-full gap-2 border-transparent shadow-lg"
-						style="
-									top: {index * 25}px;
-									left: {index * 8}px;
-									z-index: {messyReports.length - index};
-									transform: rotate({(index - 1) * 1.5}deg);
-									opacity: {100 - index * 20}%;
-								"
-					>
-						<CardHeader class="pb-3">
-							<div class="text-muted-foreground flex items-center justify-between text-xs">
-								<span>@{report?.author}</span>
-								<span>{report?.timestamp}</span>
-							</div>
-							<CardTitle class="text-base">{report?.title}</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p class="text-muted-foreground h-3/5 truncate text-sm">{report?.content}</p>
-							<div class="mt-3 flex gap-2">
-								<Badge variant="secondary" class="text-xs">no repro</Badge>
-								<Badge variant="secondary" class="text-xs">missing info</Badge>
-							</div>
-						</CardContent>
-					</Card>
-				{/each}
-			</div>
-
-			<!-- After -->
-			<Card
-				class="bg-background dark:border-accent flex max-w-full flex-1 flex-col gap-4 overflow-hidden border-transparent shadow-xl"
-			>
-				<CardHeader class="border-b">
-					<div class="flex items-start justify-between">
-						<div class="flex items-center gap-2">
-							<div class="border-primary flex h-5 w-5 items-center justify-center rounded-full border-2">
-								<Dot class="text-primary h-3 w-3 fill-current" />
-							</div>
-							<span class="text-primary text-sm font-medium">#16</span>
-						</div>
-						<Badge class="bg-primary text-xs text-white">Open</Badge>
-					</div>
-
-					<CardTitle class="text-primary mt-1 truncate text-base leading-tight"
-						>Login button unresponsive on mobile Safari</CardTitle
-					>
-
-					<div class="text-muted-foreground mt-1 flex items-center text-xs">
-						<span>@bugspot</span>
-					</div>
-				</CardHeader>
-				<CardContent class="flex flex-1 flex-col">
-					<div class="flex-1 space-y-3 text-sm">
-						<div>
-							<h4 class="mb-1 font-semibold">Steps to reproduce</h4>
-							<div class="text-muted-foreground space-y-0.5 text-sm">
-								<div>1. Visit the /login page</div>
-								<div>2. Click login without filling form</div>
-							</div>
-						</div>
-
-						<div>
-							<div class="text-nowrap">
-								<span class="font-semibold">Expected:</span>
-								<p class="text-muted-foreground truncate">Button remains clickable after validation errors.</p>
-							</div>
-							<div class="text-nowrap">
-								<span class="font-semibold">Observed:</span>
-								<p class="text-muted-foreground truncate">Button becomes unresponsive, requires page refresh.</p>
-							</div>
-						</div>
-					</div>
-
-					<div class="text-muted-foreground mt-3 flex items-center justify-between gap-4 border-t pt-3 text-xs">
-						<div class="flex gap-4">
-							<span class="flex items-center gap-1">
-								<MessageSquare class="h-3 w-3" /> 3
-							</span>
-							<Badge variant="secondary" class="text-xs">P1 - high</Badge>
-						</div>
-						<div>
-							<p class="text-muted-foreground text-xs">Safari 17.1, iOS 17.1.1</p>
-						</div>
-					</div>
-				</CardContent>
-			</Card>
-
-			<!-- Arrow indicator -->
-			<div
-				class="oveflow-hidden bg-background text-primary border-primary absolute top-[42%] left-1/2 z-20 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full border-2 shadow-xl lg:top-1/2"
-			>
-				<ArrowRight class="hidden h-8 w-8 lg:block" />
-				<ArrowDown class="h-8 w-8 lg:hidden" />
+		<!-- Live demo -->
+		<div class="mx-auto mt-20 mb-8 flex flex-col items-end justify-center gap-4">
+			<p class="text-muted-foreground mr-8 inline-flex gap-2"><CornerLeftDown class="mt-2 h-4 w-4" />Try the demo</p>
+			<div class="padding-4 relative w-full overflow-hidden rounded-3xl shadow-lg">
+				{@render demo()}
 			</div>
 		</div>
 	</div>
 </section>
 
+{#snippet demo(inPopup = false)}
+	<div class="relative">
+		{#if !demoIframeLoaded}
+			<div class="bg-background absolute inset-0 flex animate-pulse items-center justify-center"></div>
+		{/if}
+		<iframe
+			class="bg-muted/50 h-85 min-h-120 w-full transition duration-300 md:h-145 lg:h-165"
+			style:opacity={!demoIframeLoaded ? "0" : "1"}
+			class:h-[50dvh]={inPopup}
+			src="/form/demo"
+			title="Demo iframe"
+			onload={() => (demoIframeLoaded = true)}
+		>
+		</iframe>
+	</div>
+{/snippet}
+
 <!-- Features section -->
-<section class="inset-shadow-xl py-24">
+<section class="py-24">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<div class="mb-12 text-center">
-			<h2 class="mb-4 text-3xl leading-12 font-bold">
-				Say goodbye to <span class="mr-1 text-nowrap"
-					><Badge variant="secondary" class="text-3xl font-bold">need info</Badge>,</span
-				>
-				<Badge variant="secondary" class="text-3xl font-bold">duplicate</Badge> and
-				<span class="text-nowrap"><Badge variant="secondary" class="text-3xl font-bold">can't repro</Badge></span>
-			</h2>
-		</div>
-
 		<div class="grid gap-8 md:grid-cols-3">
-			<Card class="group bg-accent/50 border-none shadow-none transition">
+			<Card class="bg-accent/50 border-none shadow-none transition hover:brightness-95">
 				<CardHeader>
-					<Zap class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">Customizable AI-assistance</CardTitle>
+					<NotebookPen class="text-primary mb-2 h-8 w-8" strokeWidth={1.75} />
+					<CardTitle>Custom prompts</CardTitle>
 					<CardDescription>
-						AI guides the user through the submission process and ensures the information you need was provided. Custom
-						prompts are supported.
+						Custom prompts allow you to modify how the AI guides the user through the submission process.
 					</CardDescription>
 				</CardHeader>
 			</Card>
 
-			<Card class="group bg-accent/50 border-none shadow-none transition">
+			<Card class="bg-accent/50 border-none shadow-none transition hover:brightness-95">
 				<CardHeader>
-					<Link class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">Easy no-code setup</CardTitle>
+					<Link class="text-primary mb-2 h-8 w-8" strokeWidth={1.75} />
+					<CardTitle>Easy no-code setup</CardTitle>
 					<CardDescription>
-						Add our smart bug report form to your app with a simple iframe or direct link. No code required - just copy,
-						paste, and you're ready.
+						Add the bug report form to your app with a simple iframe or direct link. No code required.
 					</CardDescription>
 				</CardHeader>
 			</Card>
 
-			<Card class="group bg-accent/50 border-none shadow-none transition">
+			<Card class="bg-accent/50 border-none shadow-none transition hover:brightness-95">
 				<CardHeader>
-					<CloudCheck class="text-primary mb-2 h-8 w-8" />
-					<CardTitle class="group-hover:text-primary transition">Use with GitHub issues</CardTitle>
-					<CardDescription
-						>Bugspot automatically creates GitHub issues from AI-enhanced reports. It can also react & comment depending
-						on the scenario.</CardDescription
-					>
+					<Github class="text-primary mb-2 h-8 w-8" strokeWidth={1.75} />
+					<CardTitle>Use with GitHub issues</CardTitle>
+					<CardDescription>Bugspot automatically creates GitHub issues, reactions and comments.</CardDescription>
 				</CardHeader>
 			</Card>
 		</div>
@@ -502,9 +375,9 @@
 						<CardHeader class="pb-1">
 							<div class="mb-1 flex items-center justify-between">
 								<div class="flex items-center space-x-2">
-									<div class="h-3 w-3 rounded-full bg-red-500"></div>
-									<div class="h-3 w-3 rounded-full bg-yellow-500"></div>
-									<div class="h-3 w-3 rounded-full bg-green-500"></div>
+									<div class="h-3 w-3 rounded-full bg-gray-800 dark:invert"></div>
+									<div class="h-3 w-3 rounded-full bg-gray-500 dark:invert"></div>
+									<div class="h-3 w-3 rounded-full bg-gray-300 dark:invert"></div>
 								</div>
 							</div>
 							<CardTitle class="font-mono text-sm">{error.title}</CardTitle>
@@ -518,7 +391,7 @@
 		</div>
 
 		<!-- Demo dialog -->
-		<Dialog.Root onOpenChange={() => (demoIframeLoaded = false)}>
+		<Dialog.Root>
 			<div class="text-center">
 				<Dialog.Trigger class={buttonVariants({ size: "lg" })}>Try the demo</Dialog.Trigger>
 			</div>
@@ -526,19 +399,7 @@
 				<Dialog.Header>
 					<Dialog.Title>Demo</Dialog.Title>
 				</Dialog.Header>
-				<div class="relative">
-					{#if !demoIframeLoaded}
-						<div class="bg-muted absolute inset-0 flex animate-pulse items-center justify-center rounded"></div>
-					{/if}
-					<iframe
-						class="bg-muted/50 h-[50dvh] min-h-120 w-full rounded transition duration-300"
-						style:opacity={!demoIframeLoaded ? "0" : "1"}
-						src="/form/demo"
-						title="Demo iframe"
-						onload={() => (demoIframeLoaded = true)}
-					>
-					</iframe>
-				</div>
+				{@render demo(true)}
 			</Dialog.Content>
 		</Dialog.Root>
 	</div>
@@ -547,7 +408,7 @@
 <!-- CTA Section -->
 <section class="mx-8 my-16">
 	<div class="bg-primary text-primary-foreground mx-auto max-w-7xl rounded-3xl px-8 py-12 text-center shadow-xl">
-		<Bug class="mx-auto mb-8 h-16 w-16 opacity-80" />
+		<img src="/images/bugspot-icon.png" alt="icon" class="mx-auto mb-4 h-24 w-24 not-dark:invert" />
 		<h2 class="mb-4 text-3xl font-bold">
 			You debug faster, <span class="opacity-80">we clear the clutter</span>
 		</h2>
@@ -587,7 +448,7 @@
 <style>
 	:global(.glint::before) {
 		animation: 4s fade-glint 2s infinite;
-		background: white;
+		background: var(--background);
 		filter: blur(30px);
 		content: "";
 		position: absolute;

@@ -83,39 +83,18 @@
 
 <div class="mx-auto max-w-6xl px-4 pt-24 pb-8">
 	<!-- Header -->
-	<div class="mb-12 text-center">
-		<div class="mb-4 flex justify-center">
-			<Bug class="text-primary h-12 w-12" />
-		</div>
-		<h1 class="mb-4 text-4xl font-bold">Clear, flexible pricing</h1>
-	</div>
-
-	<!-- Fun testimonial quote -->
-	<div class="mb-20 flex flex-col items-center justify-center text-center">
-		<blockquote class="text-muted-foreground mb-2 max-w-xl text-lg italic">
-			"The duplicate merging is a game changer. We went from 'which report has the screenshot?' to having everything in
-			one place."
-		</blockquote>
-		<cite class="text-muted-foreground text-sm not-italic"> — A Bugspot user </cite>
+	<div class="mb-28 text-center">
+		<h1 class="text-5xl font-bold">Pricing</h1>
 	</div>
 
 	<!-- Pricing cards -->
 	<div class="mb-8 grid gap-8 lg:grid-cols-3">
 		{#each tiersWithLookup as tier, index}
 			<Card
-				class="group relative {index === 1
-					? 'border-primary shadow-lg lg:scale-105'
-					: 'shadow-none'} transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+				class="group relative border-none {index === 1
+					? 'shadow-[0_10px_50px_rgba(0,0,0,0.1)] lg:scale-105'
+					: 'shadow-[0_10px_35px_rgba(0,0,0,0.05)]'} transition-all duration-300 hover:-translate-y-1"
 			>
-				{#if index === 1}
-					<div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
-						<Badge class="bg-primary text-primary-foreground px-3 py-1">
-							<Crown class="mr-1 h-3 w-3" />
-							Developer favorite
-						</Badge>
-					</div>
-				{/if}
-
 				<CardHeader class="pb-2 text-center">
 					<CardTitle class="text-2xl">{tier.name}</CardTitle>
 					<div class="mt-4">
@@ -181,13 +160,10 @@
 							<CheckCircle class="h-4 w-4" />
 							Current plan
 						{:else if tier.id === 0}
-							<Zap class="h-4 w-4 transition-transform group-hover/btn:-rotate-12" />
 							Get started
 						{:else if tier.id === 1}
-							<PlaneTakeoff class="h-4 w-4 transition-transform group-hover/btn:-rotate-12" />
 							Upgrade
 						{:else}
-							<Rocket class="h-4 w-4 transition-transform group-hover/btn:-rotate-12" />
 							Upgrade
 						{/if}
 					</Button>

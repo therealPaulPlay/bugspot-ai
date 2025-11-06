@@ -66,20 +66,17 @@
 <svelte:window bind:scrollY={pageScrollY} />
 
 <nav class="fixed top-0 right-0 left-0 z-50">
-	<div
-		class="flex w-full justify-center transition-[padding] duration-300 {pageScrollY > 10 ? 'p-4' : ''}"
-	>
+	<div class="flex w-full justify-center transition-[padding] duration-300 {pageScrollY > 10 ? 'p-4' : ''}">
 		<div
-			class="bg-background flex h-18 w-full max-w-7xl justify-between rounded-xl border p-4 duration-300 {pageScrollY >
-			10
+			class="bg-background flex h-18 w-full max-w-7xl justify-between rounded-xl p-4 duration-300 {pageScrollY > 10
 				? 'shadow-xl'
-				: 'border-transparent'}"
+				: ''}"
 		>
-			<div class="flex items-center">
+			<div class="ml-2 flex items-center">
 				<!-- Logo -->
 				<a href="/" class="flex items-center space-x-2">
-					<Bug class="text-primary h-8 w-8 hover:scale-90 transition" />
-					<span class="text-xl font-bold">Bugspot</span>
+					<img src="/images/bugspot-icon.png" alt="icon" class="text-primary h-12 w-12 mt-1 dark:invert" />
+					<span class="text-xl font-medium">Bugspot</span>
 				</a>
 
 				<!-- Navigation links -->
@@ -87,7 +84,7 @@
 					{#each navigation as item}
 						<a
 							href={item.href}
-							class="text-muted-foreground hover:text-foreground px-2 py-2 text-sm transition-colors"
+							class="text-muted-foreground hover:text-foreground text-md px-2 py-2 transition-colors"
 							class:text-foreground={page.url.pathname === item.href}
 						>
 							{item.name}
@@ -137,7 +134,7 @@
 									}}
 									class="text-destructive!"
 								>
-									<Trash2 class="h-4 w-4 text-destructive!" />
+									<Trash2 class="text-destructive! h-4 w-4" />
 									Delete account
 								</DropdownMenuItem>
 							</DropdownMenuContent>
@@ -150,11 +147,6 @@
 						<span class="max-sm:hidden">Sign in</span>
 					</Button>
 				{/if}
-
-				<!-- Github -->
-				<Button variant="outline" size="sm" target="_blank" href="https://github.com/therealPaulPlay/bugspot-ai">
-					<Github />
-				</Button>
 
 				<!-- Theme toggle -->
 				<Button variant="ghost" size="sm" onclick={toggleTheme}>

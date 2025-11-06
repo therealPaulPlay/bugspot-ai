@@ -4,7 +4,7 @@
 	import { goto } from "$app/navigation";
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
-	import { Github, Bug } from "lucide-svelte";
+	import { Github } from "lucide-svelte";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
 	import * as env from "$env/static/public";
@@ -72,7 +72,7 @@
 	<div class="bg-muted/50 inset-0 -z-1 h-screen overflow-hidden max-lg:absolute lg:w-1/2">
 		<video
 			bind:this={videoElement}
-			class="h-full w-full object-cover opacity-75 brightness-75 dark:brightness-50 transition duration-500 max-lg:opacity-25 max-lg:blur-md"
+			class="h-full w-full object-cover opacity-75 brightness-75 dark:brightness-50 transition duration-500 max-lg:opacity-25 max-lg:blur-md grayscale"
 			style:opacity={videoLoaded ? "" : "0"}
 			autoplay
 			muted
@@ -86,11 +86,8 @@
 	<div class="flex h-screen w-full items-center justify-center px-4 lg:w-1/2">
 		<div class="flex w-sm flex-col items-center space-y-8">
 			<!-- Header -->
-			<div class="text-center">
-				<div class="mb-6 flex justify-center">
-					<Bug class="text-primary h-12 w-12" />
-				</div>
-				<h2 class="text-3xl font-bold">One step away.</h2>
+			<div class="text-center space-y-4">
+				<h2 class="text-3xl font-bold">One step away</h2>
 				<p class="text-muted-foreground mt-2 max-w-80">
 					Sign in or up to receive bug reports that are actually helpful to you.
 				</p>
