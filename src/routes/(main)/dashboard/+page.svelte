@@ -127,7 +127,7 @@
 	<title>Dashboard</title>
 </svelte:head>
 
-<div class="mx-auto min-h-screen max-w-7xl px-4 py-8">
+<div class="mx-auto min-h-screen max-w-7xl px-8 py-8">
 	{#if !$user}
 		<div class="bg-background/20 absolute inset-0 z-30 flex items-center justify-center backdrop-blur-lg">
 			<div>
