@@ -84,7 +84,7 @@
 <div class="mx-auto max-w-6xl px-4 pt-24 pb-8">
 	<!-- Header -->
 	<div class="mb-28 text-center">
-		<h1 class="text-5xl font-bold">Pricing</h1>
+		<h1 class="text-5xl font-medium">Pricing</h1>
 	</div>
 
 	<!-- Pricing cards -->
@@ -98,7 +98,7 @@
 				<CardHeader class="pb-2 text-center">
 					<CardTitle class="text-2xl">{tier.name}</CardTitle>
 					<div class="mt-4">
-						<span class="text-primary text-4xl font-bold">
+						<span class="text-primary text-4xl">
 							{formatPrice(tier.price)}
 						</span>
 						{#if tier.price > 0}
@@ -182,7 +182,7 @@
 
 	<!-- Contact section -->
 	<div class="bg-muted/50 mb-12 rounded-3xl p-12 text-center">
-		<h2 class="mb-4 text-2xl font-bold">To infinity and beyond?</h2>
+		<h2 class="mb-4 text-2xl font-medium">To infinity and beyond?</h2>
 		<p class="text-muted-foreground mx-auto mb-8 max-w-md">
 			Contact us for custom pricing and volume discounts. Let's figure this out together.
 		</p>

@@ -235,7 +235,7 @@
 	<!-- Start card -->
 	{#if slide == "start"}
 		<h1
-			class="absolute top-2/5 right-10 left-10 max-w-full -translate-y-1/2 transform truncate py-1 text-center text-5xl font-semibold text-wrap"
+			class="absolute top-2/5 right-10 left-10 max-w-full -translate-y-1/2 transform truncate py-1 text-center text-5xl font-medium text-wrap"
 			out:fly={{ y: -140 }}
 		>
 			Report a bug.
@@ -324,7 +324,7 @@
 
 	{#if slide == "title"}
 		<div in:fade>
-			<h2 class="mb-4 text-2xl font-semibold">Give your report a title.</h2>
+			<h2 class="mb-4 text-2xl font-medium">Give your report a title.</h2>
 			<Input bind:value={titleInput} type="text" placeholder="E.g. Profile fails to load" maxlength={100} />
 			<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 10 characters.</p>
 			{@render nextButton(titleInput.length >= 10)}
@@ -333,7 +333,7 @@
 
 	{#if slide == "description"}
 		<div in:fade class="w-70 max-w-full">
-			<h2 class="mb-4 text-2xl font-semibold">Write a description.</h2>
+			<h2 class="mb-4 text-2xl font-medium">Write a description.</h2>
 			<Textarea
 				bind:value={descriptionInput}
 				maxlength={300}
@@ -348,7 +348,7 @@
 	{#if slide == "expected result"}
 		<div in:fade>
 			{@render optionalBadge(!formConfig.requireExpectedResult)}
-			<h2 class="mb-4 text-2xl font-semibold">What should have happened?</h2>
+			<h2 class="mb-4 text-2xl font-medium">What should have happened?</h2>
 			<Input bind:value={expectedResultInput} maxlength={200} placeholder="E.g. The profile should have..."></Input>
 			<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 20 characters.</p>
 			{@render nextButton(expectedResultInput.length >= 20 || !formConfig.requireExpectedResult)}
@@ -358,7 +358,7 @@
 	{#if slide == "observed result"}
 		<div in:fade>
 			{@render optionalBadge(!formConfig.requireObservedResult)}
-			<h2 class="mb-4 text-2xl font-semibold">What happened instead?</h2>
+			<h2 class="mb-4 text-2xl font-medium">What happened instead?</h2>
 			<Input bind:value={observedResultInput} maxlength={200} placeholder="E.g. The profile appeared to..."></Input>
 			<p class="text-muted-foreground mt-1 ml-2 text-xs">Min. 20 characters.</p>
 			{@render nextButton(observedResultInput.length >= 20 || !formConfig.requireObservedResult)}
@@ -368,7 +368,7 @@
 	{#if slide == "steps"}
 		<div in:fade>
 			{@render optionalBadge(!formConfig.requireSteps)}
-			<h2 class="mb-4 text-2xl font-semibold">How can this be reproduced?</h2>
+			<h2 class="mb-4 text-2xl font-medium">How can this be reproduced?</h2>
 			<div class="bg-muted/50 rounded-xl">
 				<div
 					class="no-scrollbar of-top of-bottom of-length-2 h-30 space-y-2 overflow-y-auto p-2"
@@ -421,7 +421,7 @@
 	{#if slide == "screenshot"}
 		<div in:fade>
 			{@render optionalBadge(!formConfig.requireScreenshot)}
-			<h2 class="mb-4 text-2xl font-semibold">Add a screenshot.</h2>
+			<h2 class="mb-4 text-2xl font-medium">Add a screenshot.</h2>
 			{@render uploadZone("image", screenshotFileName, () => removeFile(true))}
 			{@render nextButton((screenshotUrl || !formConfig.requireScreenshot) && !fileUploading)}
 		</div>
@@ -430,7 +430,7 @@
 	{#if slide == "video"}
 		<div in:fade>
 			{@render optionalBadge(!formConfig.requireVideo)}
-			<h2 class="mb-4 text-2xl font-semibold">Add a video.</h2>
+			<h2 class="mb-4 text-2xl font-medium">Add a video.</h2>
 			{@render uploadZone("video", videoFileName, () => removeFile(false))}
 			{@render nextButton((videoUrl || !formConfig.requireVideo) && !fileUploading)}
 		</div>
@@ -439,7 +439,7 @@
 	{#if slide == "email"}
 		<div in:fade>
 			{@render optionalBadge(!formConfig.requireEmail)}
-			<h2 class="mb-4 text-2xl font-semibold">Provide an email address.</h2>
+			<h2 class="mb-4 text-2xl font-medium">Provide an email address.</h2>
 			<div class="max-w-sm">
 				<Input bind:value={emailInput} type="email" placeholder="your-name@example.com" maxlength={100} />
 				<p class="text-muted-foreground mt-1 ml-2 max-w-60 text-xs">
@@ -454,14 +454,14 @@
 	{#if slide == "processing"}
 		<div class="flex flex-col items-center justify-center text-center" in:fade>
 			<Loader2 class="mb-4 h-12 w-12 animate-spin" />
-			<h2 class="mb-2 text-2xl font-semibold">Reviewing your report...</h2>
+			<h2 class="mb-2 text-2xl font-medium">Reviewing your report...</h2>
 			<p class="text-muted-foreground">Please stand by.</p>
 		</div>
 	{/if}
 
 	{#if slide == "question"}
 		<div in:fade class="flex h-full w-100 max-w-full flex-col">
-			<h2 class="mb-4 text-2xl font-semibold">We need more information.</h2>
+			<h2 class="mb-4 text-2xl font-medium">We need more information.</h2>
 			<div class="bg-muted/50 mb-4 rounded-xl p-4">
 				<p class="of-top of-bottom no-scrollbar h-18 overflow-y-auto text-sm">
 					{aiResponse?.message || "No AI response (Error)."}
@@ -487,7 +487,7 @@
 
 	{#if slide == "duplicates"}
 		<div in:fade class="flex h-full w-100 max-w-full flex-col">
-			<h2 class="mx-12 mb-4 text-2xl font-semibold">We found similar reports.</h2>
+			<h2 class="mx-12 mb-4 text-2xl font-medium">We found similar reports.</h2>
 
 			<Carousel.Root class="bg-muted/50 relative mx-12 mb-4 rounded-xl">
 				<Carousel.Content>
@@ -495,7 +495,7 @@
 						<Carousel.Item>
 							<div class="rounded-lg p-4">
 								<div class="of-top of-bottom no-scrollbar h-42 overflow-y-auto text-sm">
-									<h3 class="text-foreground/75 mb-3 text-lg font-semibold">{duplicate.title || "Default title"}</h3>
+									<h3 class="text-foreground/75 mb-3 text-lg">{duplicate.title || "Default title"}</h3>
 									{@html formatMarkdownText(duplicate.body) || "<p>Default body text.</p>"}
 								</div>
 								<Button onclick={() => handleDuplicateSelection(duplicate.id)} class="mt-4 w-full" variant="outline">
@@ -521,7 +521,7 @@
 		<div in:fade class="w-100 max-w-full">
 			<div class="mb-4 flex items-center gap-2">
 				<XCircle class="min-h-6 min-w-6" />
-				<h2 class="text-2xl font-semibold">Report not submitted.</h2>
+				<h2 class="text-2xl font-medium">Report not submitted.</h2>
 			</div>
 			<div class="bg-muted/50 no-scrollbar max-h-48 overflow-y-auto rounded-xl">
 				<div class="of-top of-bottom of-length-2 of-top of-bottom max-h-30 overflow-y-auto p-4">
@@ -534,7 +534,7 @@
 	{#if slide == "submitted"}
 		<div class="flex flex-col items-center justify-center text-center" in:fade>
 			<Send class="mb-4 h-12 w-12" />
-			<h2 class="mb-2 text-2xl font-semibold">Submitted!</h2>
+			<h2 class="mb-2 text-2xl font-medium">Submitted!</h2>
 			<p class="text-muted-foreground">Thank you for your report.</p>
 			{#if aiResponse?.issueUrl && formConfig?.showIssueLink}
 				<Button onclick={() => window.open(aiResponse.issueUrl, "_blank")} variant="outline" class="mt-4">
@@ -547,7 +547,7 @@
 	<!-- Domain not whitelisted overlay -->
 	<div class="flex flex-col items-center justify-center text-center" in:fade>
 		<XCircle class="mb-4 h-12 w-12" />
-		<h2 class="mb-2 text-2xl font-semibold">Domain not whitelisted.</h2>
+		<h2 class="mb-2 text-2xl font-medium">Domain not whitelisted.</h2>
 		<p class="text-muted-foreground max-w-md">
 			The form requires a valid & whitelisted referring domain. This can be configured via the dashboard. <br /><br /> Note
 			that links with target="_blank" do not provide a referrer by default. Use a direct link with referrerpolicy="origin".
@@ -559,7 +559,7 @@
 {#if captchaVisible}
 	<div class="bg-background/75 absolute inset-0 z-50 flex items-center justify-center p-4" transition:fade>
 		<div class="bg-background mx-4 max-h-full max-w-full overflow-x-auto rounded-lg p-6 shadow-lg" transition:scale>
-			<h3 class="mb-4 text-lg font-semibold">Captcha.</h3>
+			<h3 class="mb-4 text-lg font-medium">Captcha.</h3>
 			<div id="captchaContainer"></div>
 		</div>
 	</div>

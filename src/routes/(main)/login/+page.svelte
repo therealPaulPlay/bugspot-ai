@@ -87,7 +87,7 @@
 		<div class="flex w-sm flex-col items-center space-y-8">
 			<!-- Header -->
 			<div class="text-center space-y-4">
-				<h2 class="text-3xl font-bold">One step away</h2>
+				<h2 class="text-3xl font-medium">One step away</h2>
 				<p class="text-muted-foreground mt-2 max-w-80">
 					Sign in or up to receive bug reports that are actually helpful to you.
 				</p>

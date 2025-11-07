@@ -138,7 +138,7 @@
 
 	<!-- Header -->
 	<div class="mb-8 space-y-2">
-		<h1 class="text-3xl font-bold">Dashboard</h1>
+		<h1 class="text-3xl font-medium">Dashboard</h1>
 		<p class="text-muted-foreground mt-1">Manage your bug report forms.</p>
 	</div>
 
@@ -187,7 +187,7 @@
 		<!-- Empty state -->
 		<div class="bg-muted/50 rounded-3xl p-8 py-12 text-center">
 			<Layers2 class="text-muted/50 mx-auto mb-4 h-16 w-16" />
-			<h3 class="mb-2 text-xl font-semibold">No forms yet.</h3>
+			<h3 class="mb-2 text-xl font-medium">No forms yet.</h3>
 			<p class="text-muted-foreground mb-6">Start collecting exceptional bug reports.</p>
 
 			<Button size="lg" class="group/btn" onclick={openCreateDialog}>
@@ -321,7 +321,7 @@
 		<div class="space-y-6">
 			<!-- Direct Link -->
 			<div>
-				<h3 class="mb-1 text-sm font-semibold">Link</h3>
+				<h3 class="mb-1 text-sm">Link</h3>
 				<p class="text-muted-foreground mb-2 text-sm">Put it anywhere users should be able to report a bug.</p>
 				<div class="bg-muted text-muted-foreground relative rounded-md p-2 text-xs">
 					<Button onclick={copyLinkCode} size="sm" variant="ghost" class="absolute top-0.5 right-0">
@@ -342,7 +342,7 @@
 
 			<!-- Iframe Embed -->
 			<div>
-				<h3 class="mb-1 text-sm font-semibold">Embed</h3>
+				<h3 class="mb-1 text-sm">Embed</h3>
 				<p class="text-muted-foreground mb-2 text-sm">
 					Embed the form directly into your site. We recommend embedding it into a popup.
 				</p>
@@ -362,7 +362,7 @@
 
 			<!-- Custom Data -->
 			<div>
-				<h3 class="mb-1 text-sm font-semibold">Adding context</h3>
+				<h3 class="mb-1 text-sm">Adding context</h3>
 				<p class="text-muted-foreground mb-2 text-sm">
 					Pass custom data via the <span class="text-foreground">?custom-data</span> URL query for better debugging. This
 					data will be included in all reports.

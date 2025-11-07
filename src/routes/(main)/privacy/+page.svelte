@@ -4,19 +4,19 @@
 
 <div class="mx-auto min-h-screen max-w-screen-xl p-4 py-18">
 	<div class="mx-auto max-w-3xl">
-		<h1 class="mb-8 text-4xl font-bold">Privacy Policy</h1>
+		<h1 class="mb-8 text-4xl font-medium">Privacy Policy</h1>
 
 		<div class="prose prose-slate max-w-none">
 			<p class="text-muted-foreground mb-6">Last updated: January 16th, 2025</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">1. Introduction</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">1. Introduction</h2>
 			<p>
 				PaulPlay ("we," "us," or "our") is committed to protecting the privacy of our users. This Privacy Policy
 				explains how we collect, use, and protect information when you use our AI-powered bug reporting platform
 				("Service").
 			</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">2. Information we collect</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">2. Information we collect</h2>
 			<p>2.1. Account information</p>
 			<p>When you create an account, we collect:</p>
 			<ul class="mb-4 list-disc pl-6">
@@ -46,7 +46,7 @@
 				<li>Access times and dates</li>
 			</ul>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">3. How we use your information</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">3. How we use your information</h2>
 			<p>We use the information we collect to:</p>
 			<ul class="mb-4 list-disc pl-6">
 				<li>Provide and improve our bug reporting services</li>
@@ -58,7 +58,7 @@
 				<li>Analyze usage patterns to improve our Service</li>
 			</ul>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">4. AI Processing</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">4. AI Processing</h2>
 			<p>
 				4.1. We use third-party AI services to analyze your bug reports and provide suggestions. Your bug report content
 				may be processed by these AI services to generate improvements and recommendations.
@@ -68,7 +68,7 @@
 				third-party AI providers process your bug reports once submitted to their services for analysis.
 			</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">5. Data sharing and third parties</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">5. Data sharing and third parties</h2>
 			<p>We may share your information with:</p>
 			<ul class="mb-4 list-disc pl-6">
 				<li>
@@ -108,12 +108,12 @@
 			</ul>
 			<p>We do not sell, rent, or trade your personal information to third parties for marketing purposes.</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">6. Data storage and security</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">6. Data storage and security</h2>
 			<p>6.1. We store your data securely using best security practices.</p>
 			<p>6.2. Bug reports and files are stored on secure cloud infrastructure with regular backups.</p>
 			<p>6.3. While we take security seriously, no method of transmission over the internet is 100% secure.</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">7. Data retention</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">7. Data retention</h2>
 			<p>8.1. We retain your account information for as long as your account is active and the data is needed.</p>
 			<p>
 				8.2. Bug reports and related data are retained until you (or we, e.g. if they violate our terms) delete them.
@@ -124,7 +124,7 @@
 				purposes.
 			</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">8. Your rights and choices</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">8. Your rights and choices</h2>
 			<p>You have the right to:</p>
 			<ul class="mb-4 list-disc pl-6">
 				<li>Access your personal data</li>
@@ -133,21 +133,21 @@
 				<li>Request information about how your data is processed</li>
 			</ul>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">9. Children's Privacy</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">9. Children's Privacy</h2>
 			<p>
 				Our Service is not directed to children under 13. We do not knowingly collect personal information from children
 				under 13. If you become aware that a child has provided us with personal information, please contact us
 				immediately.
 			</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">10. Changes to this privacy policy</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">10. Changes to this privacy policy</h2>
 			<p>
 				We may update this Privacy Policy from time to time. We will notify users of any material changes by posting the
 				new Privacy Policy on this page and updating the "Last updated" date. For significant changes, we may also send
 				email notifications.
 			</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-semibold">11. Contact Us</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">11. Contact Us</h2>
 			<p>
 				For questions about this Privacy Policy or to exercise your data rights, please contact us through the form at
 				the bottom of the

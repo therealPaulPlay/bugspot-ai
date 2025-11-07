@@ -76,9 +76,7 @@
 
 	<div class="relative mx-auto max-w-7xl px-4 py-26 sm:px-6 sm:py-32 lg:px-8">
 		<div class="text-center">
-			<h1 class="mb-8 text-4xl font-bold sm:text-6xl">
-				<span class="text-primary">Intelligent</span> bug report forms
-			</h1>
+			<h1 class="mb-8 text-4xl font-medium sm:text-6xl">Intelligent bug report forms</h1>
 
 			<p class="text-muted-foreground mx-auto mb-8 max-w-xl text-lg">
 				AI-powered forms figure out <span class="bg-primary/5 rounded-full px-1">can't repro</span> and
@@ -164,9 +162,9 @@
 			<!-- Smart Follow-up Questions -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Intelligent follow-up questions</h3>
-					<p class="text-muted-foreground text-lg leading-relaxed">
-						When reports lack crucial details, AI automatically asks context-specific follow-up questions. Get the
+					<h3 class="mb-4 text-2xl font-medium">Context-specific follow-up questions</h3>
+					<p class="text-muted-foreground text-lg">
+						When reports lack crucial details, AI automatically asks follow-up questions. Get the
 						specific information you need to debug effectively.
 					</p>
 				</div>
@@ -176,7 +174,7 @@
 						<div class="mb-3 flex gap-2">
 							<HelpCircle class="text-primary mt-0.5 h-4 w-4 flex-shrink-0" />
 							<div class="text-sm">
-								<p class="mb-2 font-medium">We need more information.</p>
+								<p class="mb-2">We need more information.</p>
 								<div class="bg-muted/50 rounded-lg p-3 text-xs">
 									<p>
 										What browser are you using? Does this happen with other form fields or just the login field? Can you
@@ -197,8 +195,8 @@
 			<!-- Duplicate management -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Smart duplicate handling</h3>
-					<p class="text-muted-foreground text-lg leading-relaxed">
+					<h3 class="mb-4 text-2xl font-medium">Smart duplicate handling</h3>
+					<p class="text-muted-foreground text-lg">
 						Before creating new issues, users may see similar existing reports. If they confirm it's the same bug, their
 						additional information gets added to the original issue.
 					</p>
@@ -208,10 +206,10 @@
 					<div class="bg-background rounded-xl p-4 shadow-sm">
 						<div class="flex gap-2">
 							<CopyCheck class="text-primary mt-0.5 h-4 w-4" />
-							<p class="mb-2 text-sm font-medium">We found similar reports.</p>
+							<p class="mb-2 text-sm">We found similar reports.</p>
 						</div>
 						<div class="bg-muted/50 rounded-lg p-3">
-							<p class="mb-1 text-xs font-medium">Login button freezes on mobile</p>
+							<p class="mb-1 text-xs">Login button freezes on mobile</p>
 							<p class="text-muted-foreground text-xs">Button becomes unresponsive after validation error...</p>
 							<div class="mt-4 flex flex-wrap gap-2">
 								<Button variant="outline" class="pointer-events-none h-8 text-xs">This is my bug</Button>
@@ -226,8 +224,8 @@
 			<!-- Automatic closing -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Automatic filtering</h3>
-					<p class="text-muted-foreground text-lg leading-relaxed">
+					<h3 class="mb-4 text-2xl font-medium">Automatic filtering</h3>
+					<p class="text-muted-foreground text-lg">
 						AI identifies and automatically closes spam, feedback requests, and user environment issues. Only genuine
 						bugs reach your issue tracker, saving hours of manual triage.
 					</p>
@@ -239,7 +237,7 @@
 					</div>
 					<div class="bg-background -mr-30 rounded-xl p-4 shadow-sm">
 						<div class="flex gap-2">
-							<p class="mb-2 text-sm font-medium">Report not submitted.</p>
+							<p class="mb-2 text-sm">Report not submitted.</p>
 						</div>
 						<div class="bg-muted/50 w-full rounded-lg mask-r-from-30% p-3 text-xs">
 							<p>
@@ -254,8 +252,8 @@
 			<!-- Customization feature -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Complete customization</h3>
-					<p class="text-muted-foreground text-lg leading-relaxed">
+					<h3 class="mb-4 text-2xl font-medium">Complete customization</h3>
+					<p class="text-muted-foreground text-lg">
 						Tailor forms to your exact needs. Select which pieces of information you need and customize colors to match
 						your brand.
 					</p>
@@ -265,7 +263,7 @@
 					<div class="bg-background rounded-xl p-4 shadow-sm">
 						<div class="mb-4 flex items-center gap-2">
 							<Palette class="text-primary h-4 w-4" />
-							<span class="text-sm font-medium">Form config</span>
+							<span class="text-sm">Form config</span>
 						</div>
 						<div class="space-y-3">
 							<div class="flex items-center justify-between">
@@ -294,8 +292,8 @@
 			<!-- Integrations -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Team integrations</h3>
-					<p class="text-muted-foreground text-lg leading-relaxed">
+					<h3 class="mb-4 text-2xl font-medium">Team integrations</h3>
+					<p class="text-muted-foreground text-lg">
 						Keep your team informed with Discord notifications for new bug reports. More integrations coming soon.
 					</p>
 				</div>
@@ -307,7 +305,7 @@
 							<div class="flex gap-2">
 								<div class="bg-primary mt-2 h-2 w-2 rounded-full"></div>
 								<div class="text-xs">
-									<p class="font-medium">New bug report #47</p>
+									<p>New bug report #47</p>
 									<p class="text-muted-foreground">Login button unresponsive on mobile</p>
 									<p class="text-muted-foreground mt-1">Priority: P1</p>
 								</div>
@@ -325,8 +323,8 @@
 			<!-- Priority assessment -->
 			<div class="grid items-center gap-12 lg:grid-cols-2">
 				<div>
-					<h3 class="mb-4 text-2xl font-bold">Priority evaluation</h3>
-					<p class="text-muted-foreground text-lg leading-relaxed">
+					<h3 class="mb-4 text-2xl font-medium">Priority evaluation</h3>
+					<p class="text-muted-foreground text-lg">
 						Reports are instantly scored P1 to P4 based on the severity and impact. Focus on what's most important.
 					</p>
 				</div>
@@ -334,7 +332,7 @@
 					<div
 						class="bg-background bg-background -mb-12 flex h-fit w-fit items-center justify-center gap-4 overflow-hidden rounded-xl p-4 pb-10 shadow-sm"
 					>
-						<p class="text-muted-foreground text-sm">Priority:</p>
+						<p class="text-muted-foreground text-sm">Priority</p>
 						<div class="flex h-15 items-center justify-center gap-2">
 							<Badge variant="secondary" class="bg-muted">P1</Badge>
 							<Badge variant="secondary" class="bg-muted">P2</Badge>
@@ -355,8 +353,8 @@
 <section class="bg-muted/50 py-24" bind:this={errorSection}>
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="mb-8 text-center">
-			<h2 class="mb-4 text-3xl font-bold">See the difference our forms make</h2>
-			<p class="text-muted-foreground text-lg">Watch how Bugspot simplifies creating beautiful bug reports.</p>
+			<h2 class="mb-4 text-3xl font-medium">See the difference our forms make</h2>
+			<p class="text-muted-foreground text-lg">Bugspot simplifies creating insightful bug reports.</p>
 		</div>
 
 		<!-- Overlapping error showcase -->
@@ -409,7 +407,7 @@
 <section class="mx-8 my-16">
 	<div class="bg-primary text-primary-foreground mx-auto max-w-7xl rounded-3xl px-8 py-12 text-center shadow-xl">
 		<img src="/images/bugspot-icon.png" alt="icon" class="mx-auto mb-4 h-24 w-24 not-dark:invert" />
-		<h2 class="mb-4 text-3xl font-bold">
+		<h2 class="mb-4 text-3xl font-medium">
 			You debug faster, <span class="opacity-80">we clear the clutter</span>
 		</h2>
 		<p class="mx-auto mb-8 max-w-lg text-lg opacity-90">
