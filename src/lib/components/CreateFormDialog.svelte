@@ -8,6 +8,7 @@
 	import * as Select from "$lib/components/ui/select/index.js";
 	import * as Alert from "$lib/components/ui/alert/index.js";
 	import { CheckCircle2, Github } from "lucide-svelte";
+	import { Spinner } from "$lib/components/ui/spinner";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
 	import { user } from "$lib/stores/account";
@@ -136,7 +137,7 @@
 
 				<!-- Domains -->
 				<div class="space-y-2">
-					<Label for="domains">Whitelisted domains (input '*' to allow all)</Label>
+					<Label for="domains">Whitelisted domains</Label>
 					<Input id="domains" bind:value={formData.domains} placeholder="your-site.com, www.your-site.com" rows={2} />
 				</div>
 
@@ -213,10 +214,10 @@
 				</div>
 
 				<!-- Actions -->
-				<div class="flex justify-end space-x-3">
+				<div class="flex justify-end gap-2">
 					<Button onclick={saveForm} disabled={loading || !formData.name.trim() || !formData.domains.trim()}>
 						{#if loading}
-							<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+							<Spinner class="size-4" />
 							{editingForm ? "Updating..." : "Creating..."}
 						{:else}
 							{editingForm ? "Update form" : "Create form"}

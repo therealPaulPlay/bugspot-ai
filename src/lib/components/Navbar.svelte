@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { Sun, Moon, Bug, User, LogOut, Trash2, CreditCard, ChevronDown, Github, Eclipse } from "lucide-svelte";
+	import { Spinner } from "$lib/components/ui/spinner";
 	import Button from "./ui/button/button.svelte";
 	import {
 		DropdownMenu,
@@ -179,7 +180,7 @@
 				<Input id="deleteConfirm" bind:value={deleteConfirmText} placeholder="Delete account" class="mt-1" />
 			</div>
 
-			<div class="flex justify-end space-x-2">
+			<div class="flex justify-end gap-2">
 				<Button variant="outline" onclick={() => (showDeleteDialog = false)}>Cancel</Button>
 				<Button
 					variant="destructive"
@@ -187,7 +188,7 @@
 					disabled={deleteConfirmText !== "Delete account" || deletingAccount}
 				>
 					{#if deletingAccount}
-						<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+						<Spinner class="size-4" />
 						Deleting...
 					{:else}
 						Delete

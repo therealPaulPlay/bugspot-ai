@@ -5,6 +5,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Github } from "lucide-svelte";
+	import { Spinner } from "$lib/components/ui/spinner";
 	import { betterFetch } from "$lib/utils/betterFetch";
 	import { toast } from "svelte-sonner";
 	import * as env from "$env/static/public";
@@ -99,7 +100,7 @@
 					<!-- GitHub login button -->
 					<Button class="w-full" size="lg" onclick={handleGitHubLogin} disabled={loading}>
 						{#if loading}
-							<div class="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+							<Spinner class="size-4" />
 							Connecting...
 						{:else}
 							<Github class="h-4 w-4" />

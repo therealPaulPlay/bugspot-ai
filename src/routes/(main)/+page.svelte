@@ -147,7 +147,7 @@
 			<Card class="bg-accent/50 border-none shadow-none transition hover:brightness-95">
 				<CardHeader>
 					<Github class="text-primary mb-2 h-8 w-8" strokeWidth={1.75} />
-					<CardTitle>Use with GitHub issues</CardTitle>
+					<CardTitle>Made for GitHub issues</CardTitle>
 					<CardDescription>Bugspot automatically creates GitHub issues, reactions and comments.</CardDescription>
 				</CardHeader>
 			</Card>

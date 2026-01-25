@@ -4,6 +4,7 @@
 	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
 	import { Badge } from "$lib/components/ui/badge";
 	import { Check, CheckCircle, Crown, Mail, UserRoundCog, Bug, Zap, Rocket, PlaneTakeoff } from "lucide-svelte";
+	import { Spinner } from "$lib/components/ui/spinner";
 	import { goto } from "$app/navigation";
 	import { tiers } from "$lib/stores/tiers";
 	import { isAuthenticated, user } from "$lib/stores/account";
@@ -154,7 +155,7 @@
 						onclick={() => handleSubscription(tier)}
 					>
 						{#if loading === tier.id}
-							<div class="border-foreground h-4 w-4 animate-spin rounded-full border-b-2"></div>
+							<Spinner class="size-4" />
 							Processing...
 						{:else if $user?.subscriptionTier == tier.id}
 							<CheckCircle class="h-4 w-4" />

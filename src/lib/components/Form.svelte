@@ -1,5 +1,6 @@
 <script>
-	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, Loader2, XCircle, Send, X } from "lucide-svelte";
+	import { ArrowLeft, ArrowRight, Info, Plus, Minus, Upload, XCircle, Send, X } from "lucide-svelte";
+	import { Spinner } from "$lib/components/ui/spinner";
 	import Button from "./ui/button/button.svelte";
 	import { fade, fly, scale } from "svelte/transition";
 	import { page } from "$app/state";
@@ -291,7 +292,7 @@
 				<div class="flex items-center justify-center">
 					<div class="bg-muted inline-flex max-w-50 items-center gap-2 rounded-md px-3 py-2 text-sm">
 						{#if fileUploading}
-							<Loader2 size={16} strokeWidth={2.5} style="min-width: 16px; min-height: 16px;" class="animate-spin" />
+							<Spinner class="size-4" />
 						{:else}
 							<Button variant="ghost" size="sm" class="h-fit! p-0!" onclick={removeFile}><X /></Button>
 						{/if}
@@ -453,7 +454,7 @@
 	<!-- Post slides -->
 	{#if slide == "processing"}
 		<div class="flex flex-col items-center justify-center text-center" in:fade>
-			<Loader2 class="mb-4 h-12 w-12 animate-spin" />
+			<Spinner class="mb-4 size-10" />
 			<h2 class="mb-2 text-2xl font-medium">Reviewing your report...</h2>
 			<p class="text-muted-foreground">Please stand by.</p>
 		</div>

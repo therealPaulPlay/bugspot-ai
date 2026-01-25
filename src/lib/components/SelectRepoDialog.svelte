@@ -76,9 +76,8 @@
 		</DialogHeader>
 
 		{#if loading}
-			<div class="flex items-center justify-center gap-4 py-8">
-				<div class="border-primary h-6 w-6 animate-spin rounded-full border-b-2"></div>
-				<span class="ml-2">Loading repositories...</span>
+			<div class="flex items-center justify-center py-8">
+				<span>Loading repositories...</span>
 			</div>
 		{:else if repos.length > 0}
 			<div class="space-y-4" in:fade={{ duration: 300 }}>

@@ -15,7 +15,7 @@
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.8.2",
-		"@lucide/svelte": "^0.525.0",
+		"@lucide/svelte": "^0.561.0",
 		"@sveltejs/adapter-auto": "^6.0.1",
 		"@sveltejs/kit": "^2.22.2",
 		"@sveltejs/vite-plugin-svelte": "^5.1.0",
@@ -47,7 +47,7 @@
 		"mysql2": "^3.14.1",
 		"node-cron": "^4.2.0",
 		"nodemailer": "^7.0.4",
-		"overfade": "^0.0.5",
+		"overfade": "^0.0.10",
 		"prism-themes": "^1.9.0",
 		"prismjs": "^1.30.0",
 		"stripe": "^18.3.0",
