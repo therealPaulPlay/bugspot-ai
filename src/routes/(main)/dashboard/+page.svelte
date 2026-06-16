@@ -331,7 +331,7 @@
 							<Copy class="h-2 w-2" />
 						{/if}
 					</Button>
-					<code class="grayscale"
+					<code class="grayscale dark:invert"
 						>{@html Prism.highlight(generateLinkTagCode(currentFormId), Prism.languages.html, "html")}</code
 					>
 				</div>
@@ -354,7 +354,7 @@
 							<Copy class="h-2 w-2" />
 						{/if}
 					</Button>
-					<code class="grayscale"
+					<code class="grayscale dark:invert"
 						>{@html Prism.highlight(generateIframeCode(currentFormId), Prism.languages.html, "html")}</code
 					>
 				</div>

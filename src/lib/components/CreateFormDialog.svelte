@@ -25,7 +25,7 @@
 	let repoSelectDialogOpen = $derived(open && !selectedRepo);
 
 	// Reset and setup when dialog opens
-	$effect(() => {
+	$effect.pre(() => {
 		if (open) {
 			formData = {
 				name: editingForm?.name || "",
@@ -41,8 +41,8 @@
 				requireExpectedResult: editingForm?.requireExpectedResult ?? true,
 				requireObservedResult: editingForm?.requireObservedResult ?? true,
 			};
-			selectedRepo = editingForm?.githubRepo ? { fullName: editingForm?.githubRepo } : null;
-		}
+			selectedRepo = editingForm?.githubRepo ? { fullName: editingForm?.githubRepo } : null; // Pre to make this run before the deriveds
+		} else selectedRepo = null; // Clear repo on close
 	});
 
 	// User came back from GitHub auth - reopen the repo selector
@@ -95,139 +95,137 @@
 </script>
 
 <!-- Main form dialog - only show after repo is selected AND not showing repo selector -->
-{#if open && selectedRepo}
-	<Dialog bind:open>
-		<DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto">
-			<DialogHeader>
-				<DialogTitle>{editingForm ? "Edit form" : "Create form"}</DialogTitle>
-			</DialogHeader>
+<Dialog open={open && Boolean(selectedRepo)} onOpenChange={(v) => (open = v)}>
+	<DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto">
+		<DialogHeader>
+			<DialogTitle>{editingForm ? "Edit form" : "Create form"}</DialogTitle>
+		</DialogHeader>
 
-			<div class="space-y-6">
-				<!-- GitHub Repository -->
-				<Alert.Root>
-					<CheckCircle2 />
-					<Alert.Title>Connected to {selectedRepo?.fullName}.</Alert.Title>
-				</Alert.Root>
+		<div class="space-y-6">
+			<!-- GitHub Repository -->
+			<Alert.Root>
+				<CheckCircle2 />
+				<Alert.Title>Connected to {selectedRepo?.fullName}.</Alert.Title>
+			</Alert.Root>
 
-				<!-- Basic Info -->
-				<div class="space-y-4">
-					<div class="space-y-2">
-						<Label for="name">Form name</Label>
-						<Input id="name" bind:value={formData.name} placeholder="My app bug reports" required />
-					</div>
-
-					<div class="space-y-2">
-						<Label for="colorScheme">Color scheme</Label>
-						<Select.Root bind:value={formData.colorScheme} type="single">
-							<Select.Trigger>
-								{(formData.colorScheme == "default" ? "default (orange)" : formData.colorScheme) || "Select the color"}
-							</Select.Trigger>
-							<Select.Content>
-								<Select.Item value="default">default</Select.Item>
-								<Select.Item value="black">black</Select.Item>
-								<Select.Item value="red">red</Select.Item>
-								<Select.Item value="blue">blue</Select.Item>
-								<Select.Item value="green">green</Select.Item>
-								<Select.Item value="yellow">yellow</Select.Item>
-								<Select.Item value="orange">orange</Select.Item>
-							</Select.Content>
-						</Select.Root>
-					</div>
-				</div>
-
-				<!-- Domains -->
+			<!-- Basic Info -->
+			<div class="space-y-4">
 				<div class="space-y-2">
-					<Label for="domains">Whitelisted domains</Label>
-					<Input id="domains" bind:value={formData.domains} placeholder="your-site.com, www.your-site.com" rows={2} />
+					<Label for="name">Form name</Label>
+					<Input id="name" bind:value={formData.name} placeholder="My app bug reports" required />
 				</div>
 
-				<!-- Custom Prompt -->
 				<div class="space-y-2">
-					<Label for="customPrompt">Custom prompt addition (optional)</Label>
-					<Textarea
-						id="customPrompt"
-						bind:value={formData.customPrompt}
-						placeholder="Do not allow bug reports about..."
-						maxlength={1500}
-						rows={2}
-					/>
-				</div>
-
-				<!-- Required Fields -->
-				<div class="space-y-3">
-					<div class="space-y-0">
-						<Label class="text-base font-medium">Required information</Label>
-						<p class="text-muted-foreground text-sm">Selected means required, unselected fields are optional.</p>
-					</div>
-					<div class="grid grid-cols-2 gap-3">
-						<div class="flex items-center space-x-2">
-							<Checkbox id="requireEmail" bind:checked={formData.requireEmail} />
-							<Label for="requireEmail" class="text-sm">User email</Label>
-						</div>
-						<div class="flex items-center space-x-2">
-							<Checkbox id="requireSteps" bind:checked={formData.requireSteps} />
-							<Label for="requireSteps" class="text-sm">Steps to reproduce</Label>
-						</div>
-						<div class="flex items-center space-x-2">
-							<Checkbox id="requireScreenshot" bind:checked={formData.requireScreenshot} />
-							<Label for="requireScreenshot" class="text-sm">Screenshot</Label>
-						</div>
-						<div class="flex items-center space-x-2">
-							<Checkbox id="requireVideo" bind:checked={formData.requireVideo} />
-							<Label for="requireVideo" class="text-sm">Video recording</Label>
-						</div>
-						<div class="flex items-center space-x-2">
-							<Checkbox id="requireExpectedResult" bind:checked={formData.requireExpectedResult} />
-							<Label for="requireExpectedResult" class="text-sm">Expected result</Label>
-						</div>
-						<div class="flex items-center space-x-2">
-							<Checkbox id="requireObservedResult" bind:checked={formData.requireObservedResult} />
-							<Label for="requireObservedResult" class="text-sm">Observed result</Label>
-						</div>
-					</div>
-				</div>
-
-				<!-- Integrations -->
-				<div class="space-y-3">
-					<Label class="text-base font-medium">Integrations</Label>
-
-					<div class="space-y-2">
-						<Label for="discordWebhook">Discord webhook URL (optional)</Label>
-						<Input
-							id="discordWebhook"
-							bind:value={formData.discordWebhook}
-							placeholder="https://discord.com/api/webhooks/..."
-							type="url"
-						/>
-						<p class="text-muted-foreground text-xs">Get notified in Discord when new bugs are reported.</p>
-					</div>
-				</div>
-
-				<!-- Additional Settings -->
-				<div class="space-y-3">
-					<Label class="mb-2 text-base font-medium">Additional settings</Label>
-
-					<div class="flex items-center space-x-2">
-						<Checkbox id="showIssueLink" bind:checked={formData.showIssueLink} />
-						<Label for="showIssueLink" class="text-sm">Show link to issue on completion</Label>
-					</div>
-				</div>
-
-				<!-- Actions -->
-				<div class="flex justify-end gap-2">
-					<Button onclick={saveForm} disabled={loading || !formData.name.trim() || !formData.domains.trim()}>
-						{#if loading}
-							<Spinner class="size-4" />
-							{editingForm ? "Updating..." : "Creating..."}
-						{:else}
-							{editingForm ? "Update form" : "Create form"}
-						{/if}
-					</Button>
+					<Label for="colorScheme">Color scheme</Label>
+					<Select.Root bind:value={formData.colorScheme} type="single">
+						<Select.Trigger>
+							{(formData.colorScheme == "default" ? "default (orange)" : formData.colorScheme) || "Select the color"}
+						</Select.Trigger>
+						<Select.Content>
+							<Select.Item value="default">default</Select.Item>
+							<Select.Item value="black">black</Select.Item>
+							<Select.Item value="red">red</Select.Item>
+							<Select.Item value="blue">blue</Select.Item>
+							<Select.Item value="green">green</Select.Item>
+							<Select.Item value="yellow">yellow</Select.Item>
+							<Select.Item value="orange">orange</Select.Item>
+						</Select.Content>
+					</Select.Root>
 				</div>
 			</div>
-		</DialogContent>
-	</Dialog>
-{/if}
+
+			<!-- Domains -->
+			<div class="space-y-2">
+				<Label for="domains">Whitelisted domains</Label>
+				<Input id="domains" bind:value={formData.domains} placeholder="your-site.com, www.your-site.com" rows={2} />
+			</div>
+
+			<!-- Custom Prompt -->
+			<div class="space-y-2">
+				<Label for="customPrompt">Custom prompt addition (optional)</Label>
+				<Textarea
+					id="customPrompt"
+					bind:value={formData.customPrompt}
+					placeholder="Do not allow bug reports about..."
+					maxlength={1500}
+					rows={2}
+				/>
+			</div>
+
+			<!-- Required Fields -->
+			<div class="space-y-3">
+				<div class="space-y-0">
+					<Label class="text-base font-medium">Required information</Label>
+					<p class="text-muted-foreground text-sm">Selected means required, unselected fields are optional.</p>
+				</div>
+				<div class="grid grid-cols-2 gap-3">
+					<div class="flex items-center space-x-2">
+						<Checkbox id="requireEmail" bind:checked={formData.requireEmail} />
+						<Label for="requireEmail" class="text-sm">User email</Label>
+					</div>
+					<div class="flex items-center space-x-2">
+						<Checkbox id="requireSteps" bind:checked={formData.requireSteps} />
+						<Label for="requireSteps" class="text-sm">Steps to reproduce</Label>
+					</div>
+					<div class="flex items-center space-x-2">
+						<Checkbox id="requireScreenshot" bind:checked={formData.requireScreenshot} />
+						<Label for="requireScreenshot" class="text-sm">Screenshot</Label>
+					</div>
+					<div class="flex items-center space-x-2">
+						<Checkbox id="requireVideo" bind:checked={formData.requireVideo} />
+						<Label for="requireVideo" class="text-sm">Video recording</Label>
+					</div>
+					<div class="flex items-center space-x-2">
+						<Checkbox id="requireExpectedResult" bind:checked={formData.requireExpectedResult} />
+						<Label for="requireExpectedResult" class="text-sm">Expected result</Label>
+					</div>
+					<div class="flex items-center space-x-2">
+						<Checkbox id="requireObservedResult" bind:checked={formData.requireObservedResult} />
+						<Label for="requireObservedResult" class="text-sm">Observed result</Label>
+					</div>
+				</div>
+			</div>
+
+			<!-- Integrations -->
+			<div class="space-y-3">
+				<Label class="text-base font-medium">Integrations</Label>
+
+				<div class="space-y-2">
+					<Label for="discordWebhook">Discord webhook URL (optional)</Label>
+					<Input
+						id="discordWebhook"
+						bind:value={formData.discordWebhook}
+						placeholder="https://discord.com/api/webhooks/..."
+						type="url"
+					/>
+					<p class="text-muted-foreground text-xs">Get notified in Discord when new bugs are reported.</p>
+				</div>
+			</div>
+
+			<!-- Additional Settings -->
+			<div class="space-y-3">
+				<Label class="mb-2 text-base font-medium">Additional settings</Label>
+
+				<div class="flex items-center space-x-2">
+					<Checkbox id="showIssueLink" bind:checked={formData.showIssueLink} />
+					<Label for="showIssueLink" class="text-sm">Show link to issue on completion</Label>
+				</div>
+			</div>
+
+			<!-- Actions -->
+			<div class="flex justify-end gap-2">
+				<Button onclick={saveForm} disabled={loading || !formData.name.trim() || !formData.domains.trim()}>
+					{#if loading}
+						<Spinner class="size-4" />
+						{editingForm ? "Updating..." : "Creating..."}
+					{:else}
+						{editingForm ? "Update form" : "Create form"}
+					{/if}
+				</Button>
+			</div>
+		</div>
+	</DialogContent>
+</Dialog>
 
 <!-- Repo selector as first step - renders last so it appears on top -->
 <SelectRepoDialog
