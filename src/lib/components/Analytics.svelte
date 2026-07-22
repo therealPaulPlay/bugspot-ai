@@ -30,7 +30,7 @@
 			gtag("config", GA_ID, {
 				page_title: document.title,
 				page_path: page.url.pathname,
-				cookie_domain: window.location.hostname,
+				cookie_domain: page.url.hostname, // Page for consistency but identical to window.location.hostname
 				cookie_flags: "SameSite=None; Secure",
 			});
 		} catch (error) {
