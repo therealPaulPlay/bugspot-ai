@@ -5,14 +5,19 @@
 	import { Card, CardContent } from "$lib/components/ui/card";
 	import { slide } from "svelte/transition";
 
-	let showBanner = $state(false);
 	const GA_ID = "G-WJWSRK3J7Z";
+
+	let showBanner = $state(false);
+
+	function gtag () {
+		window.dataLayer = window.dataLayer || [];
+		dataLayer.push(arguments);
+	};
 
 	onMount(() => {
 		const consent = localStorage.getItem("cookiePreferences");
-		if (consent) {
-			loadGA(consent === "true");
-		} else {
+		if (consent) loadGA(consent === "true"); // If the saved string is "true", accept, otherwise reject
+		else {
 			showBanner = true;
 			loadGA(false);
 		}
@@ -20,30 +25,32 @@
 
 	function loadGA(hasConsent) {
 		try {
-			window.dataLayer = window.dataLayer || [];
-			window.gtag = function () {
-				dataLayer.push(arguments);
-			};
-
+			setConsent(hasConsent, false);
 			gtag("js", new Date());
 			gtag("config", GA_ID, {
 				page_title: document.title,
 				page_path: page.url.pathname,
 				cookie_domain: window.location.hostname,
 				cookie_flags: "SameSite=None; Secure",
-				ad_storage: hasConsent ? "granted" : "denied",
-				ad_personalization: hasConsent ? "granted" : "denied",
-				ad_user_data: hasConsent ? "granted" : "denied",
-				analytics_storage: "granted",
 			});
 		} catch (error) {
 			console.error("Error loading GA:", error);
 		}
 	}
 
+	function setConsent(hasConsent, isUpdate = false) {
+		const consentState = hasConsent ? "granted" : "denied";
+		gtag("consent", isUpdate ? "update" : "default", {
+			ad_storage: consentState,
+			ad_personalization: consentState,
+			ad_user_data: consentState,
+			analytics_storage: consentState,
+		});
+	}
+
 	function handleConsent(accepted) {
 		localStorage.setItem("cookiePreferences", accepted.toString());
-		if (accepted) loadGA(true);
+		if (accepted) setConsent(true, true);
 		showBanner = false;
 	}
 </script>
