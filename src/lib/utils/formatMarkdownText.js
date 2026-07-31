@@ -1,6 +1,10 @@
 export function formatMarkdownText(text) {
     if (!text) return '';
     return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/&lt;(\/?)(details|summary)&gt;/g, '<$1$2>')
         .replace(/### (.*?)\n/g, '<h3 style="font-size: 1.05em; font-weight: 500; margin: 0.5em 0; opacity: 0.75;">$1</h3>')
         .replace(/## (.*?)\n/g, '<h2 style="font-size: 1.15em; font-weight: 500; margin: 0.5em 0; opacity: 0.75;">$1</h2>')
         .replace(/# (.*?)\n/g, '<h1 style="font-size: 1.25em; font-weight: 500; margin: 0.5em 0; opacity: 0.75;">$1</h1>')
