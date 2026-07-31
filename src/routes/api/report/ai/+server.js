@@ -89,7 +89,7 @@ async function processReport(title, description, expectedResult, observedResult,
         content: `You are a bug report processor. Based on the information provided, choose ONE action:
 
 1. ASK_QUESTION - If more information is needed
-2. CLOSE_REPORT - If this is spam, user environment issue, not actually a bug or you were told to close this type of report in the guidelines
+2. CLOSE_REPORT - If this is spam, user error, not a bug, or you were told to close this type of report in the guidelines
 3. SUBMIT_REPORT - If this is a valid bug that should be submitted to GitHub
 
 ${customPrompt ? `Additional guidelines: ${customPrompt}` : ''}
@@ -128,11 +128,11 @@ DO correct grammar & spelling mistakes, ensure that steps start with a capital l
 
 ONLY respond with this JSON format:
 {
-  "action": "ASK_QUESTION|CLOSE_REPORT|SUBMIT_REPORT",
+  "action": "ASK_QUESTION | CLOSE_REPORT | SUBMIT_REPORT",
   "message": "Your response text",
   "title": "Clean title (for SUBMIT_REPORT only)",
   "content": "GitHub issue content in the content format (for SUBMIT_REPORT only)",
-  "priority": "P1|P2|P3|P4 (for SUBMIT_REPORT only)"
+  "priority": "P1 | P2 | P3 | P4 (for SUBMIT_REPORT only)"
 }`
     }];
 
@@ -180,10 +180,11 @@ And these existing issue titles:
 ${issues.map(issue => `${issue.id}: ${issue.title}`).join('\n')}
 
 Find up to 3 potential duplicates. Only include issues that are very likely to be the same bug.
+Return an empty array if no duplicates exist.
 
 Respond with JSON format:
 {
-  "duplicates": [1, 2, 3]
+  "duplicates": [142, 17, 96]
 }`
         }]);
 
@@ -226,7 +227,7 @@ Content: ${newContent}
 
 Respond with JSON:
 {
-  "hasNewInfo": true/false,
+  "hasNewInfo": true | false,
   "comment": "Additional information to add as a comment (if hasNewInfo is true)"
 }`
         }]);

@@ -496,7 +496,7 @@
 						<Carousel.Item>
 							<div class="rounded-lg p-4">
 								<div class="of-top of-bottom no-scrollbar h-42 overflow-y-auto text-sm">
-									<h3 class="text-foreground/75 mb-3 text-lg">{duplicate.title || "Default title"}</h3>
+									<h3 class="text-foreground/75 mb-3 text-lg font-medium">{duplicate.title || "Default title"}</h3>
 									{@html formatMarkdownText(duplicate.body) || "<p>Default body text.</p>"}
 								</div>
 								<Button onclick={() => handleDuplicateSelection(duplicate.id)} class="mt-4 w-full" variant="outline">
