@@ -72,7 +72,7 @@
 			<p>We may share your information with:</p>
 			<ul class="mb-4 list-disc pl-6">
 				<li>
-					<strong>AI Service providers:</strong> For generating bug report improvements and suggestions, through
+					AI Service providers: For generating bug report improvements and suggestions, through
 					<a
 						href="https://openrouter.ai/privacy"
 						target="_blank"
@@ -80,13 +80,13 @@
 					>
 				</li>
 				<li>
-					<strong>Payment processors:</strong>
+					Payment processors:
 					<a href="https://stripe.com/privacy" target="_blank" class="hover:text-foreground underline transition-colors"
 						>Stripe</a
 					> processes subscription payments according to their privacy policy
 				</li>
 				<li>
-					<strong>Cloud storage:</strong>
+					Cloud storage:
 					<a
 						href="https://www.digitalocean.com/legal/privacy-policy"
 						target="_blank"
@@ -94,14 +94,14 @@
 					> for secure file storage
 				</li>
 				<li>
-					<strong>Authentication:</strong>
+					Authentication:
 					<a href="https://clerk.com/privacy" target="_blank" class="hover:text-foreground underline transition-colors"
 						>Clerk</a
 					> for secure user authentication and management
 				</li>
-				<li><strong>Legal requirements:</strong> When required by law or to protect our rights</li>
+				<li>Legal requirements: When required by law or to protect our rights</li>
 				<li>
-					<strong>Customers:</strong> Customers get access to the bug reports created through their forms. They will process
+					Customers: Customers get access to the bug reports created through their forms. They will process
 					these reports according to their privacy policies. Bugspot takes no accountability over how customers use & store
 					their reports.
 				</li>
@@ -149,10 +149,9 @@
 
 			<h2 class="mt-8 mb-4 text-2xl font-medium">11. Contact Us</h2>
 			<p>
-				For questions about this Privacy Policy or to exercise your data rights, please contact us through the form at
-				the bottom of the
-				<a href="https://paulplay.studio" target="_blank" class="hover:text-foreground underline transition-colors">
-					studio website
+				For questions about this Privacy Policy or to exercise your data rights, please reach out through this
+				<a href="https://paulplay.studio/contact" target="_blank" class="hover:text-foreground underline transition-colors">
+					contact form
 				</a>.
 			</p>
 

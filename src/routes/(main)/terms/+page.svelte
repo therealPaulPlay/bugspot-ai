@@ -133,9 +133,9 @@
 
 			<h2 class="mt-8 mb-4 text-2xl font-medium">13. Contact information</h2>
 			<p>
-				For questions about these terms, please contact us through the form at the bottom of the
-				<a href="https://paulplay.studio" target="_blank" class="hover:text-foreground underline transition-colors">
-					studio website
+				For questions about these terms, please reach out through this
+				<a href="https://paulplay.studio/contact" target="_blank" class="hover:text-foreground underline transition-colors">
+					contact form
 				</a>.
 			</p>
 
