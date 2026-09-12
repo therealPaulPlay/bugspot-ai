@@ -29,10 +29,10 @@
 			<div>
 				<h3 class="mb-4 font-medium">Legal</h3>
 				<ul class="text-muted-foreground space-y-2 text-sm">
-					<li><a href="/privacy" class="hover:text-foreground transition-colors">Privacy Policy</a></li>
-					<li><a href="/terms" class="hover:text-foreground transition-colors">Terms of Use</a></li>
-					<a href="https://paulplay.studio/imprint" target="_blank" class="hover:text-foreground transition-colors">
-						Imprint
+					<li><a href="/privacy" class="hover:text-foreground transition-colors">Privacy policy</a></li>
+					<li><a href="/terms" class="hover:text-foreground transition-colors">Terms of use</a></li>
+					<a href="https://paulplay.studio/company-information" target="_blank" class="hover:text-foreground transition-colors">
+						Company
 					</a>
 				</ul>
 			</div>

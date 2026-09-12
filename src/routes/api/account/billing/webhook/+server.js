@@ -33,7 +33,7 @@ Checkout session ID: ${sessionId}
 Amount: ${((amountTotal || 0) / 100).toFixed(2)}
 
 If you have any questions, please reach out to us via the contact form on https://paulplay.studio. 
-For business details, please refer to https://paulplay.studio/imprint. 
+For business details, please refer to https://paulplay.studio/company-information. 
 
 Best regards,
 The Bugspot Team`

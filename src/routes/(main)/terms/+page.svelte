@@ -1,10 +1,10 @@
 <svelte:head>
-	<title>Terms of Use</title>
+	<title>Terms of use</title>
 </svelte:head>
 
 <div class="mx-auto min-h-screen max-w-screen-xl p-4 py-18">
 	<div class="mx-auto max-w-3xl">
-		<h1 class="mb-8 text-4xl font-medium">Terms of Use</h1>
+		<h1 class="mb-8 text-4xl font-medium">Terms of use</h1>
 
 		<div class="max-w-none">
 			<p class="text-muted-foreground mb-6">Last updated: January 16th, 2025</p>
@@ -12,10 +12,10 @@
 			<h2 class="mt-8 mb-4 text-2xl font-medium">1. Acceptance of terms</h2>
 			<p>
 				By accessing or using the Bugspot platform ("Service") provided by PaulPlay ("we," "us," or "our"), you agree to
-				be bound by these Terms of Use. If you do not agree to these terms, please do not use the Service.
+				be bound by these terms of use. If you do not agree to these terms, please do not use the Service.
 			</p>
 
-			<h2 class="mt-8 mb-4 text-2xl font-medium">2. Description of Service</h2>
+			<h2 class="mt-8 mb-4 text-2xl font-medium">2. Description of service</h2>
 			<p>
 				Bugspot is an AI-powered bug reporting platform designed to help development teams create, manage, and track
 				software issues. The Service allows users to create professional bug reports with AI assistance, collaborate
@@ -106,7 +106,7 @@
 
 			<h2 class="mt-8 mb-4 text-2xl font-medium">10. Privacy and data protection</h2>
 			<p>
-				10.1. Your privacy is important to us. Please review our Privacy Policy to understand how we collect, use, and
+				10.1. Your privacy is important to us. Please review our privacy policy to understand how we collect, use, and
 				protect your information.
 			</p>
 			<p>
@@ -141,8 +141,8 @@
 
 			<div class="text-muted-foreground mt-12 mb-8 text-sm">
 				<p>
-					By using the Service, you acknowledge that you have read, understood, and agree to be bound by these Terms of
-					Service.
+					By using the Service, you acknowledge that you have read, understood, and agree to be bound by these terms of
+					use.
 				</p>
 			</div>
 		</div>

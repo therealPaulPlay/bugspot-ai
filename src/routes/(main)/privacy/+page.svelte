@@ -1,17 +1,17 @@
 <svelte:head>
-	<title>Privacy Policy</title>
+	<title>Privacy policy</title>
 </svelte:head>
 
 <div class="mx-auto min-h-screen max-w-screen-xl p-4 py-18">
 	<div class="mx-auto max-w-3xl">
-		<h1 class="mb-8 text-4xl font-medium">Privacy Policy</h1>
+		<h1 class="mb-8 text-4xl font-medium">Privacy policy</h1>
 
 		<div class="prose prose-slate max-w-none">
 			<p class="text-muted-foreground mb-6">Last updated: January 16th, 2025</p>
 
 			<h2 class="mt-8 mb-4 text-2xl font-medium">1. Introduction</h2>
 			<p>
-				PaulPlay ("we," "us," or "our") is committed to protecting the privacy of our users. This Privacy Policy
+				PaulPlay ("we," "us," or "our") is committed to protecting the privacy of our users. This privacy policy
 				explains how we collect, use, and protect information when you use our AI-powered bug reporting platform
 				("Service").
 			</p>
@@ -142,21 +142,21 @@
 
 			<h2 class="mt-8 mb-4 text-2xl font-medium">10. Changes to this privacy policy</h2>
 			<p>
-				We may update this Privacy Policy from time to time. We will notify users of any material changes by posting the
-				new Privacy Policy on this page and updating the "Last updated" date. For significant changes, we may also send
+				We may update this privacy policy from time to time. We will notify users of any material changes by posting the
+				new privacy policy on this page and updating the "Last updated" date. For significant changes, we may also send
 				email notifications.
 			</p>
 
 			<h2 class="mt-8 mb-4 text-2xl font-medium">11. Contact Us</h2>
 			<p>
-				For questions about this Privacy Policy or to exercise your data rights, please reach out through this
+				For questions about this privacy policy or to exercise your data rights, please reach out through this
 				<a href="https://paulplay.studio/contact" target="_blank" class="hover:text-foreground underline transition-colors">
 					contact form
 				</a>.
 			</p>
 
 			<div class="text-muted-foreground mt-12 mb-8 text-sm">
-				<p>By using the Service, you acknowledge that you have read and understood this Privacy Policy.</p>
+				<p>By using the Service, you acknowledge that you have read and understood this privacy policy.</p>
 			</div>
 		</div>
 	</div>

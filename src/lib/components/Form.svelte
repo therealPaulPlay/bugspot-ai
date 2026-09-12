@@ -252,8 +252,8 @@
 				This form is powered by <a href={page.url.origin} target="_blank" class="text-primary hover:underline"
 					>Bugspot</a
 				>. By clicking on "Start", you accept the
-				<a href="/terms" target="_blank" class="hover:underline">Terms of Use</a>
-				and <a href="/privacy" target="_blank" class="hover:underline">Privacy Policy</a>.
+				<a href="/terms" target="_blank" class="hover:underline">terms of use</a>
+				and <a href="/privacy" target="_blank" class="hover:underline">privacy policy</a>.
 			</p>
 		</div>
 	{/if}

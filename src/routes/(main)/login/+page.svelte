@@ -113,9 +113,9 @@
 			<!-- Terms -->
 			<p class="text-muted-foreground max-w-75 text-center text-xs">
 				By signing up, you agree to our
-				<a href="/terms" class="hover:underline">Terms of Use</a>
+				<a href="/terms" class="hover:underline">terms of use</a>
 				and
-				<a href="/privacy" class="hover:underline">Privacy Policy</a>.
+				<a href="/privacy" class="hover:underline">privacy policy</a>.
 			</p>
 		</div>
 	</div>
