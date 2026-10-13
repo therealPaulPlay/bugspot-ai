@@ -22,7 +22,7 @@ async function makeAIRequest(messages) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: 'google/gemini-2.5-flash',
+            model: 'google/gemini-3.5-flash-lite',
             messages,
             max_tokens: 3000
         })
@@ -89,7 +89,7 @@ async function processReport(title, description, expectedResult, observedResult,
         content: `You are a bug report processor. Based on the information provided, choose ONE action:
 
 1. ASK_QUESTION - If more information is needed
-2. CLOSE_REPORT - If this is spam, user error, not a bug, or you were told to close this type of report in the guidelines
+2. CLOSE_REPORT - If this is spam, user error, not a bug, or if you were told to close this type of report in the guidelines
 3. SUBMIT_REPORT - If this is a valid bug that should be submitted to GitHub
 
 ${customPrompt ? `Additional guidelines: ${customPrompt}` : ''}
