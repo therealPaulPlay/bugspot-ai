@@ -252,12 +252,12 @@ export async function POST({ request, locals, getClientAddress }) {
     try {
         const captchaToken = request.headers.get('cf-turnstile-response');
         await validateCaptcha(captchaToken, getClientAddress());
-        if (await checkReportRateLimit(getClientAddress())) return json({ error: 'Too many report submissions.' }, { status: 429 });
+        if (await checkReportRateLimit(getClientAddress())) return json({ error: 'Too many report submissions' }, { status: 429 });
 
         const { formId, title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, questionAnswerHistory, demo } = locals.body;
-        if (!formId || !title || !description) return json({ error: 'Missing required fields id, title and description.' }, { status: 400 });
-        if (screenshotUrl && !screenshotUrl.startsWith(getBaseURL())) return json({ error: 'Invalid screenshot URL.' }, { status: 400 });
-        if (videoUrl && !videoUrl.startsWith(getBaseURL())) return json({ error: 'Invalid video URL.' }, { status: 400 });
+        if (!formId || !title || !description) return json({ error: 'Missing required fields id, title and description' }, { status: 400 });
+        if (screenshotUrl && !screenshotUrl.startsWith(getBaseURL())) return json({ error: 'Invalid screenshot URL' }, { status: 400 });
+        if (videoUrl && !videoUrl.startsWith(getBaseURL())) return json({ error: 'Invalid video URL' }, { status: 400 });
 
         // Get form with user data
         const formData = await db
@@ -273,7 +273,7 @@ export async function POST({ request, locals, getClientAddress }) {
 
         // Check monthly report limit
         const limit = get(tiers)?.[user.subscriptionTier]?.reportLimit;
-        if (user.reportAmount >= limit) return json({ error: "This form's account has surpassed the monthly report limit." }, { status: 429 });
+        if (user.reportAmount >= limit) return json({ error: "This form's account has surpassed the monthly report limit" }, { status: 429 });
 
         const aiResult = await processReport(title, description, expectedResult, observedResult, steps, email, userAgent, customData, screenshotUrl, videoUrl, form.customPrompt, questionAnswerHistory);
 
@@ -305,18 +305,18 @@ export async function POST({ request, locals, getClientAddress }) {
             }
         }
 
-        return json({ error: 'Invalid AI response.' }, { status: 500 });
+        return json({ error: 'Invalid AI response' }, { status: 500 });
 
     } catch (error) {
         console.error('Processing error:', error);
-        return json({ error: 'Report processing failed: ' + (error.message || "Please refer to the logs.") }, { status: 500 });
+        return json({ error: 'Report processing failed: ' + (error.message || "Please refer to the logs") }, { status: 500 });
     }
 }
 
 export async function PUT({ request, locals, getClientAddress }) {
     try {
         const { reportId, duplicateIssueId, demo } = locals.body;
-        if (!reportId || !pendingReports.has(reportId)) return json({ error: 'Invalid or expired report.' }, { status: 400 });
+        if (!reportId || !pendingReports.has(reportId)) return json({ error: 'Invalid or expired report' }, { status: 400 });
 
         const reportData = pendingReports.get(reportId);
         pendingReports.delete(reportId);
@@ -352,6 +352,6 @@ export async function PUT({ request, locals, getClientAddress }) {
         }
     } catch (error) {
         console.error('Duplicate handling error:', error);
-        return json({ error: 'Report processing failed for potential duplicate: ' + (error.message || "Please refer to the logs.") }, { status: 500 });
+        return json({ error: 'Report processing failed for potential duplicate: ' + (error.message || "Please refer to the logs") }, { status: 500 });
     }
 }

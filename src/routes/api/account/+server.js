@@ -51,14 +51,14 @@ export async function GET({ request, url }) {
 
     } catch (error) {
         console.error('Account info error:', error);
-        return json({ error: 'Failed to get account info.' }, { status: 500 });
+        return json({ error: 'Failed to get account info' }, { status: 500 });
     }
 }
 
 // GitHub App OAuth login/signup
 export async function POST({ request, locals }) {
     const { code } = locals.body;
-    if (!code) return json({ error: 'Missing code parameter.' }, { status: 400 });
+    if (!code) return json({ error: 'Missing code parameter' }, { status: 400 });
 
     try {
         // Exchange code for access token
@@ -98,7 +98,7 @@ export async function POST({ request, locals }) {
 
         const emails = await emailResponse.json();
         const primaryEmail = emails?.find(email => email.primary)?.email || githubUser.email;
-        if (!primaryEmail) return json({ error: 'No email address found. Please make sure your GitHub email is public or primary.' }, { status: 400 });
+        if (!primaryEmail) return json({ error: 'No email address found. Please make sure your GitHub email is public or primary' }, { status: 400 });
 
         // Check if user exists
         let user = await db.select().from(users).where(eq(users.githubId, githubUser.id.toString())).limit(1);
@@ -130,7 +130,7 @@ export async function POST({ request, locals }) {
 
         // Generate JWT token
         const token = createNewJwtToken(user[0]);
-        if (!token) return json({ error: 'Failed to generate access token!' }, { status: 500 });
+        if (!token) return json({ error: 'Failed to generate access token' }, { status: 500 });
 
         return json({
             token,
@@ -147,14 +147,14 @@ export async function POST({ request, locals }) {
 
     } catch (error) {
         console.error('GitHub auth error:', error);
-        return json({ error: 'Internal server error.' }, { status: 500 });
+        return json({ error: 'Internal server error' }, { status: 500 });
     }
 }
 
 // Delete account
 export async function DELETE({ request, locals }) {
     const { userId } = locals.body;
-    if (!userId) return json({ error: 'User ID is required.' }, { status: 400 });
+    if (!userId) return json({ error: 'User ID is required' }, { status: 400 });
 
     try {
         authenticateTokenWithId(request, userId);

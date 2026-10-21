@@ -2,7 +2,7 @@ import * as env from '$env/static/private';
 import { error } from '@sveltejs/kit';
 
 export async function validateCaptcha(token, clientIp) {
-    if (!token) throw error(400, 'Turnstile token missing.');
+    if (!token) throw error(400, 'Turnstile token missing');
 
     try {
         const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
@@ -16,11 +16,11 @@ export async function validateCaptcha(token, clientIp) {
         });
 
         const data = await response.json();
-        if (!data.success) throw error(403, 'Captcha validation failed.');
+        if (!data.success) throw error(403, 'Captcha validation failed');
 
         return true;
     } catch (err) {
         if (err.status) throw err;
-        throw error(500, 'Error validating captcha token.');
+        throw error(500, 'Error validating captcha token');
     }
 }
