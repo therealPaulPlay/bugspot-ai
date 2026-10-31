@@ -19,6 +19,9 @@ jobs:
       - name: Connect to server, build image, and deploy
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            # Makes the shell exit if any command returns failure (for loud errors)
+            set -e
+
             cd ${{ secrets.WORK_DIR }}
 
             # Write .env file from secret
